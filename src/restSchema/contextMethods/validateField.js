@@ -1,0 +1,182 @@
+const isObject = require("../helpers/isObject");
+const isArray = require("../helpers/isObject");
+const isFunction = require("../helpers/isFunction");
+const validationMessages = require("../defaults/defaultMessages").validations;
+const checkRequired = require("../validators/required");
+const checkMin = require("../validators/min");
+const checkMax = require("../validators/max");
+const checkBetween = require("../validators/between");
+const checkMinLength = require("../validators/minLength");
+const checkMaxLength = require("../validators/maxLength");
+const checkBetweenLength = require("../validators/betweenLength");
+const checkMatch = require("../validators/match");
+const checkEnum = require("../validators/enum");
+
+const getErrorMessage = (type, key, value, args) => {
+  let message = validationMessages[type];
+  message.replace(new RegExp("{key}", "g"), key);
+  message.replace(new RegExp("\\{value\\}", "g"), value);
+  if (isArray(args)) {
+    message.replace(new RegExp("\\{arg\\}", "g"), args);
+  } else {
+    for (let argIndex in args) {
+      message.replace(
+        new RegExp("\\{arg\\[" + argIndex + "\\]\\}", "g"),
+        args[argIndex]
+      );
+    }
+  }
+
+  return message;
+};
+
+// check that field  is require or not
+// works with mongoose checkRequired
+const check = async ({
+  value,
+  validationArgs,
+  key,
+  context,
+  validator,
+  validationName
+}) => {
+  // if is nested -> should be checked for each route
+  if (isObject(validationArgs)) {
+    return check({
+      value,
+      validationArgs: validationArgs[context.route],
+      key,
+      context,
+      validator,
+      validationName
+    });
+  }
+
+  // define message of validation
+  let message = getErrorMessage(validationName, key, value, validationArgs);
+
+  let shouldBeChecked = !!validationArgs;
+
+  // if is function call the function to determine
+  // that should be checked or not
+  if (isFunction(validationArgs)) {
+    shouldBeChecked = await validationArgs(context);
+  }
+  if (!shouldBeChecked) {
+    return true;
+  }
+
+  if (shouldBeChecked && !validator(value, validationArgs)) {
+    // check value is valid or not using validator
+    throw new Error(message);
+  }
+  return true;
+};
+
+// check custom validation
+const checkCustomValidation = async ({
+  value,
+  validationArgs,
+  key,
+  context
+}) => {
+  // if is nested -> should be checked for each route
+  if (isObject(validationArgs)) {
+    return checkCustomValidation({
+      value,
+      validationArgs: validationArgs[context.route],
+      key,
+      context
+    });
+  }
+
+  let shouldBeChecked = !!validationArgs;
+
+  if (!shouldBeChecked) {
+    return true;
+  }
+
+  let message = getErrorMessage("default", key, value);
+
+  let result;
+
+  // if validation is function
+  // call that function
+  // async throw will be handled in next
+  // if falsy value was returned
+  // validation message will be the default
+  // message and will throw an error
+  if (isFunction(validationArgs)) {
+    result = await validationArgs(value, context, key);
+  }
+
+  // if type of validate was object : {validator , message}
+  else if (isObject(validationArgs)) {
+    // if validator was sended and is a function
+    if (validationArgs.validator && isFunction(validationArgs.validator)) {
+      result = await validationArgs.validator(value, context, key);
+    }
+
+    // if message was send
+    // can be a function or a string
+    if (!result && validationArgs.message) {
+      if (isFunction(validationArgs.message)) {
+        message = await validationArgs.message({ value, key });
+      } else if (typeof validationArgs.message == "string") {
+        message == validationArgs.message;
+      }
+    }
+  }
+
+  if (!result) {
+    throw new Error(message);
+  }
+};
+
+module.exports = async function(value, validations, key = "field") {
+  const context = this;
+
+  const checkValidation = async (validationName, validator) => {
+    await check({
+      value,
+      validationArgs: validations[validationName],
+      key,
+      context,
+      validator,
+      validationName
+    });
+  };
+
+  // all validations that should be applied
+  let validationHandlers = {
+    required: checkRequired,
+    min: checkMin,
+    max: checkMax,
+    between: checkBetween,
+    minLength: checkMinLength,
+    maxLength: checkMaxLength,
+    betweenLength: checkBetweenLength,
+    match: checkMatch,
+    enum: checkEnum
+  };
+
+  // apply each validation
+  // if any validation failed error
+  // will be accrued
+  for (let validationName in validationHandlers) {
+    if (validations[validationName]) {
+      const validationHandler = validations[validationName];
+      await checkValidation(validationName, validationHandler);
+    }
+  }
+
+  // check custom validations
+  if (validations["custom"]) {
+    await checkCustomValidation({
+      value,
+      validationArgs: validations["custom"],
+      key,
+      context
+    });
+  }
+};
