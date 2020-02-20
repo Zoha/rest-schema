@@ -7,11 +7,11 @@ module.exports = {
     maxLength: "{key} should have less than {args} characters",
     between: "{key} value should be between {args[0]} and {args[1]}",
     betweenLength:
-      "{key} characters length should be between {args[0]},{args[1]}",
-    enum: "{key} value is not a valid items",
+      "{key} characters length should be between {args[0]} and {args[1]}",
+    enum: "{key} is invalid",
     default: "{key} is invalid",
-    match: "{key} is not matched"
+    match: "{key} is invalid"
   },
-  idPramNotFound: ":id param not exists in request",
+  idParamNotFound: ":id param not exists in request",
   resourceNotFound: "resource not found"
 };

@@ -14,8 +14,6 @@ const sanitizeBy = (type, value, shouldBeSanitized, context) => {
     return sanitizeBy(type, value, shouldBeSanitized[context.route], context);
   }
 
-  const shouldBeSanitized = !!args;
-
   if (!shouldBeSanitized || !availableSanitizers[type]) {
     return value;
   }
@@ -23,9 +21,9 @@ const sanitizeBy = (type, value, shouldBeSanitized, context) => {
   return availableSanitizers[type](value);
 };
 
-const customSanitize = async (value, customSanitize, context) => {
+const customSanitizeHandler = async (value, customSanitize, context) => {
   if (isObject(customSanitize)) {
-    return customSanitize(value, customSanitize[context.route], context);
+    return customSanitizeHandler(value, customSanitize[context.route], context);
   }
 
   // custom sanitize
@@ -58,7 +56,7 @@ module.exports = async function(value, sanitizers) {
   }
 
   if (sanitizers.sanitize) {
-    return await customSanitize(value, sanitizers.sanitize, context);
+    return await customSanitizeHandler(value, sanitizers.sanitize, context);
   }
 
   return value;

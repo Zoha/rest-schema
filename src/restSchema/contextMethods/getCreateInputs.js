@@ -1,4 +1,4 @@
-module.exports = async function({ setCreateInputs = true }) {
+module.exports = async function({ setCreateInputs = true } = {}) {
   const context = this;
   const createFields = await context.getCreateFields();
   const createInputs = await context.getInputsFromFields(createFields);

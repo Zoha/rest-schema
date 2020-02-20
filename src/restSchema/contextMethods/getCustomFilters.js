@@ -1,3 +1,5 @@
+const filter = require("../helpers/filter");
+
 module.exports = async function() {
   const context = this;
   const filters = context.schema.filters;

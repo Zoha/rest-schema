@@ -1,4 +1,7 @@
 module.exports = (value, match) => {
+  if (typeof value == "number") {
+    value = value.toString();
+  }
   if (typeof value != "string") {
     return false;
   }

@@ -1,12 +1,12 @@
 const filter = require("../helpers/filter");
 const isArray = require("../helpers/isArray");
-const isObject = require("../helpers/isArray");
+const isObject = require("../helpers/isObject");
 
-const validateFields = async (fields, inputs, context, prependKey = "") => {
+const validateInputs = async (fields, inputs, context, prependKey = "") => {
   if (!fields) {
     return isArray(inputs) ? [] : {};
   }
-  const validationErrors = [];
+  let validationErrors = [];
 
   // if type of fields are array
   // and count of fields are lower that inputs
@@ -53,12 +53,13 @@ const validateFields = async (fields, inputs, context, prependKey = "") => {
 
     // do the validation
     try {
-      await context.validateField(value, validations, key);
+      await context.validateInput(value, validations, prependKey + key);
     } catch (e) {
       validationErrors.push({
         value,
-        location: findLocationOfField(key),
-        param: prependKey + key
+        location: context.findLocationOfInput(key),
+        field: prependKey + key,
+        message: e.message
       });
     }
 
@@ -66,13 +67,31 @@ const validateFields = async (fields, inputs, context, prependKey = "") => {
     if ((field.isNested && isArray(value)) || isObject(value)) {
       validationErrors = [
         ...validationErrors,
-        ...(await validateFields(field.children, value, prependKey + key + "."))
+        ...(await validateInputs(
+          field.children,
+          value,
+          context,
+          prependKey + key + "."
+        ))
       ];
     }
   }
+  return validationErrors;
 };
 
-module.exports = async function() {
+module.exports = async function({
+  setResponse = false,
+  setValidationErrors = true
+} = {}) {
   const context = this;
-  validateFields(context.fields, context.inputs, context);
+  const fields = context.fields || (await context.getFields());
+  const inputs = context.inputs || (await context.getInputs());
+  let validationResult = await validateInputs(fields, inputs, context);
+  if (setValidationErrors) {
+    context.validationErrors = validationResult;
+  }
+  if (setResponse && validationResult.length) {
+    context.response = validationResult;
+  }
+  return validationResult;
 };

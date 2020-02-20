@@ -2,11 +2,13 @@ const isArray = require("../helpers/isArray");
 const isObject = require("../helpers/isObject");
 const deepmerge = require("deepmerge");
 const defaultField = require("../defaults/defaultField");
+const types = require("../types");
 
 const formatFields = async (fields, context) => {
   if (!fields) {
     return {};
   }
+
   // if fields is function call the function
   if (typeof fields === "function") {
     fields = await fields(context);
@@ -19,7 +21,23 @@ const formatFields = async (fields, context) => {
   // process each field and format it
   for (let fieldKey in fields) {
     let field = fields[fieldKey];
-    field.fieldKey = fieldKey;
+
+    // if field is false so ignore it
+    // this is useful for removing default fields
+    if (typeof field == "boolean" && field === false) {
+      continue;
+    }
+
+    // if field type is function
+    // then call the function for getting
+    // field type or field nested value
+    if (
+      !Object.values(types).includes(field) &&
+      !Object.keys(types).includes(field) &&
+      typeof field == "function"
+    ) {
+      field = await field(context);
+    }
 
     if (!isObject(field)) {
       // if type of field is not object by default
@@ -30,13 +48,11 @@ const formatFields = async (fields, context) => {
       };
     }
 
+    // define field key
+    field.fieldKey = fieldKey;
+
     // deep merge field values with default field values
     field = deepmerge(defaultField, field);
-
-    // if field type is function
-    // then call the function for getting
-    // field type or field nested value
-    field.type = await field.type(context);
 
     // if field is array nested
     // change type to Array and
@@ -63,7 +79,7 @@ const formatFields = async (fields, context) => {
       if (!field.children && field.isArrayNested) {
         field.children = [];
       } else {
-        field.children = formatFields(field.children, context);
+        field.children = await formatFields(field.children, context);
       }
     }
 
@@ -78,11 +94,11 @@ const formatFields = async (fields, context) => {
   return formattedFields;
 };
 
-module.exports = async function({ setFields = true }) {
+module.exports = async function({ setFields = true } = {}) {
   const context = this;
   const fields = await formatFields(context.schema.fields, context);
   if (setFields) {
     context.fields = fields;
   }
-  return setFields;
+  return fields;
 };

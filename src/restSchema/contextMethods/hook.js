@@ -5,7 +5,7 @@ module.exports = async function(hook) {
 
   // global hooks
   if (schema.hooks[hook] && typeof schema.hooks[hook] == "function") {
-    promises.push(schema.hooks[hook](context));
+    await schema.hooks[hook](context);
   }
 
   // global object hooks
@@ -14,7 +14,7 @@ module.exports = async function(hook) {
     schema.hooks.global[hook] &&
     typeof schema.hooks.global[hook] == "function"
   ) {
-    promises.push(schema.hooks.global[hook](context));
+    await schema.hooks.global[hook](context);
   }
 
   // route hooks
@@ -23,7 +23,7 @@ module.exports = async function(hook) {
     schema.hooks[route][hook] &&
     typeof schema.hooks[route][hook] == "function"
   ) {
-    promises.push(schema.hooks[route][hook](context));
+    await schema.hooks[route][hook](context);
   }
 
   if (promises.length) {

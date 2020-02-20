@@ -32,6 +32,11 @@ const getCreatableFields = async (fields, context) => {
       else {
         creatableFields[fieldKey] = field;
       }
+    } else if (
+      isFunction(field.creatable) &&
+      (await field.creatable(context))
+    ) {
+      creatableFields[fieldKey] = field;
     } else if (isBoolean(field.creatable) && field.creatable !== false) {
       // if creatable is boolean
       // and its value is true

@@ -1,6 +1,6 @@
-module.exports = async function({ setInputs = true }) {
+module.exports = async function({ setInputs = true } = {}) {
   const context = this;
-  const inputsTarget = context.routeObject.inputsTarget;
+  const inputsTarget = context.routeObject.inputsTarget || [];
   const inputs = {
     ...inputsTarget.map(i => context.req[i] || {})
   };

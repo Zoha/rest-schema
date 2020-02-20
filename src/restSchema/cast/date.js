@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = function castDate(value) {
   if (value == null || value === "") {
     return null;

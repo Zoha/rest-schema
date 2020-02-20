@@ -33,6 +33,25 @@ const getInputs = async (fields, inputs, context) => {
     const field = fields[fieldName];
     let value = context.cast(inputs[fieldName]).to(field.type || String);
 
+    // if value have no value (undefined or null)
+    // and field has a default property
+    // get the default value for
+    if (value == undefined && field.default) {
+      if (field.default) {
+        let defaultValue = field.default;
+        if (isObject(defaultValue)) {
+          defaultValue = field.default[context.route];
+        }
+        if (defaultValue) {
+          if (isFunction(defaultValue)) {
+            value = await defaultValue(context);
+          } else {
+            value = defaultValue;
+          }
+        }
+      }
+    }
+
     // if value have a set
     // or is an object that has set
     // then get value by the set function or set value
@@ -53,7 +72,7 @@ const getInputs = async (fields, inputs, context) => {
     // if value was set and not equals to null or undefined
     // process the nested values for the field
     if (
-      typeof value != undefined &&
+      value != undefined &&
       field.isNested &&
       (isObject(value) || isArray(value))
     ) {

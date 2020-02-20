@@ -1,1 +1,3 @@
-module.exports = require("mongoose").Schema.Types.String.checkRequired;
+module.exports = (value, arguments) => {
+  return value != undefined;
+};

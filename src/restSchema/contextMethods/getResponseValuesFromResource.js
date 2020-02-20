@@ -1,6 +1,6 @@
 const isArray = require("../helpers/isArray");
 const isObject = require("../helpers/isObject");
-const isFunction = require("../helpers/isObject");
+const isFunction = require("../helpers/isFunction");
 const filter = require("../helpers/filter");
 
 const getValues = async (fields, values, context) => {
@@ -50,6 +50,25 @@ const getValues = async (fields, values, context) => {
       }
     }
 
+    // if value have no value (undefined or null)
+    // and field has a default property
+    // get the default value for
+    if (value == undefined && field.default) {
+      if (field.default) {
+        let defaultValue = field.default;
+        if (isObject(defaultValue)) {
+          defaultValue = field.default[context.route];
+        }
+        if (defaultValue) {
+          if (isFunction(defaultValue)) {
+            value = await defaultValue(context);
+          } else {
+            value = defaultValue;
+          }
+        }
+      }
+    }
+
     // if value have a get
     // or is an object that has get
     // then get value by the get function or get value
@@ -87,7 +106,7 @@ const getValues = async (fields, values, context) => {
 
 module.exports = async function(fields, resource) {
   const context = this;
-  fields = fields || context.fields;
+  fields = fields || context.fields || (await context.getFields());
   resource = resource || context.resource || {};
   return await getValues(fields, resource, context);
 };

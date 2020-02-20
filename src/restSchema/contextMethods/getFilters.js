@@ -4,20 +4,27 @@ const isArray = require("../helpers/isArray");
 
 module.exports = async function() {
   const context = this;
-  const inputs = context.inputs;
+  const inputs = context.inputs || (await context.getInputs());
   const operators = context.routeObject.filteringOperators;
-  const defaultFilters = context.schema.paginationMeta.defaultFilters;
-  const customFilters = context.schema.filters;
+  const defaultFilters = context.schema.pagination.defaultFilters;
+  const customFilters = await context.getCustomFilters();
 
-  const formatFilters = (key, value) => {
+  const formatFilters = async (key, value) => {
     let logic, filterValue, hasOperator, type;
 
     // if type of field not found return undefined
-    const field = context.getNestedField(key);
-    if (field == null || !field.filterable) {
+    const field = await context.getNestedField(key);
+    if (field == null || !field.filterable || field.type == null) {
       return undefined;
     }
     type = field.type;
+
+    // convert value to string and url decode it
+    value = decodeURIComponent(context.cast(value).to(String));
+
+    if (value == undefined) {
+      return undefined;
+    }
 
     // change hasOperator if string
     // starts with an operator
@@ -33,13 +40,25 @@ module.exports = async function() {
     // and push its filter that returned from
     // handler to the filterValue
     if (hasOperator) {
-      let regex = new RegExp("(" + Object.keys(operators).join("|") + ")", "g");
-      let operatorSections = value.replace(regex, "$1{$SP$}").split("{$SP$}");
+      let regex = new RegExp(
+        "(" +
+          Object.keys(operators)
+            .map(i => i.replace(":", "").replace("$", "\\$"))
+            .join("|") +
+          ")",
+        "g"
+      );
+      let operatorSections = value
+        .replace(regex, "{$SP$}$1")
+        .split("{$SP$}")
+        .slice(1);
 
       if (operatorSections.length > 1) {
         filterValue = [];
 
         logic = operatorSections[0].endsWith("|") ? "$or" : "$and";
+
+        operatorSections = operatorSections.map(i => i.replace(/[|,]?$/, ""));
 
         if (logic == "$or") {
           operatorSections = operatorSections.map(i => i.replace(/\]$/, ""));
@@ -49,22 +68,24 @@ module.exports = async function() {
       // get value and the operator in each operator section
       // and call its handler to get the value
       for (let section of operatorSections) {
-        let result = /(\$[^:]+:)(.*)/.exec(section);
+        let result = /(\$[^:]+:?)(.*)/.exec(section);
         operator = result[1];
         value = result[2];
         if (operators[operator]) {
           if (logic) {
-            filterValue.push(operators[operator](value, key));
+            filterValue.push(operators[operator](value, key, type));
           } else {
-            filterValue = operators[operator];
+            filterValue = operators[operator](value, key, type);
           }
         }
       }
     } else {
-      filterValue = value;
+      filterValue = context.cast(value).to(type);
     }
 
-    return logic ? { [logic]: filterValue } : filterValue;
+    return logic
+      ? { [logic]: filterValue.map(i => ({ [key]: i })) }
+      : filterValue;
   };
 
   // separate inputs that are not meta
@@ -76,31 +97,81 @@ module.exports = async function() {
 
   let requestFilters = {};
   for (let inputKey in notMetaInputs) {
+    // decode key
+    inputKey = decodeURIComponent(inputKey);
+
+    // if property is $or
     if (inputKey == "$or") {
       if (!isArray(notMetaInputs[inputKey])) {
         continue;
       }
 
+      // for each array element of
+      // get filter value
+      // and push it to final $or property of fields
       let filters = [];
-      for (let key in notMetaInputs[inputKey]) {
-        let filterValue = formatFilters(inputKey, notMetaInputs[inputKey][key]);
-        if (filterValue != null) {
-          filter.push(filterValue);
+      for (let index in notMetaInputs[inputKey]) {
+        // each item of $or
+        // has sub object that in that property is
+        // defined like {prop : value}
+        for (let key in notMetaInputs[inputKey][index]) {
+          let logicItemFilters = {};
+          let filterValue = await formatFilters(
+            key,
+            notMetaInputs[inputKey][index][key]
+          );
+          if (filterValue === undefined) {
+            continue;
+          }
+
+          // check that filter value contains logic or not
+          if (filterValue != null && filterValue.$or) {
+            logicItemFilters.$or = logicItemFilters.$or || [];
+            logicItemFilters.$or = [
+              ...logicItemFilters.$or,
+              ...filterValue.$or
+            ];
+          } else if (filterValue != null && filterValue.$and) {
+            logicItemFilters.$and = logicItemFilters.$and || [];
+            logicItemFilters.$and = [
+              ...logicItemFilters.$and,
+              ...filterValue.$and
+            ];
+          } else {
+            logicItemFilters[key] = filterValue;
+          }
+
+          filters.push(logicItemFilters);
         }
       }
 
       if (filters.length) {
-        requestFilters["$or"] = filters;
+        requestFilters.$or = requestFilters.$or || [];
+        requestFilters.$or = [...requestFilters.$or, ...filters];
       }
     } else {
-      let filterValue = formatFilters(inputKey, notMetaInputs[inputKey]);
-      if (filterValue == null) {
+      // get filter value
+      // if filter contains logic
+      // push the logic in global logic
+      // other wise push it to direct filters
+      let filterValue = await formatFilters(inputKey, notMetaInputs[inputKey]);
+      if (filterValue === undefined) {
         continue;
       }
-      requestFilters[inputKey] = filterValue;
+      if (filterValue != null && filterValue.$or) {
+        requestFilters.$or = requestFilters.$or || [];
+        requestFilters.$or = [...requestFilters.$or, ...filterValue.$or];
+      } else if (filterValue != null && filterValue.$and) {
+        requestFilters.$and = requestFilters.$and || [];
+        requestFilters.$and = [...requestFilters.$and, ...filterValue.$and];
+      } else {
+        requestFilters[inputKey] = filterValue;
+      }
     }
   }
 
+  // return final result
+  // merge them with custom filters
   return {
     ...(isObject(defaultFilters) ? defaultFilters : {}),
     ...requestFilters,

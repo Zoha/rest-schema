@@ -16,6 +16,7 @@ module.exports = {
   creatable: true,
   updatable: true,
   filterable: true,
+  sortable: true,
   hide: false,
   set: undefined,
   get: undefined,

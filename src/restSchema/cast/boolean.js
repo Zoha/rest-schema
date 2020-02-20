@@ -1,4 +1,4 @@
-module.exports = function castBoolean(value, path) {
+module.exports = function castBoolean(value) {
   if (module.exports.convertToTrue.has(value)) {
     return true;
   }

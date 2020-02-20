@@ -1,8 +1,8 @@
 const filter = require("../helpers/filter");
 const isArray = require("../helpers/isArray");
-const isObject = require("../helpers/isArray");
+const isObject = require("../helpers/isObject");
 
-const sanitizeFields = async (fields, inputs, context, prependKey = "") => {
+const sanitizeInputs = async (fields, inputs, context) => {
   if (!fields) {
     return isArray(inputs) ? [] : {};
   }
@@ -30,21 +30,23 @@ const sanitizeFields = async (fields, inputs, context, prependKey = "") => {
     sanitizes = filter(field, (i, k) => availableSanitizes.includes(k));
 
     // do the sanitization
-    inputs[fieldKey] = await context.sanitizeField(value, sanitizes);
+    inputs[fieldKey] = await context.sanitizeInput(value, sanitizes);
 
     // sanitize children
     if ((field.isNested && isArray(value)) || isObject(value)) {
-      inputs[fieldKey] = await sanitizeFields(
-        field.children,
-        value,
-        prependKey + key + "."
-      );
+      inputs[fieldKey] = await sanitizeInputs(field.children, value, context);
     }
   }
   return inputs;
 };
 
-module.exports = async function() {
+module.exports = async function({ setInputs = true } = {}) {
   const context = this;
-  context.inputs = sanitizeFields(context.fields, context.inputs, context);
+  const fields = context.fields || (await context.getFields());
+  const inputs = context.inputs || (await context.getInputs());
+  const sanitizedInputs = await sanitizeInputs(fields, inputs, context);
+  if (setInputs) {
+    context.inputs = sanitizedInputs;
+  }
+  return sanitizedInputs;
 };

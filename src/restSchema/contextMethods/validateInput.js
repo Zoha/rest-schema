@@ -1,5 +1,5 @@
 const isObject = require("../helpers/isObject");
-const isArray = require("../helpers/isObject");
+const isArray = require("../helpers/isArray");
 const isFunction = require("../helpers/isFunction");
 const validationMessages = require("../defaults/defaultMessages").validations;
 const checkRequired = require("../validators/required");
@@ -14,17 +14,17 @@ const checkEnum = require("../validators/enum");
 
 const getErrorMessage = (type, key, value, args) => {
   let message = validationMessages[type];
-  message.replace(new RegExp("{key}", "g"), key);
-  message.replace(new RegExp("\\{value\\}", "g"), value);
+  message = message.replace(new RegExp("{key}", "g"), key);
+  message = message.replace(new RegExp("\\{value\\}", "g"), value);
   if (isArray(args)) {
-    message.replace(new RegExp("\\{arg\\}", "g"), args);
-  } else {
     for (let argIndex in args) {
-      message.replace(
-        new RegExp("\\{arg\\[" + argIndex + "\\]\\}", "g"),
+      message = message.replace(
+        new RegExp("\\{args\\[" + argIndex + "\\]\\}", "g"),
         args[argIndex]
       );
     }
+  } else {
+    message = message.replace(new RegExp("\\{args\\}", "g"), args);
   }
 
   return message;
@@ -81,7 +81,7 @@ const checkCustomValidation = async ({
   context
 }) => {
   // if is nested -> should be checked for each route
-  if (isObject(validationArgs)) {
+  if (isObject(validationArgs) && !validationArgs.validator) {
     return checkCustomValidation({
       value,
       validationArgs: validationArgs[context.route],
@@ -121,9 +121,9 @@ const checkCustomValidation = async ({
     // can be a function or a string
     if (!result && validationArgs.message) {
       if (isFunction(validationArgs.message)) {
-        message = await validationArgs.message({ value, key });
+        message = await validationArgs.message({ value, key }, context);
       } else if (typeof validationArgs.message == "string") {
-        message == validationArgs.message;
+        message = validationArgs.message;
       }
     }
   }
@@ -164,17 +164,17 @@ module.exports = async function(value, validations, key = "field") {
   // if any validation failed error
   // will be accrued
   for (let validationName in validationHandlers) {
-    if (validations[validationName]) {
-      const validationHandler = validations[validationName];
+    if (validationHandlers[validationName]) {
+      const validationHandler = validationHandlers[validationName];
       await checkValidation(validationName, validationHandler);
     }
   }
 
   // check custom validations
-  if (validations["custom"]) {
+  if (validations["validate"]) {
     await checkCustomValidation({
       value,
-      validationArgs: validations["custom"],
+      validationArgs: validations["validate"],
       key,
       context
     });

@@ -1,9 +1,11 @@
-module.exports = async function() {
+module.exports = async function({ setTotal = true } = {}) {
   const context = this;
-  const filters = context.getFilters();
+  const filters = await context.getFilters();
 
   const total = await context.model.countDocuments(filters);
 
-  context.total = total;
+  if (setTotal) {
+    context.total = total;
+  }
   return total;
 };

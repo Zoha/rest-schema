@@ -1,11 +1,11 @@
 module.exports = async context => {
   // apply sanitize on request fields
   // also cast values and get default values
-  await context.sanitizeFields();
+  await context.sanitizeInputs();
   // validate fields of the request
   // also return's validated fields
   // will response with 400 and validation errors
-  await context.validateFields({ response: true });
+  await context.validateInputs({ response: true });
   // will create new resource from fields of request
   await context.createResource();
   // response -> also can be with context.json();

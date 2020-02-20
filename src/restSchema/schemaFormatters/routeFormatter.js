@@ -1,4 +1,5 @@
-const defaultRoutes = require("../defaults/defaultRoutes");
+const defaultRoutes = require("../defaults/schema/defaultSchemaRoutes");
+const defaultRoute = require("../defaults/defaultRoute");
 
 const getRoute = route => {
   if (typeof route == "object") {
@@ -6,7 +7,7 @@ const getRoute = route => {
     if (route.name) {
       defaultValues = defaultRoutes[route.name];
     }
-    return { ...defaultRoutes.default, ...defaultValues, ...route };
+    return { ...defaultRoute, ...defaultValues, ...route };
   } else if (typeof route === "string" && defaultRoutes[route]) {
     return defaultRoutes[route];
   }

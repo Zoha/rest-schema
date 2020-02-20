@@ -14,4 +14,5 @@ module.exports = schema => {
   for (route of schema.routes) {
     registerRoute(router, route, schema);
   }
+  return router;
 };

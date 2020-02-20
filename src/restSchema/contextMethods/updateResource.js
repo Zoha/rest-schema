@@ -1,7 +1,7 @@
 module.exports = async function({
   setResource = true,
   setUpdatedResource = true
-}) {
+} = {}) {
   const context = this;
   if (!context.resource || !context.resource instanceof context.model) {
     await context.getResource({ errorOnNotFound: true });

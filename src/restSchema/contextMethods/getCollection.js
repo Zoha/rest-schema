@@ -1,12 +1,17 @@
-module.exports = async function({ setCollection = true }) {
+module.exports = async function({ setCollection = true, force = false } = {}) {
   const context = this;
-  const filters = context.getFilters();
-  const offset = context.getOffset();
-  const limit = context.getLimit();
+
+  if (!force && context.collection) {
+    return context.collection;
+  }
+
+  const filters = await context.getFilters();
+  const skip = await context.getSkip();
+  const limit = await context.getLimit();
 
   const collection = await context.model
     .find(filters)
-    .offset(offset)
+    .skip(skip)
     .limit(limit);
 
   if (setCollection) {
