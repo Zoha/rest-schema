@@ -1,8 +1,10 @@
 const { expect } = require("chai");
 const validateInput = require("../../src/restSchema/contextMethods/validateInput");
+const model = require("../../src/testHelpers/model");
 
 const context = {
-  route: "create"
+  route: "create",
+  model
 };
 
 describe("validateInput method", () => {
@@ -558,5 +560,36 @@ describe("validateInput method", () => {
     expect(error)
       .to.haveOwnProperty("message")
       .that.equal("field is invalid");
+  });
+
+  it("unique validate", async () => {
+    await model.create({
+      prop1: "prop1"
+    });
+    let value, validations, error;
+
+    validations = {
+      unique: true
+    };
+    value = "prop1";
+
+    try {
+      await validateInput.call(context, value, validations, "prop1");
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("prop1 should be unique, prop1 already exists");
+
+    value = "prop2";
+    error = null;
+    try {
+      await validateInput.call(context, value, validations);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).to.be.equal(null);
   });
 });

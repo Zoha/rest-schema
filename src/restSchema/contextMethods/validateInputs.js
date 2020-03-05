@@ -37,7 +37,8 @@ const validateInputs = async (fields, inputs, context, prependKey = "") => {
       "betweenLength",
       "match",
       "enum",
-      "validate"
+      "validate",
+      "unique"
     ];
 
     if (typeof value == "undefined") {
@@ -79,19 +80,13 @@ const validateInputs = async (fields, inputs, context, prependKey = "") => {
   return validationErrors;
 };
 
-module.exports = async function({
-  setResponse = false,
-  setValidationErrors = true
-} = {}) {
+module.exports = async function({ setValidationErrors = true } = {}) {
   const context = this;
   const fields = context.fields || (await context.getFields());
   const inputs = context.inputs || (await context.getInputs());
   let validationResult = await validateInputs(fields, inputs, context);
   if (setValidationErrors) {
     context.validationErrors = validationResult;
-  }
-  if (setResponse && validationResult.length) {
-    context.response = validationResult;
   }
   return validationResult;
 };

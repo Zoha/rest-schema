@@ -1,4 +1,4 @@
-module.exports = (value, match) => {
+module.exports = (value, match, key, context) => {
   if (typeof value == "number") {
     value = value.toString();
   }

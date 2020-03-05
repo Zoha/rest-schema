@@ -613,4 +613,36 @@ describe("getFilters method", () => {
       .to.haveOwnProperty("prop3")
       .that.equals("custom");
   });
+
+  it("will returns filters for date", async () => {
+    let result = await getFilters.call({
+      ...context,
+      fields: {
+        prop1: {
+          ...defaultField,
+          type: Date
+        }
+      },
+      inputs: {
+        prop1: "$gte:2019,$lte:2018"
+      }
+    });
+
+    result = JSON.parse(JSON.stringify(result));
+
+    // nin operator
+    expect(result)
+      .to.be.an("object")
+      .that.haveOwnProperty("$and");
+    expect(result.$and[0])
+      .to.haveOwnProperty("prop1")
+      .that.is.an("object")
+      .that.haveOwnProperty("$gte")
+      .that.includes("2019");
+    expect(result.$and[1])
+      .to.haveOwnProperty("prop1")
+      .that.is.an("object")
+      .that.haveOwnProperty("$lte")
+      .that.includes("2018");
+  });
 });

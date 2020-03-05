@@ -5,6 +5,8 @@ module.exports = {
   // define key in schema
   // will be defined in get fields method
   fieldKey: "",
+  fieldNestedKey: "",
+  fieldUniqueKey: "",
 
   // nested options
   isNested: false,
@@ -18,6 +20,7 @@ module.exports = {
   filterable: true,
   sortable: true,
   hide: false,
+  hideByDefault: false,
   set: undefined,
   get: undefined,
 
@@ -34,6 +37,7 @@ module.exports = {
 
   // validations
   validate: undefined,
+  unique: false,
   required: false,
   min: undefined,
   max: undefined,

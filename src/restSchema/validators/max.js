@@ -1,6 +1,6 @@
 const isArray = require("../helpers/isArray");
 
-module.exports = (value, of, checkString = false) => {
+module.exports = (value, of, key, context, checkString = false) => {
   if (value == undefined) {
     return false;
   }

@@ -1,5 +1,6 @@
 const cloneDeep = require("clone-deep");
 const isObject = require("../helpers/isObject");
+const isArray = require("../helpers/isArray");
 const isFunction = require("../helpers/isFunction");
 const isBoolean = require("../helpers/isBoolean");
 
@@ -8,6 +9,9 @@ const getUpdatableFields = async (fields, context) => {
     return {};
   }
   let updatableFields = {};
+  if (isArray(fields)) {
+    updatableFields = [];
+  }
   // process each field
   for (let fieldKey in fields) {
     let field = fields[fieldKey];

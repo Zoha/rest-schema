@@ -1,13 +1,9 @@
-const deepmerge = require("deepmerge");
 const registerRoute = require("./registerRoute");
-const modelFormatter = require("./schemaFormatters/modelFormatter");
-const defaults = require("./defaults/defaultSchema");
+const schemaFormatter = require("./schemaFormatters/schemaFormatter");
 
-module.exports = schema => {
-  // merge defaults and passed
-  const schema = deepmerge([defaults, schema]);
-  // format schema model
-  schema.model = modelFormatter(schema.model);
+module.exports.resource = userSchema => {
+  // format schema and merge it with default
+  const schema = schemaFormatter(userSchema);
   // create express router
   const router = require("express").Router();
   // register routes

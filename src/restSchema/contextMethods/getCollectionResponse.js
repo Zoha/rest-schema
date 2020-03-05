@@ -7,6 +7,6 @@ module.exports = async function() {
       await this.getResponseValuesFromResource(context.fields, resource)
     );
   }
-  context.response = response;
-  return response;
+  context.response = finalResponseFromCollection;
+  return finalResponseFromCollection;
 };

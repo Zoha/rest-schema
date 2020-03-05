@@ -16,7 +16,7 @@ const getRoute = route => {
 
 const getRoutes = routes => {
   let optionRoutes = [];
-  for (let route of routes) {
+  for (let route of Object.values(routes)) {
     optionRoutes.push(getRoute(route));
   }
   return optionRoutes;

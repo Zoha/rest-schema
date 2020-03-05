@@ -1,19 +1,13 @@
 const { expect } = require("chai");
-const getUpdateInputs = require("../../src/restSchema/contextMethods/getUpdateInputs");
 const defaultField = require("../../src/restSchema/defaults/defaultField");
-const cast = require("../../src/restSchema/helpers/cast");
-const getUpdateFields = require("../../src/restSchema/contextMethods/getUpdateFields");
-const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields");
 const updateResource = require("../../src/restSchema/contextMethods/updateResource");
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute");
 const model = require("../../src/testHelpers/model");
-
-const getResource = async function() {
-  return await model.findOne({
-    _id: this.resource._id
-  });
-};
+const createContext = require("../../src/restSchema/createContext");
+const defaultSchema = require("../../src/restSchema/defaults/defaultSchema");
 
 const schema = {
+  ...defaultSchema,
   model
 };
 
@@ -30,16 +24,14 @@ describe("updateResource method", function() {
     const resource = await model.create({
       prop1: "test"
     });
+    defaultContext = await createContext(schema, defaultRoute);
     const context = {
-      schema,
+      ...defaultContext,
+      req: {
+        params: { id: "test" }
+      },
       resource,
-      getResource,
-      model,
-      cast,
-      getInputsFromFields,
-      getUpdateFields,
-      getUpdateInputs,
-      updateResource,
+      getRouteKeys: () => ["prop1", "_id"],
       fields: {
         prop1: {
           ...defaultField
@@ -63,16 +55,14 @@ describe("updateResource method", function() {
     const resource = await model.create({
       prop1: "test"
     });
+    defaultContext = await createContext(schema, defaultRoute);
     const context = {
-      schema,
+      ...defaultContext,
+      req: {
+        params: { id: "test" }
+      },
       resource,
-      getResource,
-      model,
-      cast,
-      getInputsFromFields,
-      getUpdateFields,
-      getUpdateInputs,
-      updateResource,
+      getRouteKeys: () => ["prop1", "_id"],
       fields: {
         prop1: {
           ...defaultField

@@ -1,22 +1,26 @@
 const getResponseValuesFromResource = require("../../src/restSchema/contextMethods/getResponseValuesFromResource");
-const cast = require("../../src/restSchema/contextMethods/cast");
-const getFields = require("../../src/restSchema/contextMethods/getFields");
 const model = require("../../src/testHelpers/model");
+const createContext = require("../../src/restSchema/createContext");
+const defaultSchema = require("../../src/restSchema/defaults/defaultSchema");
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute");
 const { expect } = require("chai");
 
-const context = {
-  getResponseValuesFromResource,
-  cast,
-  getFields,
-  route: "create",
-  schema: {
+const context = createContext(
+  {
+    ...defaultSchema,
     fields: {
       prop1: String
     }
   },
-  route: "create",
-  resource: {}
+  defaultRoute
+);
+
+context.req = {
+  query: {},
+  params: {},
+  body: {}
 };
+context.route = "create";
 
 describe("getResponseValuesFromResource method", () => {
   beforeEach(async () => {

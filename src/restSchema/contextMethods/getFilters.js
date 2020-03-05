@@ -95,6 +95,13 @@ module.exports = async function() {
     (i, k) => !Object.values(context.routeObject.meta).includes(k)
   );
 
+  // check that route is filterable
+  // if not filters notMetaInputs should be empty
+  // and no route filter should be applied
+  if (!context.routeObject.filterable) {
+    notMetaInputs = {};
+  }
+
   let requestFilters = {};
   for (let inputKey in notMetaInputs) {
     // decode key

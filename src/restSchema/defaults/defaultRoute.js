@@ -1,13 +1,15 @@
 const cast = require("../helpers/cast");
 
 module.exports = {
+  // basic info of route
   name: "default",
   method: "get",
   path: "/",
-  resource: false,
-  collection: false,
   inputsTarget: ["query", "body"],
   selectable: true,
+  filterable: true,
+
+  // meta that contains key props for this route
   meta: {
     select: "select",
     sort: "sort",
@@ -15,6 +17,9 @@ module.exports = {
     skip: "skip",
     page: "page"
   },
+
+  // custom operators fro filtering data
+  // this operators will be applied in getFilters method
   filteringOperators: {
     "$eq:": (v, k, type) => {
       v = cast(v).to(type);

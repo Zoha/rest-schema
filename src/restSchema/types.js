@@ -1,4 +1,4 @@
-const { ObjectId } = require("mongoose").Schema.Types;
+const { ObjectId, Mixed } = require("mongoose").Schema.Types;
 
 module.exports = Object.freeze({
   String: String,
@@ -9,5 +9,6 @@ module.exports = Object.freeze({
   Buffer: Buffer,
   Date: Date,
   Map: Map,
+  Mixed,
   ObjectId
 });

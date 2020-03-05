@@ -4,7 +4,7 @@ module.exports = async function() {
   const context = this;
   const filters = context.schema.filters;
   const route = context.route;
-  const routes = context.getRoutes().map(i => i.name);
+  const routes = Object.values(context.getRoutes()).map(i => i.name);
 
   // if filters property is function
   if (typeof filters == "function") {

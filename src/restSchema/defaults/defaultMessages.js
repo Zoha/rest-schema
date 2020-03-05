@@ -10,8 +10,10 @@ module.exports = {
       "{key} characters length should be between {args[0]} and {args[1]}",
     enum: "{key} is invalid",
     default: "{key} is invalid",
-    match: "{key} is invalid"
+    match: "{key} is invalid",
+    unique: "{key} should be unique, {value} already exists"
   },
   idParamNotFound: ":id param not exists in request",
-  resourceNotFound: "resource not found"
+  resourceNotFound: "resource not found",
+  validationPassed: "validation passed, request is valid"
 };

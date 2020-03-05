@@ -24,7 +24,14 @@ const sanitizeInputs = async (fields, inputs, context) => {
     const key = fieldKey;
 
     sanitizes = {};
-    const availableSanitizes = ["sanitize", "trim", "lowercase", "uppercase"];
+    const availableSanitizes = [
+      "default",
+      "type",
+      "sanitize",
+      "trim",
+      "lowercase",
+      "uppercase"
+    ];
 
     // separate sanitization properties in the field
     sanitizes = filter(field, (i, k) => availableSanitizes.includes(k));

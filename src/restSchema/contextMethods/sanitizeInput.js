@@ -39,6 +39,33 @@ module.exports = async function(value, sanitizers) {
   const context = this;
 
   if (typeof value != undefined) {
+    // cast to type
+    if (sanitizers.type) {
+      value = context.cast(value).to(sanitizers.type);
+    }
+
+    // default value
+    if (sanitizers.default) {
+      // if value have no value (undefined or null)
+      // and field has a default property
+      // get the default value for
+      if (value == undefined) {
+        if (field.default) {
+          let defaultValue = field.default;
+          if (isObject(defaultValue)) {
+            defaultValue = field.default[context.route];
+          }
+          if (defaultValue) {
+            if (isFunction(defaultValue)) {
+              value = await defaultValue(context);
+            } else {
+              value = defaultValue;
+            }
+          }
+        }
+      }
+    }
+
     // trim value
     if (sanitizers.trim) {
       value = sanitizeBy("trim", value, sanitizers.trim, context);

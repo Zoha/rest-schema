@@ -11,10 +11,11 @@ const checkMaxLength = require("../validators/maxLength");
 const checkBetweenLength = require("../validators/betweenLength");
 const checkMatch = require("../validators/match");
 const checkEnum = require("../validators/enum");
+const checkUnique = require("../validators/unique");
 
 const getErrorMessage = (type, key, value, args) => {
   let message = validationMessages[type];
-  message = message.replace(new RegExp("{key}", "g"), key);
+  message = message.replace(new RegExp("\\{key\\}", "g"), key);
   message = message.replace(new RegExp("\\{value\\}", "g"), value);
   if (isArray(args)) {
     for (let argIndex in args) {
@@ -66,7 +67,16 @@ const check = async ({
     return true;
   }
 
-  if (shouldBeChecked && !validator(value, validationArgs)) {
+  if (
+    validator.constructor.name == "AsyncFunction" &&
+    shouldBeChecked &&
+    !(await validator(value, validationArgs, key, context))
+  ) {
+    throw new Error(message);
+  } else if (
+    shouldBeChecked &&
+    !validator(value, validationArgs, key, context)
+  ) {
     // check value is valid or not using validator
     throw new Error(message);
   }
@@ -157,7 +167,8 @@ module.exports = async function(value, validations, key = "field") {
     maxLength: checkMaxLength,
     betweenLength: checkBetweenLength,
     match: checkMatch,
-    enum: checkEnum
+    enum: checkEnum,
+    unique: checkUnique
   };
 
   // apply each validation

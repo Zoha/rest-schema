@@ -2,9 +2,11 @@ const { expect } = require("chai");
 const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput");
 const sanitizeInputs = require("../../src/restSchema/contextMethods/sanitizeInputs");
 const getFields = require("../../src/restSchema/contextMethods/getFields");
+const cast = require("../../src/restSchema/contextMethods/cast");
 
 const context = {
   route: "create",
+  cast,
   sanitizeInput,
   getFields
 };
@@ -66,5 +68,60 @@ describe("sanitizeInputs method", () => {
     expect(sanitized.prop3)
       .to.haveOwnProperty("nested")
       .to.be.equal("HELLO-create");
+  });
+
+  it("will sanitize boolean type with false value", async () => {
+    const sanitized = await sanitizeInputs.call({
+      ...context,
+      schema: {
+        fields: {
+          prop1: {
+            type: Boolean
+          },
+          prop2: {
+            type: Boolean
+          },
+          prop3: {
+            type: Boolean
+          },
+          prop4: {
+            type: Boolean
+          },
+          prop5: {
+            type: Boolean
+          },
+          prop6: {
+            type: Boolean
+          }
+        }
+      },
+      inputs: {
+        prop1: "false",
+        prop2: 0,
+        prop3: "0",
+        prop4: "",
+        prop5: null,
+        prop6: false
+      }
+    });
+
+    expect(sanitized)
+      .to.haveOwnProperty("prop1")
+      .to.be.equal(false);
+    expect(sanitized)
+      .to.haveOwnProperty("prop2")
+      .to.be.equal(false);
+    expect(sanitized)
+      .to.haveOwnProperty("prop3")
+      .to.be.equal(false);
+    expect(sanitized)
+      .to.haveOwnProperty("prop4")
+      .to.be.equal(false);
+    expect(sanitized)
+      .to.haveOwnProperty("prop5")
+      .to.be.equal(false);
+    expect(sanitized)
+      .to.haveOwnProperty("prop6")
+      .to.be.equal(false);
   });
 });

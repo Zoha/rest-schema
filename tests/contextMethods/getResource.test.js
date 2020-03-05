@@ -6,6 +6,7 @@ const { expect } = require("chai");
 const getNestedField = require("../../src/restSchema/contextMethods/getNestedField");
 const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomFilters");
 const defaultRoute = require("../../src/restSchema/defaults/defaultRoute");
+const getRouteKeysFilters = require("../../src/restSchema/contextMethods/getRouteKeysFilters");
 const { ObjectId } = require("../../src/restSchema/types");
 
 const context = {
@@ -14,6 +15,7 @@ const context = {
   getNestedField,
   getCustomFilters,
   model,
+  getRouteKeysFilters,
   getRoutes: () => [defaultRoute],
   getRouteKeys: () => ["prop1", "_id"],
   req: {

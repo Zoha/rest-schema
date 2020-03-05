@@ -33,26 +33,10 @@ const getValues = async (fields, values, context) => {
     const field = fields[fieldName];
     let value = context.cast(values[fieldName]).to(field.type || String);
 
-    // check that field not be hided
-    // if field was hided send loop
-    // to next cycle
-    let hide = field.hide;
-    if (isObject(field.hide)) {
-      hide = field.hide[context.route];
-    }
-    if (hide) {
-      if (isFunction(hide)) {
-        if (!(await hide(context))) {
-          continue;
-        }
-      } else {
-        continue;
-      }
-    }
-
     // if value have no value (undefined or null)
     // and field has a default property
     // get the default value for
+
     if (value == undefined && field.default) {
       if (field.default) {
         let defaultValue = field.default;
@@ -106,7 +90,7 @@ const getValues = async (fields, values, context) => {
 
 module.exports = async function(fields, resource) {
   const context = this;
-  fields = fields || context.fields || (await context.getFields());
+  fields = await context.getSelectFields();
   resource = resource || context.resource || {};
   return await getValues(fields, resource, context);
 };

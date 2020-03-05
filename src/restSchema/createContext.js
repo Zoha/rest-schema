@@ -1,6 +1,7 @@
 const methods = {
   cast: require("./contextMethods/cast"),
   createResource: require("./contextMethods/createResource"),
+  deleteResource: require("./contextMethods/deleteResource"),
   findLocationOfInput: require("./contextMethods/findLocationOfInput"),
   getCollection: require("./contextMethods/getCollection"),
   getCreateFields: require("./contextMethods/getCreateFields"),
@@ -18,7 +19,9 @@ const methods = {
   getResourceResponse: require("./contextMethods/getResourceResponse"),
   getResponseValuesFromResource: require("./contextMethods/getResponseValuesFromResource"),
   getRouteKeys: require("./contextMethods/getRouteKeys"),
+  getRouteKeysFilters: require("./contextMethods/getRouteKeysFilters"),
   getRoutes: require("./contextMethods/getRoutes"),
+  getSelectFields: require("./contextMethods/getSelectFields"),
   getSkip: require("./contextMethods/getSkip"),
   getSort: require("./contextMethods/getSort"),
   getTotal: require("./contextMethods/getTotal"),

@@ -4,7 +4,7 @@ const deepmerge = require("deepmerge");
 const defaultField = require("../defaults/defaultField");
 const types = require("../types");
 
-const formatFields = async (fields, context) => {
+const formatFields = async (fields, context, prepend = "") => {
   if (!fields) {
     return {};
   }
@@ -50,6 +50,10 @@ const formatFields = async (fields, context) => {
 
     // define field key
     field.fieldKey = fieldKey;
+    field.fieldNestedKey = prepend + fieldKey;
+    field.fieldUniqueKey = Math.random()
+      .toString(36)
+      .substring(7);
 
     // deep merge field values with default field values
     field = deepmerge(defaultField, field);
@@ -79,7 +83,11 @@ const formatFields = async (fields, context) => {
       if (!field.children && field.isArrayNested) {
         field.children = [];
       } else {
-        field.children = await formatFields(field.children, context);
+        field.children = await formatFields(
+          field.children,
+          context,
+          prepend + fieldKey + "."
+        );
       }
     }
 

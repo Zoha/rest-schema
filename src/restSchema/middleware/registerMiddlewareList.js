@@ -1,5 +1,5 @@
-module.exports = context => {
-  const schemaMiddlewareList = context.schema.middleware;
+module.exports = (schema, routeObject) => {
+  const schemaMiddlewareList = schema.middleware;
 
   if (
     Array.isArray(schemaMiddlewareList) ||
@@ -17,14 +17,14 @@ module.exports = context => {
         finalMiddlewareList.push(schemaMiddlewareList.global);
       }
     }
-    if (schemaMiddlewareList[context.route]) {
-      if (Array.isArray(schemaMiddlewareList[context.route])) {
+    if (schemaMiddlewareList[routeObject.name]) {
+      if (Array.isArray(schemaMiddlewareList[routeObject.name])) {
         finalMiddlewareList = [
           ...finalMiddlewareList,
-          ...schemaMiddlewareList[context.route]
+          ...schemaMiddlewareList[routeObject.name]
         ];
-      } else if (typeof schemaMiddlewareList[context.route] == "function") {
-        finalMiddlewareList.push(schemaMiddlewareList[context.route]);
+      } else if (typeof schemaMiddlewareList[routeObject.name] == "function") {
+        finalMiddlewareList.push(schemaMiddlewareList[routeObject.name]);
       }
     }
     return finalMiddlewareList;

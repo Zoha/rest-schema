@@ -14,6 +14,7 @@ module.exports = async function() {
   const hasNextPage = skip + limit < total;
   const prevPage = hasPrevPage ? page - 1 : "";
   const nextPage = hasNextPage ? page + 1 : "";
+  const lastPage = Math.ceil(total / limit) || 1;
 
   const paginationHeaders = {
     "x-total": total || "",
@@ -26,8 +27,10 @@ module.exports = async function() {
     "x-next-page": nextPage || "",
     "x-has-prev-page": hasPrevPage || "",
     "x-has-next-page": hasNextPage || "",
+    "x-last-page": lastPage,
+    "x-first-page": "1",
     "Access-Control-Expose-Headers":
-      "x-total, x-range, x-limit, x-skip, x-page, x-prev-page, x-next-page, x-total , x-has-next-page, x-has-prev-page"
+      "x-total, x-range, x-limit, x-skip, x-page, x-prev-page, x-next-page, x-total , x-has-next-page, x-has-prev-page, x-last-page, x-first-page"
   };
 
   if (!res.headersSent) {

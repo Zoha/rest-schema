@@ -1,3 +1,3 @@
-module.exports = (value, arguments) => {
+module.exports = (value, arguments, key, context) => {
   return value != undefined;
 };

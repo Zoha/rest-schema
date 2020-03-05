@@ -3,15 +3,21 @@ module.exports = async function({
   setUpdatedResource = true
 } = {}) {
   const context = this;
-  if (!context.resource || !context.resource instanceof context.model) {
-    await context.getResource({ errorOnNotFound: true });
-  }
+  let resource = await context.getResource();
 
-  await context.resource.updateOne(await context.getUpdateInputs());
+  await context.model.findOneAndUpdate(
+    {
+      $or: await context.getRouteKeysFilters(),
+      ...context.getCustomFilters()
+    },
+    await context.getUpdateInputs()
+  );
 
-  const resource = await context.getResource({
+  resource = await context.getResource({
     setResource: setResource,
-    errorOnNotFound: true
+    errorOnNotFound: true,
+    force: true,
+    resourceId: resource._id
   });
 
   if (setUpdatedResource) {
