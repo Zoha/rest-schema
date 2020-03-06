@@ -1,5 +1,6 @@
 module.exports = async function({ setCollection = true, force = false } = {}) {
   const context = this;
+  await context.hook("beforeGetCollection");
 
   if (!force && context.collection) {
     return context.collection;
@@ -17,6 +18,7 @@ module.exports = async function({ setCollection = true, force = false } = {}) {
   if (setCollection) {
     context.collection = collection;
   }
+  await context.hook("afterGetCollection");
 
   return collection;
 };

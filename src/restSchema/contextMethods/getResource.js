@@ -8,6 +8,8 @@ module.exports = async function({
 } = {}) {
   const context = this;
 
+  await context.hook("beforeGetResource");
+
   if (!force && context.resource) {
     return context.resource;
   }
@@ -32,5 +34,7 @@ module.exports = async function({
   if (setResource && !!resource) {
     context.resource = resource;
   }
+  await context.hook("afterGetResource");
+
   return resource;
 };

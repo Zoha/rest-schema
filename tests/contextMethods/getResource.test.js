@@ -8,6 +8,7 @@ const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomF
 const defaultRoute = require("../../src/restSchema/defaults/defaultRoute");
 const getRouteKeysFilters = require("../../src/restSchema/contextMethods/getRouteKeysFilters");
 const { ObjectId } = require("../../src/restSchema/types");
+const hook = require("../../src/restSchema/contextMethods/hook");
 
 const context = {
   cast,
@@ -16,6 +17,7 @@ const context = {
   getCustomFilters,
   model,
   getRouteKeysFilters,
+  hook,
   getRoutes: () => [defaultRoute],
   getRouteKeys: () => ["prop1", "_id"],
   req: {
@@ -28,7 +30,8 @@ const context = {
     fields: {
       prop1: String
     },
-    filters: {}
+    filters: {},
+    hooks: {}
   },
   route: "create"
 };
@@ -56,6 +59,7 @@ describe("getResource method", () => {
         params: { id: result._id.toString() }
       },
       schema: {
+        hooks: {},
         fields: {
           _id: ObjectId,
           prop1: String
@@ -82,6 +86,7 @@ describe("getResource method", () => {
         params: { id: "1" }
       },
       schema: {
+        hooks: {},
         fields: {
           prop1: String
         },
@@ -110,6 +115,7 @@ describe("getResource method", () => {
         params: { id: "1" }
       },
       schema: {
+        hooks: {},
         fields: {
           prop1: {
             type: {

@@ -1,7 +1,7 @@
 module.exports = async function(hook) {
   const context = this;
   const schema = context.schema;
-  const promises = [];
+  const route = context.route;
 
   // global hooks
   if (schema.hooks[hook] && typeof schema.hooks[hook] == "function") {
@@ -24,9 +24,5 @@ module.exports = async function(hook) {
     typeof schema.hooks[route][hook] == "function"
   ) {
     await schema.hooks[route][hook](context);
-  }
-
-  if (promises.length) {
-    return await Promise.all(promises);
   }
 };

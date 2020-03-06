@@ -3,6 +3,7 @@ module.exports = async function({
   setUpdatedResource = true
 } = {}) {
   const context = this;
+  await context.hook("beforeUpdateResource");
   let resource = await context.getResource();
 
   await context.model.findOneAndUpdate(
@@ -23,5 +24,6 @@ module.exports = async function({
   if (setUpdatedResource) {
     context.updatedResource = resource;
   }
+  await context.hook("afterUpdateResource");
   return resource;
 };

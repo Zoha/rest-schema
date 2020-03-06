@@ -1,9 +1,15 @@
 const model = require("../../src/testHelpers/model");
 const getCollection = require("../../src/restSchema/contextMethods/getCollection");
 const { expect } = require("chai");
+const hook = require("../../src/restSchema/contextMethods/hook");
 
 const context = {
+  schema: {
+    hooks: {}
+  },
   model,
+  hook,
+  route: "default",
   getFilters: async () => ({}),
   getLimit: async () => 5,
   getSkip: async () => 0
