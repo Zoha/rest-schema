@@ -1,20 +1,20 @@
-const cloneDeep = require("clone-deep");
-const isObject = require("../helpers/isObject");
-const isArray = require("../helpers/isArray");
-const isFunction = require("../helpers/isFunction");
-const isBoolean = require("../helpers/isBoolean");
+const cloneDeep = require('clone-deep')
+const isObject = require('../helpers/isObject')
+const isArray = require('../helpers/isArray')
+const isFunction = require('../helpers/isFunction')
+const isBoolean = require('../helpers/isBoolean')
 
 const getCreatableFields = async (fields, context) => {
   if (!fields) {
-    return {};
+    return {}
   }
-  let creatableFields = {};
+  let creatableFields = {}
   if (isArray(fields)) {
-    creatableFields = [];
+    creatableFields = []
   }
   // process each field
   for (let fieldKey in fields) {
-    let field = fields[fieldKey];
+    let field = fields[fieldKey]
 
     // check field creatable property
     // that specified for this route
@@ -25,44 +25,41 @@ const getCreatableFields = async (fields, context) => {
         isFunction(field.creatable[context.route]) &&
         (await field.creatable[context.route](context))
       ) {
-        creatableFields[fieldKey] = field;
+        creatableFields[fieldKey] = field
       }
 
       // else check creatable value
       else {
-        creatableFields[fieldKey] = field;
+        creatableFields[fieldKey] = field
       }
-    } else if (
-      isFunction(field.creatable) &&
-      (await field.creatable(context))
-    ) {
-      creatableFields[fieldKey] = field;
+    } else if (isFunction(field.creatable) && (await field.creatable(context))) {
+      creatableFields[fieldKey] = field
     } else if (isBoolean(field.creatable) && field.creatable !== false) {
       // if creatable is boolean
       // and its value is true
-      creatableFields[fieldKey] = field;
+      creatableFields[fieldKey] = field
     }
 
     // if field is nested process children and filter them too
     // but do this just if parent currently is added to fields
     if (creatableFields[fieldKey] && field.isNested) {
       if (!field.children && field.isArrayNested) {
-        creatableFields[fieldKey].children = [];
+        creatableFields[fieldKey].children = []
       } else {
-        creatableFields[fieldKey].children = await getCreatableFields(
-          field.children,
-          context
-        );
+        creatableFields[fieldKey].children = await getCreatableFields(field.children, context)
       }
     }
   }
 
-  return creatableFields;
-};
+  return creatableFields
+}
 
-module.exports = async function() {
-  const context = this;
-  const originalFields = context.fields || (await context.getFields());
-  let fields = cloneDeep(originalFields);
-  return await getCreatableFields(fields);
-};
+module.exports = async function({ fields = null } = {}) {
+  const context = this
+  const originalFields =
+    (fields && (await context.getFields({ fields }))) ||
+    context.fields ||
+    (await context.getFields())
+  fields = cloneDeep(originalFields)
+  return await getCreatableFields(fields)
+}

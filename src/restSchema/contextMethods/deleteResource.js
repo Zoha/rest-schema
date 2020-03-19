@@ -1,19 +1,20 @@
-module.exports = async function({ setDeletedResource = true } = {}) {
-  const context = this;
+module.exports = async function({ setDeletedResource = true, resource = null } = {}) {
+  const context = this
 
-  await context.hook("beforeDeleteResource");
+  await context.hook('beforeDeleteResource')
 
-  let resource = await context.getResource();
+  resource =
+    context.cast(resource).to(Object) || (await context.getResource({ errorOnNotFound: true }))
 
   await context.model.findOneAndDelete({
     $or: await context.getRouteKeysFilters(),
     ...context.getCustomFilters()
-  });
+  })
 
   if (setDeletedResource) {
-    context.deletedResource = resource;
+    context.deletedResource = resource
   }
-  await context.hook("afterDeleteResource");
+  await context.hook('afterDeleteResource')
 
-  return resource;
-};
+  return resource
+}

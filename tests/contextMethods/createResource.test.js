@@ -7,6 +7,7 @@ const getInputsFromFields = require("../../src/restSchema/contextMethods/getInpu
 const createResource = require("../../src/restSchema/contextMethods/createResource");
 const model = require("../../src/testHelpers/model");
 const hook = require("../../src/restSchema/contextMethods/hook");
+const getFields = require("../../src/restSchema/contextMethods/getFields");
 
 const schema = {
   model,
@@ -32,6 +33,7 @@ describe("createResource method", function() {
       getCreateFields,
       getCreateInputs,
       createResource,
+      getFields,
       fields: {
         prop1: {
           ...defaultField
@@ -61,6 +63,7 @@ describe("createResource method", function() {
       getCreateFields,
       getCreateInputs,
       createResource,
+      getFields,
       fields: {
         prop1: {
           ...defaultField
@@ -85,6 +88,7 @@ describe("createResource method", function() {
       getCreateFields,
       getCreateInputs,
       createResource,
+      getFields,
       fields: {
         prop1: {
           ...defaultField

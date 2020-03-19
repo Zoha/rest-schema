@@ -2,6 +2,8 @@ const { expect } = require("chai");
 const getCreateFields = require("../../src/restSchema/contextMethods/getCreateFields");
 const types = require("../../src/restSchema/types");
 const defaultField = require("../../src/restSchema/defaults/defaultField");
+const getFields = require("../../src/restSchema/contextMethods/getFields");
+
 const fields = {
   notCreatable: {
     ...defaultField,
@@ -46,7 +48,8 @@ const fields = {
 describe("getCreateFields method", function() {
   it("will getCreateFields normally", async () => {
     const context = {
-      fields
+      fields,
+      getFields
     };
     const createFields = await getCreateFields.call(context);
     expect(createFields)

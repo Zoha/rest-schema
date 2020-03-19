@@ -4,6 +4,7 @@ const defaultField = require("../../src/restSchema/defaults/defaultField");
 const cast = require("../../src/restSchema/helpers/cast");
 const getCreateFields = require("../../src/restSchema/contextMethods/getCreateFields");
 const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields");
+const getFields = require("../../src/restSchema/contextMethods/getFields");
 
 describe("getCreateInputs method", function() {
   it("will get inputs normally", async () => {
@@ -21,6 +22,7 @@ describe("getCreateInputs method", function() {
       inputs,
       getCreateFields,
       getInputsFromFields,
+      getFields,
       cast
     };
     const fieldsInputs = await getCreateInputs.call(context);
@@ -49,6 +51,7 @@ describe("getCreateInputs method", function() {
       inputs,
       getCreateFields,
       getInputsFromFields,
+      getFields,
       cast
     };
     const fieldsInputs = await getCreateInputs.call(context, {
