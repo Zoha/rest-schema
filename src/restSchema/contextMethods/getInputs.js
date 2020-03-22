@@ -1,15 +1,23 @@
+const isArray = require("../helpers/isArray")
+
 module.exports = async function({ setInputs = true } = {}) {
-  const context = this;
-  const inputsTarget = context.routeObject.inputsTarget || [];
-  let inputs = {};
-  for (let target of inputsTarget) {
+  const context = this
+  let inputsTarget = context.routeObject.inputsTarget || []
+  if (!isArray(inputsTarget)) {
+    inputsTarget = [inputsTarget]
+  }
+
+  let inputs = {}
+  const inputsTargetValues = Object.values(inputsTarget)
+  inputsTargetValues.forEach(target => {
     if (!context.req[target]) {
-      continue;
+      return
     }
-    inputs = { ...inputs, ...context.req[target] };
-  }
+    inputs = { ...inputs, ...context.req[target] }
+  })
+
   if (setInputs) {
-    context.inputs = inputs;
+    context.inputs = inputs
   }
-  return inputs;
-};
+  return inputs
+}

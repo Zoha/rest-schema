@@ -1,20 +1,20 @@
-const { expect } = require("chai");
-const validateInput = require("../../src/restSchema/contextMethods/validateInput");
-const validateInputs = require("../../src/restSchema/contextMethods/validateInputs");
-const getFields = require("../../src/restSchema/contextMethods/getFields");
+const { expect } = require("chai")
+const validateInput = require("../../src/restSchema/contextMethods/validateInput")
+const validateInputs = require("../../src/restSchema/contextMethods/validateInputs")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
 
 const context = {
   route: "create",
   validateInput,
   getFields,
   findLocationOfInput() {
-    return "body";
+    return "body"
   }
-};
+}
 
-describe("sanitizeInputs method", () => {
+describe("validateInputs method", () => {
   it("validate fields normally", async () => {
-    let validateResult;
+    let validateResult
     let contextWithSchema = {
       ...context,
       schema: {
@@ -45,7 +45,7 @@ describe("sanitizeInputs method", () => {
           }
         }
       }
-    };
+    }
 
     validateResult = await validateInputs.call({
       ...contextWithSchema,
@@ -53,49 +53,49 @@ describe("sanitizeInputs method", () => {
         prop2: [null],
         prop4: {}
       }
-    });
+    })
 
     expect(validateResult)
       .to.be.an("array")
-      .that.have.lengthOf(3);
+      .that.have.lengthOf(3)
 
     expect(validateResult[0])
       .to.haveOwnProperty("field")
-      .that.equals("prop1");
+      .that.equals("prop1")
     expect(validateResult[0])
       .to.haveOwnProperty("value")
-      .that.equals(undefined);
+      .that.equals(undefined)
     expect(validateResult[0])
       .to.haveOwnProperty("location")
-      .that.equals("body");
+      .that.equals("body")
     expect(validateResult[0])
       .to.haveOwnProperty("message")
-      .that.equals("prop1 is required");
+      .that.equals("prop1 is required")
 
     expect(validateResult[1])
       .to.haveOwnProperty("field")
-      .that.equals("prop2.0");
+      .that.equals("prop2.0")
     expect(validateResult[1])
       .to.haveOwnProperty("value")
-      .that.equals(null);
+      .that.equals(null)
     expect(validateResult[1])
       .to.haveOwnProperty("location")
-      .that.equals("body");
+      .that.equals("body")
     expect(validateResult[1])
       .to.haveOwnProperty("message")
-      .that.equals("prop2.0 is required");
+      .that.equals("prop2.0 is required")
 
     expect(validateResult[2])
       .to.haveOwnProperty("field")
-      .that.equals("prop4.nested");
+      .that.equals("prop4.nested")
     expect(validateResult[2])
       .to.haveOwnProperty("value")
-      .that.equals(undefined);
+      .that.equals(undefined)
     expect(validateResult[2])
       .to.haveOwnProperty("location")
-      .that.equals("body");
+      .that.equals("body")
     expect(validateResult[2])
       .to.haveOwnProperty("message")
-      .that.equals("prop4.nested is required");
-  });
-});
+      .that.equals("prop4.nested is required")
+  })
+})

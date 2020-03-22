@@ -6,6 +6,9 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha ./tests/**/*.test.js --exit"
   },
+  "engines": {
+    "node": ">=8.10.0"
+  },
   "author": "Zoha Banam <zoha.banam@gmail.com>",
   "license": "MIT",
   "dependencies": {

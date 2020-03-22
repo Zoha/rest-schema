@@ -1,40 +1,39 @@
-const isArray = require('../helpers/isArray')
-const isObject = require('../helpers/isObject')
-const deepmerge = require('deepmerge')
-const defaultField = require('../defaults/defaultField')
-const types = require('../types')
+const deepmerge = require("deepmerge")
+const isArray = require("../helpers/isArray")
+const isObject = require("../helpers/isObject")
+const defaultField = require("../defaults/defaultField")
+const types = require("../types")
+const filter = require("../helpers/filter")
 
-const formatFields = async (fields, context, prepend = '') => {
+const formatFields = async (argFields, context, prepend = "") => {
+  let fields = argFields
   if (!fields) {
     return {}
   }
 
   // if fields is function call the function
-  if (typeof fields === 'function') {
+  if (typeof fields === "function") {
     fields = await fields(context)
   }
 
   // if list of fields is not object
   // because formatField will be used recursively
-  let formattedFields = isObject(fields) ? {} : []
+  const formattedFields = isObject(fields) ? {} : []
 
-  // process each field and format it
-  for (let fieldKey in fields) {
+  const operationOnEachField = async fieldKey => {
     let field = fields[fieldKey]
-
     // if field is false so ignore it
     // this is useful for removing default fields
-    if (typeof field == 'boolean' && field === false) {
-      continue
+    if (typeof field === "boolean" && field === false) {
+      return
     }
-
     // if field type is function
     // then call the function for getting
     // field type or field nested value
     if (
       !Object.values(types).includes(field) &&
       !Object.keys(types).includes(field) &&
-      typeof field == 'function'
+      typeof field === "function"
     ) {
       field = await field(context)
     }
@@ -49,9 +48,9 @@ const formatFields = async (fields, context, prepend = '') => {
     }
 
     // define field key
-    field.fieldKey = fieldKey
-    field.fieldNestedKey = prepend + fieldKey
-    field.fieldUniqueKey = Math.random()
+    field.key = fieldKey
+    field.nestedKey = prepend + fieldKey
+    field.uniqueKey = Math.random()
       .toString(36)
       .substring(7)
 
@@ -83,7 +82,7 @@ const formatFields = async (fields, context, prepend = '') => {
       if (!field.children && field.isArrayNested) {
         field.children = []
       } else {
-        field.children = await formatFields(field.children, context, prepend + fieldKey + '.')
+        field.children = await formatFields(field.children, context, `${prepend + fieldKey}.`)
       }
     }
 
@@ -95,7 +94,18 @@ const formatFields = async (fields, context, prepend = '') => {
       formattedFields.push(field)
     }
   }
-  return formattedFields
+
+  // process each field and format it
+  const operationOnEachFieldPromises = []
+  const fieldKeys = Object.keys(fields)
+  for (let fieldKeyIndex = 0; fieldKeyIndex < fieldKeys.length; fieldKeyIndex += 1) {
+    const fieldKey = fieldKeys[fieldKeyIndex]
+    operationOnEachFieldPromises.push(operationOnEachField(fieldKey))
+  }
+
+  // execute operations
+  await Promise.all(operationOnEachFieldPromises)
+  return filter(formattedFields, i => i != null)
 }
 
 module.exports = async function({ setFields = true, fields = undefined } = {}) {
@@ -104,9 +114,9 @@ module.exports = async function({ setFields = true, fields = undefined } = {}) {
     return null
   }
   const fieldsToBeFormatted = fields || context.schema.fields
-  fields = await formatFields(fieldsToBeFormatted, context)
+  const formattedFields = await formatFields(fieldsToBeFormatted, context)
   if (setFields) {
-    context.fields = fields
+    context.fields = formattedFields
   }
-  return fields
+  return formattedFields
 }

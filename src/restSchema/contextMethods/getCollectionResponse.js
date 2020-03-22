@@ -1,18 +1,21 @@
 module.exports = async function({ collection = null, fields = null } = {}) {
   const context = this
-  await context.hook('beforeGetCollectionResponse')
-  collection =
+  await context.hook("beforeGetCollectionResponse")
+  const detectedCollection =
     context.cast(collection).to(Array) || context.collection || (await context.getCollection())
-  fields =
+  const detectedFields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
 
-  let finalResponseFromCollection = []
-  for (let resource of collection) {
-    finalResponseFromCollection.push(await this.getResponseValuesFromResource(fields, resource))
-  }
+  const finalResponseFromCollectionPromises = []
+  Object.values(detectedCollection).forEach(async resource => {
+    finalResponseFromCollectionPromises.push(
+      context.getResponseValuesFromResource(detectedFields, resource)
+    )
+  })
+  const finalResponseFromCollection = await Promise.all(finalResponseFromCollectionPromises)
   context.response = finalResponseFromCollection
-  await context.hook('beforeGetCollectionResponse')
+  await context.hook("beforeGetCollectionResponse")
   return finalResponseFromCollection
 }

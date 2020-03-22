@@ -1,12 +1,12 @@
-const { Mixed } = require("../types");
+const { Mixed } = require("../types")
 module.exports = {
   type: Mixed,
 
   // define key in schema
   // will be defined in get fields method
-  fieldKey: "",
-  fieldNestedKey: "",
-  fieldUniqueKey: "",
+  key: "",
+  nestedKey: "",
+  uniqueKey: "",
 
   // nested options
   isNested: false,
@@ -47,4 +47,4 @@ module.exports = {
   betweenLength: undefined,
   match: undefined,
   enum: undefined
-};
+}

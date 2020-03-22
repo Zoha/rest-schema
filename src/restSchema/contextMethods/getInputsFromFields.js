@@ -1,52 +1,44 @@
-const isArray = require("../helpers/isArray");
-const isObject = require("../helpers/isObject");
-const isFunction = require("../helpers/isFunction");
-const filter = require("../helpers/filter");
+const isArray = require("../helpers/isArray")
+const isObject = require("../helpers/isObject")
+const isFunction = require("../helpers/isFunction")
+const filter = require("../helpers/filter")
+const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 
-const getInputs = async (fields, inputs, context) => {
-  if (!fields) {
-    return isArray(inputs) ? [] : {};
+const getInputs = async (argFields, inputs, context) => {
+  if (!argFields) {
+    return isArray(inputs) ? [] : {}
   }
   // define object for final results
-  let result = {};
+  let result = {}
   // if target should be array
-  if (isArray(fields)) {
-    result = [];
+  if (isArray(argFields)) {
+    result = []
   }
 
   // if type of fields are array
   // and count of fields are lower that inputs
   // add fields item to equal length of the inputs
-  if (isArray(fields) && fields.length < inputs.length) {
-    let specifiedCount = fields.length;
-    let loopCount = Math.ceil((inputs.length - fields.length) / specifiedCount);
-    for (let i = 0; i < loopCount; i++) {
-      fields = [...fields, ...fields.slice(0, specifiedCount)];
-    }
-    fields = fields.slice(0, inputs.length);
-  }
+  const fields = addToFieldsArrayAsLengthOfInputs(argFields, inputs)
 
-  // process each field
-  // and get its value from inputs
-  for (let fieldName in fields) {
+  const executeLoopOperation = async fieldKey => {
     // define field and value
-    const field = fields[fieldName];
-    let value = context.cast(inputs[fieldName]).to(field.type || String);
+    const field = fields[fieldKey]
+    let value = context.cast(inputs[fieldKey]).to(field.type || String)
 
     // if value have no value (undefined or null)
     // and field has a default property
     // get the default value for
-    if (value == undefined && field.default) {
+    if (value == null && field.default) {
       if (field.default) {
-        let defaultValue = field.default;
+        let defaultValue = field.default
         if (isObject(defaultValue)) {
-          defaultValue = field.default[context.route];
+          defaultValue = field.default[context.route]
         }
         if (defaultValue) {
           if (isFunction(defaultValue)) {
-            value = await defaultValue(context);
+            value = await defaultValue(context)
           } else {
-            value = defaultValue;
+            value = defaultValue
           }
         }
       }
@@ -56,39 +48,45 @@ const getInputs = async (fields, inputs, context) => {
     // or is an object that has set
     // then get value by the set function or set value
     if (field.set) {
-      let set = field.set;
+      let { set } = field
       if (isObject(set)) {
-        set = field.set[context.route];
+        set = field.set[context.route]
       }
       if (set) {
         if (isFunction(set) && value != null) {
-          value = await set(value, context);
+          value = await set(value, context)
         } else if (!isFunction(set)) {
-          value = set;
+          value = set
         }
       }
     }
 
     // if value was set and not equals to null or undefined
     // process the nested values for the field
-    if (
-      value != undefined &&
-      field.isNested &&
-      (isObject(value) || isArray(value))
-    ) {
-      value = await getInputs(field.children, value, context);
+    if (value != null && field.isNested && (isObject(value) || isArray(value))) {
+      value = await getInputs(field.children, value, context)
     }
 
     // add to final result
-    result[fieldName] = value;
+    result[fieldKey] = value
   }
 
-  // filter values that are not undefined
-  return filter(result, i => i != undefined);
-};
+  const operations = []
+  // process each field
+  const fieldKeys = Object.keys(fields)
+  for (let fieldKeyIndex = 0; fieldKeyIndex < fieldKeys.length; fieldKeyIndex += 1) {
+    const fieldKey = fieldKeys[fieldKeyIndex]
+    operations.push(executeLoopOperation(fieldKey))
+  }
 
-module.exports = async function(fields) {
-  const context = this;
-  fields = fields || context.fields || (await context.getFields());
-  return await getInputs(fields, context.inputs, context);
-};
+  // execute operations
+  await Promise.all(operations)
+
+  return filter(result, i => i != null)
+}
+
+module.exports = async function(argFields) {
+  const context = this
+  const fields = argFields || context.fields || (await context.getFields())
+  return getInputs(fields, context.inputs, context)
+}

@@ -1,12 +1,12 @@
 module.exports = function() {
-  const context = this;
+  const context = this
   // get array of route keys
   // if route key was a string
   // will return it as an array
-  const schemaRouteKeys = context.schema.routeKeys;
+  const schemaRouteKeys = context.schema.routeKeys
   if (typeof schemaRouteKeys == "string") {
-    return [schemaRouteKeys];
+    return [schemaRouteKeys]
   }
-  context.routeKeys = schemaRouteKeys;
-  return schemaRouteKeys;
-};
+  context.routeKeys = schemaRouteKeys
+  return schemaRouteKeys
+}

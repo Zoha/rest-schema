@@ -1,20 +1,21 @@
-const cloneDeep = require("clone-deep");
-const isObject = require("../helpers/isObject");
-const isArray = require("../helpers/isArray");
-const isFunction = require("../helpers/isFunction");
-const isBoolean = require("../helpers/isBoolean");
+const cloneDeep = require("clone-deep")
+const isObject = require("../helpers/isObject")
+const isArray = require("../helpers/isArray")
+const isFunction = require("../helpers/isFunction")
+const isBoolean = require("../helpers/isBoolean")
+const filter = require("../helpers/filter")
 
 const getUpdatableFields = async (fields, context) => {
   if (!fields) {
-    return {};
+    return {}
   }
-  let updatableFields = {};
+  let result = {}
   if (isArray(fields)) {
-    updatableFields = [];
+    result = []
   }
-  // process each field
-  for (let fieldKey in fields) {
-    let field = fields[fieldKey];
+
+  const executeLoopOperation = async fieldKey => {
+    const field = fields[fieldKey]
 
     // check field updatable property
     // that specified for this route
@@ -25,44 +26,49 @@ const getUpdatableFields = async (fields, context) => {
         isFunction(field.updatable[context.route]) &&
         (await field.updatable[context.route](context))
       ) {
-        updatableFields[fieldKey] = field;
+        result[fieldKey] = field
       }
 
       // else check updatable value
       else {
-        updatableFields[fieldKey] = field;
+        result[fieldKey] = field
       }
-    } else if (
-      isFunction(field.updatable) &&
-      (await field.updatable(context))
-    ) {
-      updatableFields[fieldKey] = field;
+    } else if (isFunction(field.updatable) && (await field.updatable(context))) {
+      result[fieldKey] = field
     } else if (isBoolean(field.updatable) && field.updatable !== false) {
       // if updatable is boolean
       // and its value is true
-      updatableFields[fieldKey] = field;
+      result[fieldKey] = field
     }
 
     // if field is nested process children and filter them too
     // but do this just if parent currently is added to fields
-    if (updatableFields[fieldKey] && field.isNested) {
+    if (result[fieldKey] && field.isNested) {
       if (!field.children && field.isArrayNested) {
-        updatableFields[fieldKey].children = [];
+        result[fieldKey].children = []
       } else {
-        updatableFields[fieldKey].children = await getUpdatableFields(
-          field.children,
-          context
-        );
+        result[fieldKey].children = await getUpdatableFields(field.children, context)
       }
     }
   }
 
-  return updatableFields;
-};
+  const operations = []
+  // process each field
+  const fieldKeys = Object.keys(fields)
+  for (let fieldKeyIndex = 0; fieldKeyIndex < fieldKeys.length; fieldKeyIndex += 1) {
+    const fieldKey = fieldKeys[fieldKeyIndex]
+    operations.push(executeLoopOperation(fieldKey))
+  }
+
+  // execute operations
+  await Promise.all(operations)
+
+  return filter(result, i => i != null)
+}
 
 module.exports = async function() {
-  const context = this;
-  const originalFields = context.fields;
-  let fields = cloneDeep(originalFields);
-  return await getUpdatableFields(fields);
-};
+  const context = this
+  const originalFields = context.fields
+  const fields = cloneDeep(originalFields)
+  return getUpdatableFields(fields)
+}

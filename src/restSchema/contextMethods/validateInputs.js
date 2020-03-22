@@ -1,32 +1,26 @@
-const filter = require("../helpers/filter");
-const isArray = require("../helpers/isArray");
-const isObject = require("../helpers/isObject");
+const filter = require("../helpers/filter")
+const isArray = require("../helpers/isArray")
+const isObject = require("../helpers/isObject")
+const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 
-const validateInputs = async (fields, inputs, context, prependKey = "") => {
-  if (!fields) {
-    return isArray(inputs) ? [] : {};
+const validateInputs = async (argFields, inputs, context) => {
+  if (!argFields) {
+    return isArray(inputs) ? [] : {}
   }
-  let validationErrors = [];
+  let validationErrors = []
 
   // if type of fields are array
   // and count of fields are lower that inputs
   // add fields item to equal length of the inputs
-  if (isArray(fields) && fields.length < inputs.length) {
-    let specifiedCount = fields.length;
-    let loopCount = Math.ceil((inputs.length - fields.length) / specifiedCount);
-    for (let i = 0; i < loopCount; i++) {
-      fields = [...fields, ...fields.slice(0, specifiedCount)];
-    }
-    fields = fields.slice(0, inputs.length);
-  }
+  const fields = addToFieldsArrayAsLengthOfInputs(argFields, inputs)
 
-  for (let fieldKey in fields) {
+  const executeLoopOperation = async fieldKey => {
     // define value, validations, key
-    const value = inputs[fieldKey];
-    const field = fields[fieldKey];
-    const key = fieldKey;
+    const value = inputs[fieldKey]
+    const field = fields[fieldKey]
+    const key = fieldKey
 
-    validations = {};
+    let validations = {}
     const availableValidations = [
       "required",
       "min",
@@ -39,54 +33,67 @@ const validateInputs = async (fields, inputs, context, prependKey = "") => {
       "enum",
       "validate",
       "unique"
-    ];
+    ]
 
-    if (typeof value == "undefined") {
+    if (value == null) {
       // if type of value is undefined
       // just check the required field
       validations = {
         required: field.required
-      };
+      }
     } else {
       // separate validation properties in the field
-      validations = filter(field, (i, k) => availableValidations.includes(k));
+      validations = filter(field, (i, k) => availableValidations.includes(k))
     }
 
     // do the validation
-    try {
-      await context.validateInput(value, validations, prependKey + key);
-    } catch (e) {
+    const formatError = e => {
       validationErrors.push({
         value,
         location: context.findLocationOfInput(key),
-        field: prependKey + key,
+        field: field.nestedKey,
         message: e.message
-      });
+      })
+    }
+    try {
+      await context.validateInput(value, validations, field.nestedKey)
+    } catch (e) {
+      if (e.list) {
+        e.list.forEach(err => formatError(err))
+      } else {
+        formatError(e)
+      }
     }
 
     // validate children
     if ((field.isNested && isArray(value)) || isObject(value)) {
-      validationErrors = [
-        ...validationErrors,
-        ...(await validateInputs(
-          field.children,
-          value,
-          context,
-          prependKey + key + "."
-        ))
-      ];
+      const childrenValidationErrors = await validateInputs(field.children, value, context)
+      childrenValidationErrors.forEach(error => {
+        validationErrors.push(error)
+      })
     }
   }
-  return validationErrors;
-};
+
+  const operations = []
+  // process each field
+  const fieldKeys = Object.keys(fields)
+  for (let fieldKeyIndex = 0; fieldKeyIndex < fieldKeys.length; fieldKeyIndex += 1) {
+    const fieldKey = fieldKeys[fieldKeyIndex]
+    operations.push(executeLoopOperation(fieldKey))
+  }
+  // execute operations
+  await Promise.all(operations)
+
+  return filter(validationErrors, i => i != null)
+}
 
 module.exports = async function({ setValidationErrors = true } = {}) {
-  const context = this;
-  const fields = context.fields || (await context.getFields());
-  const inputs = context.inputs || (await context.getInputs());
-  let validationResult = await validateInputs(fields, inputs, context);
+  const context = this
+  const fields = context.fields || (await context.getFields())
+  const inputs = context.inputs || (await context.getInputs())
+  const validationResult = await validateInputs(fields, inputs, context)
   if (setValidationErrors) {
-    context.validationErrors = validationResult;
+    context.validationErrors = validationResult
   }
-  return validationResult;
-};
+  return validationResult
+}

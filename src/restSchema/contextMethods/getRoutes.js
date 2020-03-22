@@ -1,4 +1,4 @@
 module.exports = function() {
-  const context = this;
-  return context.schema.routes;
-};
+  const context = this
+  return context.schema.routes
+}

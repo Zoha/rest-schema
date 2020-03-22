@@ -5,7 +5,7 @@ module.exports = async function({
 } = {}) {
   const context = this
 
-  await context.hook('beforeCreateResource')
+  await context.hook("beforeCreateResource")
 
   const createInputs = context.cast(inputs).to(Object) || (await context.getCreateInputs())
   const resource = await context.model.create(createInputs)
@@ -15,6 +15,6 @@ module.exports = async function({
   if (setResource) {
     context.resource = resource
   }
-  await context.hook('afterCreateResource')
+  await context.hook("afterCreateResource")
   return resource
 }

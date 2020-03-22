@@ -1,4 +1,4 @@
-const validationMessages = require("../defaults/defaultMessages");
+const validationMessages = require("../defaults/defaultMessages")
 
 module.exports = async function({
   errorOnNotFound = false,
@@ -6,35 +6,35 @@ module.exports = async function({
   force = false,
   resourceId = null
 } = {}) {
-  const context = this;
+  const context = this
 
-  await context.hook("beforeGetResource");
+  await context.hook("beforeGetResource")
 
   if (!force && context.resource) {
-    return context.resource;
+    return context.resource
   }
 
   // find the resource by route keys
-  let resource;
+  let resource
   if (resourceId != null) {
     resource = await context.model.findOne({
       _id: resourceId
-    });
+    })
   } else {
     resource = await context.model.findOne({
       $or: await context.getRouteKeysFilters(),
       ...context.getCustomFilters()
-    });
+    })
   }
 
   if (errorOnNotFound && !resource) {
-    throw new Error(validationMessages.resourceNotFound);
+    throw new Error(validationMessages.resourceNotFound)
   }
 
   if (setResource && !!resource) {
-    context.resource = resource;
+    context.resource = resource
   }
-  await context.hook("afterGetResource");
+  await context.hook("afterGetResource")
 
-  return resource;
-};
+  return resource
+}

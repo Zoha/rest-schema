@@ -1,6 +1,7 @@
-const get = require("../helpers/get");
+const get = require("../helpers/get")
+
 module.exports = async function(target) {
-  const context = this.context;
-  const inputs = context.inputs || (await context.getInputs());
-  return get(inputs, target);
-};
+  const { context } = this
+  const inputs = context.inputs || (await context.getInputs())
+  return get(inputs, target)
+}

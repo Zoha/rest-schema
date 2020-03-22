@@ -1,12 +1,14 @@
-const get = require('../helpers/get')
+const get = require("../helpers/get")
 
 module.exports = function(key) {
   const context = this
 
-  for (let target of context.routeObject.inputsTarget.slice().reverse()) {
-    if (get(context.req[target], key)) {
-      return target
+  let foundTarget = null
+  const inputTargets = context.routeObject.inputsTarget.slice().reverse()
+  Object.values(inputTargets).forEach(target => {
+    if (foundTarget == null && get(context.req[target], key)) {
+      foundTarget = target
     }
-  }
-  return null
+  })
+  return foundTarget
 }

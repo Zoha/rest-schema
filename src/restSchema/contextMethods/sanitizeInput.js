@@ -1,65 +1,68 @@
-const trim = require("../sanitizers/trim");
-const uppercase = require("../sanitizers/uppercase");
-const lowercase = require("../sanitizers/lowercase");
-const isObject = require("../helpers/isObject");
+const trim = require("../sanitizers/trim")
+const uppercase = require("../sanitizers/uppercase")
+const lowercase = require("../sanitizers/lowercase")
+const isObject = require("../helpers/isObject")
+const isFunction = require("../helpers/isFunction")
 
 const availableSanitizers = {
   trim,
   lowercase,
   uppercase
-};
+}
 
 const sanitizeBy = (type, value, shouldBeSanitized, context) => {
   if (isObject(shouldBeSanitized)) {
-    return sanitizeBy(type, value, shouldBeSanitized[context.route], context);
+    return sanitizeBy(type, value, shouldBeSanitized[context.route], context)
   }
 
   if (!shouldBeSanitized || !availableSanitizers[type]) {
-    return value;
+    return value
   }
 
-  return availableSanitizers[type](value);
-};
+  return availableSanitizers[type](value)
+}
 
-const customSanitizeHandler = async (value, customSanitize, context) => {
+const customSanitizeHandler = async (argValue, customSanitize, context) => {
   if (isObject(customSanitize)) {
-    return customSanitizeHandler(value, customSanitize[context.route], context);
+    return customSanitizeHandler(argValue, customSanitize[context.route], context)
   }
 
   // custom sanitize
-  if (typeof customSanitize == "function") {
-    value = await customSanitize(value, context);
+  let value
+  if (typeof customSanitize === "function") {
+    value = await customSanitize(argValue, context)
   } else {
-    value = customSanitize;
+    value = customSanitize
   }
-  return value;
-};
+  return value
+}
 
-module.exports = async function(value, sanitizers) {
-  const context = this;
+module.exports = async function(argValue, sanitizers) {
+  const context = this
+  let value = argValue
 
-  if (typeof value != undefined) {
+  if (value !== undefined) {
     // cast to type
     if (sanitizers.type) {
-      value = context.cast(value).to(sanitizers.type);
+      value = context.cast(value).to(sanitizers.type)
     }
 
     // default value
     if (sanitizers.default) {
-      // if value have no value (undefined or null)
+      // if value has no value (undefined or null)
       // and field has a default property
       // get the default value for
-      if (value == undefined) {
-        if (field.default) {
-          let defaultValue = field.default;
+      if (value == null) {
+        if (sanitizers.default) {
+          let defaultValue = sanitizers.default
           if (isObject(defaultValue)) {
-            defaultValue = field.default[context.route];
+            defaultValue = sanitizers.default[context.route]
           }
           if (defaultValue) {
             if (isFunction(defaultValue)) {
-              value = await defaultValue(context);
+              value = await defaultValue(context)
             } else {
-              value = defaultValue;
+              value = defaultValue
             }
           }
         }
@@ -68,23 +71,23 @@ module.exports = async function(value, sanitizers) {
 
     // trim value
     if (sanitizers.trim) {
-      value = sanitizeBy("trim", value, sanitizers.trim, context);
+      value = sanitizeBy("trim", value, sanitizers.trim, context)
     }
 
     // to lower case
     if (sanitizers.lowercase) {
-      value = sanitizeBy("lowercase", value, sanitizers.lowercase, context);
+      value = sanitizeBy("lowercase", value, sanitizers.lowercase, context)
     }
 
     // to upper case
     if (sanitizers.uppercase) {
-      value = sanitizeBy("uppercase", value, sanitizers.uppercase, context);
+      value = sanitizeBy("uppercase", value, sanitizers.uppercase, context)
     }
   }
 
   if (sanitizers.sanitize) {
-    return await customSanitizeHandler(value, sanitizers.sanitize, context);
+    return customSanitizeHandler(value, sanitizers.sanitize, context)
   }
 
-  return value;
-};
+  return value
+}

@@ -1,9 +1,9 @@
-const { expect } = require("chai");
-const createContext = require("../../src/restSchema/createContext");
-const defaultRoute = require("../../src/restSchema/defaults/defaultRoute");
-const defaultSchema = require("../../src/restSchema/defaults/defaultSchema");
+const { expect } = require("chai")
+const createContext = require("../../src/restSchema/createContext")
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
+const defaultSchema = require("../../src/restSchema/defaults/defaultSchema")
 
-const route = defaultRoute;
+const route = defaultRoute
 const schema = {
   ...defaultSchema,
   fields: {
@@ -28,13 +28,13 @@ const schema = {
     prop6: {
       type: String,
       hide: () => {
-        return true;
+        return true
       }
     }
   }
-};
+}
 
-const context = createContext(schema, route);
+const context = createContext(schema, route)
 
 context.resource = {
   prop1: "something",
@@ -49,70 +49,70 @@ context.resource = {
   },
   prop5: "something",
   prop6: "something"
-};
+}
 
 describe("getSelectFields method", () => {
   it("returns just selected fields", async () => {
     context.inputs = {
       select: "prop1 prop3.1 prop2.nested"
-    };
+    }
 
-    let result = await context.getSelectFields();
+    let result = await context.getSelectFields()
 
-    expect(result).to.haveOwnProperty("prop1");
-    expect(result).to.haveOwnProperty("prop2");
-    expect(result).to.haveOwnProperty("prop3");
+    expect(result).to.haveOwnProperty("prop1")
+    expect(result).to.haveOwnProperty("prop2")
+    expect(result).to.haveOwnProperty("prop3")
 
-    expect(result).to.not.haveOwnProperty("prop4");
-    expect(result).to.not.haveOwnProperty("prop5");
-    expect(result).to.not.haveOwnProperty("prop6");
+    expect(result).to.not.haveOwnProperty("prop4")
+    expect(result).to.not.haveOwnProperty("prop5")
+    expect(result).to.not.haveOwnProperty("prop6")
 
-    expect(result.prop2.children).to.be.an("object");
+    expect(result.prop2.children).to.be.an("object")
 
-    expect(result.prop2.children["nested"]).to.be.an("object");
-    expect(result.prop2.children).to.not.haveOwnProperty("nested2");
+    expect(result.prop2.children["nested"]).to.be.an("object")
+    expect(result.prop2.children).to.not.haveOwnProperty("nested2")
 
     expect(result.prop3.children)
       .to.be.an("array")
-      .that.have.lengthOf(1);
-    expect(result.prop3.children[0]).to.be.an("object");
-  });
+      .that.have.lengthOf(1)
+    expect(result.prop3.children[0]).to.be.an("object")
+  })
 
   it("will not select fields that have - before their field name", async () => {
     context.inputs = {
       select: "-prop1 -prop3.1 -prop2.nested2 -prop4"
-    };
+    }
 
-    let result = await context.getSelectFields();
+    let result = await context.getSelectFields()
 
-    expect(result).to.not.haveOwnProperty("prop1");
-    expect(result).to.haveOwnProperty("prop2");
-    expect(result).to.haveOwnProperty("prop3");
+    expect(result).to.not.haveOwnProperty("prop1")
+    expect(result).to.haveOwnProperty("prop2")
+    expect(result).to.haveOwnProperty("prop3")
 
-    expect(result).to.not.haveOwnProperty("prop4");
-    expect(result).to.not.haveOwnProperty("prop5");
-    expect(result).to.not.haveOwnProperty("prop6");
+    expect(result).to.not.haveOwnProperty("prop4")
+    expect(result).to.not.haveOwnProperty("prop5")
+    expect(result).to.not.haveOwnProperty("prop6")
 
-    expect(result.prop2.children).to.be.an("object");
+    expect(result.prop2.children).to.be.an("object")
 
-    expect(result.prop2.children.nested).to.be.an("object");
-    expect(result.prop2.children).to.not.haveOwnProperty("nested2");
+    expect(result.prop2.children.nested).to.be.an("object")
+    expect(result.prop2.children).to.not.haveOwnProperty("nested2")
 
     expect(result.prop3.children)
       .to.be.an("array")
-      .that.have.lengthOf(1);
-    expect(result.prop3.children[0]).to.be.an("object");
-    expect(result.prop3.children[0].fieldKey).to.be.equal("0");
-  });
+      .that.have.lengthOf(1)
+    expect(result.prop3.children[0]).to.be.an("object")
+    expect(result.prop3.children[0].key).to.be.equal("0")
+  })
 
   it("do not hide fields that are hideByDefault if we want to", async () => {
     context.inputs = {
       select: "prop5 prop6"
-    };
+    }
 
-    let result = await context.getSelectFields();
+    let result = await context.getSelectFields()
 
-    expect(result).to.haveOwnProperty("prop5");
-    expect(result).to.not.haveOwnProperty("prop6");
-  });
-});
+    expect(result).to.haveOwnProperty("prop5")
+    expect(result).to.not.haveOwnProperty("prop6")
+  })
+})

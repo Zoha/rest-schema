@@ -1,4 +1,5 @@
-const cast = require("../helpers/cast");
+const cast = require("../helpers/cast")
+
 module.exports = function(...args) {
-  return cast(...args);
-};
+  return cast(...args)
+}
