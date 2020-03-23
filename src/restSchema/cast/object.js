@@ -1,6 +1,6 @@
 module.exports = val => {
-  if (val == undefined) {
-    return null;
+  if (val == null) {
+    return null
   }
-  return typeof val == "object" ? val : {};
-};
+  return typeof val === "object" ? val : {}
+}

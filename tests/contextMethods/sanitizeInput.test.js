@@ -1,140 +1,134 @@
-const { expect } = require("chai");
-const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput");
+const { expect } = require("chai")
+const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput")
 
 const context = {
   route: "create"
-};
+}
 
 describe("sanitizeInput method", () => {
   it("will trim without any sanitizer", async () => {
-    let sanitizers, value, result;
-    sanitizers = {};
-    value = "hello";
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal(value);
-  });
+    const sanitizers = {}
+    const value = "hello"
+    const result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal(value)
+  })
 
   it("will trim input", async () => {
-    let sanitizers, value, result;
-    sanitizers = {
+    let sanitizers = {
       trim: true
-    };
-    value = "  hello   ";
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello");
+    }
+    const value = "  hello   "
+    let result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello")
 
     sanitizers = {
       trim: {
         create: true
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello");
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello")
 
     sanitizers = {
       trim: {
         update: true
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.not.be.equal("hello");
-  });
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.not.be.equal("hello")
+  })
 
   it("will uppercase input", async () => {
-    let sanitizers, value, result;
-    sanitizers = {
+    let sanitizers = {
       uppercase: true
-    };
-    value = "hello";
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("HELLO");
+    }
+    const value = "hello"
+    let result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("HELLO")
 
     sanitizers = {
       uppercase: {
         create: true
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("HELLO");
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("HELLO")
 
     sanitizers = {
       uppercase: {
         update: true
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.not.be.equal("HELLO");
-  });
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.not.be.equal("HELLO")
+  })
 
   it("will lowercase input", async () => {
-    let sanitizers, value, result;
-    sanitizers = {
+    let sanitizers = {
       lowercase: true
-    };
-    value = "Hello";
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello");
+    }
+    const value = "Hello"
+    let result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello")
 
     sanitizers = {
       lowercase: {
         create: true
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello");
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello")
 
     sanitizers = {
       lowercase: {
         update: true
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.not.be.equal("hello");
-  });
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.not.be.equal("hello")
+  })
 
   it("will apply custom sanitizer", async () => {
-    let sanitizers, value, result;
-    sanitizers = {
-      sanitize: (val, context) => {
-        return val + "-" + context.route;
+    let sanitizers = {
+      sanitize: (val, ctx) => {
+        return `${val}-${ctx.route}`
       }
-    };
-    value = "hello";
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello-create");
+    }
+    const value = "hello"
+    let result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello-create")
 
     sanitizers = {
       sanitize: {
-        create: (val, context) => {
-          return val + "-" + context.route;
+        create: (val, ctx) => {
+          return `${val}-${ctx.route}`
         }
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello-create");
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello-create")
 
     sanitizers = {
       sanitize: {
-        update: (val, context) => {
-          return val + "-" + context.route;
+        update: (val, ctx) => {
+          return `${val}-${ctx.route}`
         }
       }
-    };
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.not.be.equal("hello");
-  });
+    }
+    result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.not.be.equal("hello")
+  })
 
   it("will do all together", async () => {
-    let sanitizers, value, result;
-    sanitizers = {
+    const sanitizers = {
       trim: true,
       lowercase: true,
-      sanitize: (val, context) => {
-        return val + "-" + context.route;
+      sanitize: (val, ctx) => {
+        return `${val}-${ctx.route}`
       }
-    };
-    value = "    HELLO   ";
-    result = await sanitizeInput.call(context, value, sanitizers);
-    expect(result).to.be.equal("hello-create");
-  });
-});
+    }
+    const value = "    HELLO   "
+    const result = await sanitizeInput.call(context, value, sanitizers)
+    expect(result).to.be.equal("hello-create")
+  })
+})

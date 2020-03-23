@@ -1,26 +1,29 @@
-const isArray = require("../helpers/isArray");
+const isArray = require("../helpers/isArray")
 
 module.exports = (value, of, key, context, checkString = false) => {
-  if (value == undefined) {
-    return false;
+  let val = value
+  if (val === undefined) {
+    return false
   }
   if (checkString) {
-    if (typeof value == "number") {
-      value = value.toString();
+    if (typeof val === "number") {
+      val = val.toString()
     }
-    if (value.toString && value.length !== undefined) {
-      value = value.length;
+    if (val.toString && val.length !== undefined) {
+      val = val.length
     } else {
-      return false;
+      return false
     }
   }
-  if (typeof value == "string" || isArray(value)) {
-    if (value.length < parseFloat(of)) {
-      return false;
+  if (typeof val === "string" || isArray(val)) {
+    if (val.length < parseFloat(of)) {
+      return false
     }
-    return true;
-  } else if (value < parseFloat(of)) {
-    return false;
+    return true
   }
-  return true;
-};
+
+  if (val < parseFloat(of)) {
+    return false
+  }
+  return true
+}

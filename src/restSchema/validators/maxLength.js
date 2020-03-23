@@ -1,4 +1,5 @@
-const checkMax = require("./max");
+const checkMax = require("./max")
+
 module.exports = (...args) => {
-  return checkMax(...args, true);
-};
+  return checkMax(...args, true)
+}

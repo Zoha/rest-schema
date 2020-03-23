@@ -1,6 +1,6 @@
 module.exports = val => {
-  if (val == undefined) {
-    return null;
+  if (val == null) {
+    return null
   }
-  return Array.isArray(val) ? val : [];
-};
+  return Array.isArray(val) ? val : []
+}

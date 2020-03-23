@@ -1,6 +1,6 @@
 module.exports = (value, validItems, key, context) => {
   if (validItems.includes(value)) {
-    return true;
+    return true
   }
-  return false;
-};
+  return false
+}

@@ -1,15 +1,16 @@
-module.exports = (value, match, key, context) => {
-  if (typeof value == "number") {
-    value = value.toString();
+module.exports = (value, match) => {
+  let val = value
+  if (typeof val === "number") {
+    val = val.toString()
   }
-  if (typeof value != "string") {
-    return false;
+  if (typeof val !== "string") {
+    return false
   }
   if (match instanceof RegExp) {
-    return match.test(value);
+    return match.test(val)
   }
-  if (typeof match == "string") {
-    return new RegExp(match).test(value);
+  if (typeof match === "string") {
+    return new RegExp(match).test(val)
   }
-  return false;
-};
+  return false
+}

@@ -1,3 +1,3 @@
 module.exports = value => {
-  return !!value && typeof value === "boolean";
-};
+  return !!value && typeof value === "boolean"
+}

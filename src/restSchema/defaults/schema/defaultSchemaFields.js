@@ -1,4 +1,5 @@
-const { ObjectId } = require("../../types");
+const { ObjectId } = require("../../types")
+
 module.exports = {
   _id: {
     type: ObjectId,
@@ -15,4 +16,4 @@ module.exports = {
     creatable: false,
     updatable: false
   }
-};
+}

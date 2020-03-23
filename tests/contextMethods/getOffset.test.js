@@ -1,7 +1,8 @@
-const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute");
-const getLimit = require("../../src/restSchema/contextMethods/getLimit");
-const getSkip = require("../../src/restSchema/contextMethods/getSkip");
-const { expect } = require("chai");
+const { expect } = require("chai")
+const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute")
+const getLimit = require("../../src/restSchema/contextMethods/getLimit")
+const getSkip = require("../../src/restSchema/contextMethods/getSkip")
+
 const context = {
   routeObject: {
     ...defaultRouteObject
@@ -15,25 +16,25 @@ const context = {
     skip: 0
   },
   getLimit
-};
+}
 
 describe("getSkip method", () => {
   it("return correct skip", async () => {
-    let skip = getSkip.call(context);
-    expect(skip).to.be.equal(0);
-    skip = getSkip.call({ ...context, inputs: { skip: 10 } });
-    expect(skip).to.be.equal(10);
-    skip = getSkip.call({ ...context, inputs: { page: 3 } });
-    expect(skip).to.be.equal(20);
-    skip = getSkip.call({ ...context, inputs: { skip: 10, page: 3 } });
-    expect(skip).to.be.equal(10);
+    let skip = getSkip.call(context)
+    expect(skip).to.be.equal(0)
+    skip = getSkip.call({ ...context, inputs: { skip: 10 } })
+    expect(skip).to.be.equal(10)
+    skip = getSkip.call({ ...context, inputs: { page: 3 } })
+    expect(skip).to.be.equal(20)
+    skip = getSkip.call({ ...context, inputs: { skip: 10, page: 3 } })
+    expect(skip).to.be.equal(10)
 
     // with predefined skip
     skip = getSkip.call({
       ...context,
       schema: { pagination: { skip: 30 } }
-    });
-    expect(skip).to.be.equal(30);
+    })
+    expect(skip).to.be.equal(30)
 
     // with changed name of meta
 
@@ -47,7 +48,7 @@ describe("getSkip method", () => {
         }
       },
       inputs: { offs: 30 }
-    });
-    expect(skip).to.be.equal(30);
-  });
-});
+    })
+    expect(skip).to.be.equal(30)
+  })
+})

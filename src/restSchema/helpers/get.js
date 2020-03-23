@@ -1,1 +1,1 @@
-module.exports = require("lodash.get");
+module.exports = require("lodash.get")

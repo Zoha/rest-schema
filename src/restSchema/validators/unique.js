@@ -1,9 +1,9 @@
 module.exports = async (value, args, key, context) => {
-  const findedResource = await context.model.findOne({
+  const foundedResource = await context.model.findOne({
     [key]: value
-  });
-  if (findedResource) {
-    return false;
+  })
+  if (foundedResource) {
+    return false
   }
-  return true;
-};
+  return true
+}

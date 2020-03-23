@@ -1,5 +1,5 @@
-const getFields = require("../../src/restSchema/contextMethods/getFields")
 const { expect } = require("chai")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
 
 const context = {
   schema: {

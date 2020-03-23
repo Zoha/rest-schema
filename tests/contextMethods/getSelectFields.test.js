@@ -57,7 +57,7 @@ describe("getSelectFields method", () => {
       select: "prop1 prop3.1 prop2.nested"
     }
 
-    let result = await context.getSelectFields()
+    const result = await context.getSelectFields()
 
     expect(result).to.haveOwnProperty("prop1")
     expect(result).to.haveOwnProperty("prop2")
@@ -69,7 +69,7 @@ describe("getSelectFields method", () => {
 
     expect(result.prop2.children).to.be.an("object")
 
-    expect(result.prop2.children["nested"]).to.be.an("object")
+    expect(result.prop2.children.nested).to.be.an("object")
     expect(result.prop2.children).to.not.haveOwnProperty("nested2")
 
     expect(result.prop3.children)
@@ -83,7 +83,7 @@ describe("getSelectFields method", () => {
       select: "-prop1 -prop3.1 -prop2.nested2 -prop4"
     }
 
-    let result = await context.getSelectFields()
+    const result = await context.getSelectFields()
 
     expect(result).to.not.haveOwnProperty("prop1")
     expect(result).to.haveOwnProperty("prop2")
@@ -110,7 +110,7 @@ describe("getSelectFields method", () => {
       select: "prop5 prop6"
     }
 
-    let result = await context.getSelectFields()
+    const result = await context.getSelectFields()
 
     expect(result).to.haveOwnProperty("prop5")
     expect(result).to.not.haveOwnProperty("prop6")

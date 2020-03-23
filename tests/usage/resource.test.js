@@ -1,13 +1,14 @@
+/* eslint-disable no-underscore-dangle */
 const { expect } = require("chai")
 const express = require("express")
+const request = require("supertest")
+const bodyParser = require("body-parser")
 const { resource } = require("../../src/restSchema")
 const model = require("../../src/testHelpers/model")
 const expressErrorHandler = require("../../src/testHelpers/expressErrorHandler")
 const { Mixed } = require("../../src/restSchema/types")
 
 const app = express()
-const request = require("supertest")
-const bodyParser = require("body-parser")
 
 const schema = {
   model,
@@ -269,20 +270,20 @@ describe("resource method", () => {
       prop1: "something",
       prop2: new Date(),
       prop3: {
-        nested: "nested"
+        nested: 50
       },
       prop4: [1, 2]
     })
 
-    // await request(app)
-    //   .get(`/test/${dbResource._id}`)
-    //   .expect("Content-Type", /json/)
-    //   .expect(res => {
-    //     const response = JSON.parse(res.text)
-    //     expect(response)
-    //       .to.haveOwnProperty("prop1")
-    //       .that.equals(dbResource.prop1)
-    //   })
+    await request(app)
+      .get(`/test/${dbResource._id}`)
+      .expect("Content-Type", /json/)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response)
+          .to.haveOwnProperty("prop1")
+          .that.equals(dbResource.prop1)
+      })
 
     await request(app)
       .get(`/test/${dbResource.prop3.nested}`)
@@ -457,7 +458,7 @@ describe("resource method", () => {
           .that.is.a("string")
           .that.equals("something")
       })
-    newDbResource = await model.find()
+    const newDbResource = await model.find()
     expect(newDbResource).to.have.lengthOf(0)
   })
 

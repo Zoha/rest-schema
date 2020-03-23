@@ -14,8 +14,7 @@ const context = {
 
 describe("validateInputs method", () => {
   it("validate fields normally", async () => {
-    let validateResult
-    let contextWithSchema = {
+    const contextWithSchema = {
       ...context,
       schema: {
         fields: {
@@ -47,7 +46,7 @@ describe("validateInputs method", () => {
       }
     }
 
-    validateResult = await validateInputs.call({
+    const validateResult = await validateInputs.call({
       ...contextWithSchema,
       inputs: {
         prop2: [null],

@@ -1,9 +1,13 @@
+const fields = require("./schema/defaultSchemaFields")
+const routes = require("./schema/defaultSchemaRoutes")
+const pagination = require("./schema/defaultSchemaPagination")
+
 module.exports = {
-  fields: require("./schema/defaultSchemaFields"),
-  routes: require("./schema/defaultSchemaRoutes"),
-  pagination: require("./schema/defaultSchemaPagination"),
+  fields,
+  routes,
+  pagination,
   filters: {},
   middleware: {},
   routeKeys: ["_id"],
   hooks: {}
-};
+}

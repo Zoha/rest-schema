@@ -1,3 +1,3 @@
 module.exports = a => {
-  return !!a && typeof a == "function";
-};
+  return !!a && typeof a === "function"
+}

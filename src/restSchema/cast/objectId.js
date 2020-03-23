@@ -1,32 +1,34 @@
-const ObjectId = require("mongoose").Types.ObjectId;
+const { ObjectId } = require("mongoose").Types
 
 module.exports = function castObjectId(value) {
   if (value == null) {
-    return value;
+    return value
   }
 
   if (value instanceof ObjectId) {
-    return value;
+    return value
   }
 
-  if (value._id) {
-    if (value._id instanceof ObjectId) {
-      return value._id;
+  // eslint-disable-next-line no-underscore-dangle
+  const idOfValue = value._id
+  if (idOfValue) {
+    if (idOfValue instanceof ObjectId) {
+      return idOfValue
     }
-    if (value._id.toString instanceof Function) {
-      if (!ObjectId.isValid(value._id.toString())) {
-        return null;
+    if (idOfValue.toString instanceof Function) {
+      if (!ObjectId.isValid(idOfValue.toString())) {
+        return null
       }
-      return new ObjectId(value._id.toString());
+      return new ObjectId(idOfValue.toString())
     }
   }
 
   if (value.toString instanceof Function) {
     if (!ObjectId.isValid(value.toString())) {
-      return null;
+      return null
     }
-    return new ObjectId(value.toString());
+    return new ObjectId(value.toString())
   }
 
-  return null;
-};
+  return null
+}

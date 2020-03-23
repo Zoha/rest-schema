@@ -5,4 +5,4 @@ module.exports = {
   limit: 10,
   minLimit: 1,
   maxLimit: 50
-};
+}

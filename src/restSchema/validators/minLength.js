@@ -1,5 +1,5 @@
-const checkMin = require("./min");
+const checkMin = require("./min")
 
 module.exports = (...args) => {
-  return checkMin(...args, true);
-};
+  return checkMin(...args, true)
+}

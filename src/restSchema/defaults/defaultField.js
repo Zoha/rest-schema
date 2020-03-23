@@ -1,4 +1,5 @@
 const { Mixed } = require("../types")
+
 module.exports = {
   type: Mixed,
 

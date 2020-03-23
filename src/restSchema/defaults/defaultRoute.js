@@ -1,4 +1,4 @@
-const cast = require("../helpers/cast");
+const cast = require("../helpers/cast")
 
 module.exports = {
   // basic info of route
@@ -22,53 +22,53 @@ module.exports = {
   // this operators will be applied in getFilters method
   filteringOperators: {
     "$eq:": (v, k, type) => {
-      v = cast(v).to(type);
-      return { $eq: v };
+      const value = cast(v).to(type)
+      return { $eq: value }
     },
     "$gt:": (v, k, type) => {
-      v = cast(v).to(type);
-      return { $gt: v };
+      const value = cast(v).to(type)
+      return { $gt: value }
     },
     "$gte:": (v, k, type) => {
-      v = cast(v).to(type);
-      return { $gte: v };
+      const value = cast(v).to(type)
+      return { $gte: value }
     },
     "$in:": (v, k, type) => {
-      v = v.split(",");
-      v = v.map(i => cast(i).to(type));
-      return { $in: v };
+      let value = v.split(",")
+      value = value.map(i => cast(i).to(type))
+      return { $in: value }
     },
     "$lt:": (v, k, type) => {
-      v = cast(v).to(type);
-      return { $lt: v };
+      const value = cast(v).to(type)
+      return { $lt: value }
     },
     "$lte:": (v, k, type) => {
-      v = cast(v).to(type);
-      return { $lte: v };
+      const value = cast(v).to(type)
+      return { $lte: value }
     },
     "$ne:": (v, k, type) => {
-      v = cast(v).to(type);
-      return { $ne: v };
+      const value = cast(v).to(type)
+      return { $ne: value }
     },
     "$nin:": (v, k, type) => {
-      v = v.split(",");
-      v = v.map(i => cast(i).to(type));
-      return { $nin: v };
+      let value = v.split(",")
+      value = value.map(i => cast(i).to(type))
+      return { $nin: value }
     },
-    $exists: (v, k) => {
-      return { $exists: true };
+    $exists: () => {
+      return { $exists: true }
     },
-    $notExists: (v, k) => {
-      return { $exists: false };
+    $notExists: () => {
+      return { $exists: false }
     },
-    $null: (v, k) => {
-      return null;
+    $null: () => {
+      return null
     },
-    "$regex:": (v, k) => {
-      return { $regex: new RegExp(v) };
+    "$regex:": v => {
+      return { $regex: new RegExp(v) }
     },
-    "$regexi:": (v, k) => {
-      return { $regex: new RegExp(v, "i") };
+    "$regexi:": v => {
+      return { $regex: new RegExp(v, "i") }
     }
   }
-};
+}

@@ -1,3 +1,3 @@
 module.exports = a => {
-  return !!a && a.constructor === Object;
-};
+  return !!a && a.constructor === Object
+}

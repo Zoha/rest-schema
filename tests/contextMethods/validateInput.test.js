@@ -1,595 +1,595 @@
-const { expect } = require("chai");
-const validateInput = require("../../src/restSchema/contextMethods/validateInput");
-const model = require("../../src/testHelpers/model");
+const { expect } = require("chai")
+const validateInput = require("../../src/restSchema/contextMethods/validateInput")
+const model = require("../../src/testHelpers/model")
 
 const context = {
   route: "create",
   model
-};
+}
 
 describe("validateInput method", () => {
   it("required validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       required: true
-    };
-    value = undefined;
+    }
+    let value
 
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field is required");
+      .that.equals("field is required")
 
-    value = "something";
-    error = null;
+    value = "something"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("min validate on string", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       min: 10
-    };
-    value = "less";
+    }
+    let value = "less"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should be more than 10");
+      .that.equals("field1 should be more than 10")
 
-    value = "something that is not less";
-    error = null;
+    value = "something that is not less"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("max validate on string", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       max: 10
-    };
-    value = "something that is not less";
+    }
+    let value = "something that is not less"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should be less than 10");
+      .that.equals("field1 should be less than 10")
 
-    value = "less";
-    error = null;
+    value = "less"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("min validate on number", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       min: 10.2
-    };
-    value = 10;
+    }
+    let value = 10
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should be more than 10.2");
+      .that.equals("field1 should be more than 10.2")
 
-    value = 10.3;
-    error = null;
+    value = 10.3
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("max validate on number", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       max: 10
-    };
-    value = 12;
+    }
+    let value = 12
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should be less than 10");
+      .that.equals("field1 should be less than 10")
 
-    value = 8;
-    error = null;
+    value = 8
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("minLength validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       minLength: 10
-    };
-    value = "less";
+    }
+    let value = "less"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should have more than 10 characters");
+      .that.equals("field1 should have more than 10 characters")
 
-    value = "something that is not less";
-    error = null;
+    value = "something that is not less"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("maxLength validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       maxLength: 10
-    };
-    value = "something that is not less";
+    }
+    let value = "something that is not less"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should have less than 10 characters");
+      .that.equals("field1 should have less than 10 characters")
 
-    value = "less";
-    error = null;
+    value = "less"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("between validate on string", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       between: [5, 6]
-    };
-    value = "1234567";
+    }
+    let value = "1234567"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 value should be between 5 and 6");
+      .that.equals("field1 value should be between 5 and 6")
 
-    value = "1234";
-    error = null;
+    value = "1234"
+    error = null
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 value should be between 5 and 6");
+      .that.equals("field1 value should be between 5 and 6")
 
-    value = "123456";
-    error = null;
+    value = "123456"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("between validate on number", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       between: [10.2, 11]
-    };
-    value = 10.1;
+    }
+    let value = 10.1
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 value should be between 10.2 and 11");
+      .that.equals("field1 value should be between 10.2 and 11")
 
-    value = 11.1;
-    error = null;
+    value = 11.1
+    error = null
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 value should be between 10.2 and 11");
+      .that.equals("field1 value should be between 10.2 and 11")
 
-    value = 10.3;
-    error = null;
+    value = 10.3
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("betweenLength validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       betweenLength: [5, 6]
-    };
-    value = "1234567";
+    }
+    let value = "1234567"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 characters length should be between 5 and 6");
+      .that.equals("field1 characters length should be between 5 and 6")
 
-    value = "1234";
-    error = null;
+    value = "1234"
+    error = null
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 characters length should be between 5 and 6");
+      .that.equals("field1 characters length should be between 5 and 6")
 
-    value = "123456";
-    error = null;
+    value = "123456"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("betweenLength validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       betweenLength: [5, 6]
-    };
-    value = "1234567";
+    }
+    let value = "1234567"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 characters length should be between 5 and 6");
+      .that.equals("field1 characters length should be between 5 and 6")
 
-    value = "1234";
-    error = null;
+    value = "1234"
+    error = null
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 characters length should be between 5 and 6");
+      .that.equals("field1 characters length should be between 5 and 6")
 
-    value = "123456";
-    error = null;
+    value = "123456"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("min validate on array", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       min: 10
-    };
-    value = [1, 2, 3, 4];
+    }
+    let value = [1, 2, 3, 4]
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should be more than 10");
+      .that.equals("field1 should be more than 10")
 
-    value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    error = null;
+    value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("max validate on array", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       max: 10
-    };
-    value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    }
+    let value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 should be less than 10");
+      .that.equals("field1 should be less than 10")
 
-    value = [1, 2, 3];
-    error = null;
+    value = [1, 2, 3]
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("between validate on array", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       between: [5, 6]
-    };
-    value = [1, 2, 3, 4, 5, 6, 7];
+    }
+    let value = [1, 2, 3, 4, 5, 6, 7]
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 value should be between 5 and 6");
+      .that.equals("field1 value should be between 5 and 6")
 
-    value = [1, 2, 3, 4];
-    error = null;
+    value = [1, 2, 3, 4]
+    error = null
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 value should be between 5 and 6");
+      .that.equals("field1 value should be between 5 and 6")
 
-    value = [1, 2, 3, 4, 5, 6];
-    error = null;
+    value = [1, 2, 3, 4, 5, 6]
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("match validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       match: {
         create: new RegExp("ok$")
       }
-    };
-    value = "ends with invalid";
+    }
+    let value = "ends with invalid"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 is invalid");
+      .that.equals("field1 is invalid")
 
-    value = "ends with ok";
-    error = null;
+    value = "ends with ok"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("enum validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       enum: ["valid1", "valid2"]
-    };
-    value = "invalid";
+    }
+    let value = "invalid"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 is invalid");
+      .that.equals("field1 is invalid")
 
-    value = "valid2";
-    error = null;
+    value = "valid2"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
+    expect(error).to.be.equal(null)
+  })
 
   it("custom validate", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       validate: value => {
-        return value.length > 5;
+        return value.length > 5
       }
-    };
-    value = "less";
+    }
+    const value = "less"
 
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("field1 is invalid");
-  });
+      .that.equals("field1 is invalid")
+  })
 
   it("custom validate in validate object", async () => {
-    let value, validations, error;
+    let error
 
-    validations = {
+    const validations = {
       validate: {
         validator: value => {
-          return value.length > 5;
+          return value.length > 5
         },
         message: "field is invalid"
       }
-    };
-    value = "less";
-    error = null;
+    }
+    const value = "less"
+    error = null
     try {
-      await validateInput.call(context, value, validations, "field1");
+      await validateInput.call(context, value, validations, "field1")
     } catch (e) {
-      error = e;
+      error = e
     }
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equal("field is invalid");
-  });
+      .that.equal("field is invalid")
+  })
 
   it("unique validate", async () => {
     await model.create({
       prop1: "prop1"
-    });
-    let value, validations, error;
+    })
+    let error
 
-    validations = {
+    const validations = {
       unique: true
-    };
-    value = "prop1";
+    }
+    let value = "prop1"
 
     try {
-      await validateInput.call(context, value, validations, "prop1");
+      await validateInput.call(context, value, validations, "prop1")
     } catch (e) {
-      error = e;
+      error = e
     }
 
     expect(error)
       .to.haveOwnProperty("message")
-      .that.equals("prop1 should be unique, prop1 already exists");
+      .that.equals("prop1 should be unique, prop1 already exists")
 
-    value = "prop2";
-    error = null;
+    value = "prop2"
+    error = null
     try {
-      await validateInput.call(context, value, validations);
+      await validateInput.call(context, value, validations)
     } catch (e) {
-      error = e;
+      error = e
     }
-    expect(error).to.be.equal(null);
-  });
-});
+    expect(error).to.be.equal(null)
+  })
+})

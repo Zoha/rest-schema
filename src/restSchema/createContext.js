@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const methods = {
   cast: require("./contextMethods/cast"),
   createResource: require("./contextMethods/createResource"),
@@ -35,7 +36,7 @@ const methods = {
   validateInput: require("./contextMethods/validateInput"),
   validateInputs: require("./contextMethods/validateInputs"),
   getCollectionResponse: require("./contextMethods/getCollectionResponse")
-};
+}
 
 module.exports = (schema, route) => {
   return {
@@ -44,5 +45,5 @@ module.exports = (schema, route) => {
     route: route.name,
     routeObject: route,
     ...methods
-  };
-};
+  }
+}

@@ -1,14 +1,15 @@
-const getResource = require("../../src/restSchema/contextMethods/getResource");
-const cast = require("../../src/restSchema/contextMethods/cast");
-const getFields = require("../../src/restSchema/contextMethods/getFields");
-const model = require("../../src/testHelpers/model");
-const { expect } = require("chai");
-const getNestedField = require("../../src/restSchema/contextMethods/getNestedField");
-const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomFilters");
-const defaultRoute = require("../../src/restSchema/defaults/defaultRoute");
-const getRouteKeysFilters = require("../../src/restSchema/contextMethods/getRouteKeysFilters");
-const { ObjectId } = require("../../src/restSchema/types");
-const hook = require("../../src/restSchema/contextMethods/hook");
+/* eslint-disable no-underscore-dangle */
+const { expect } = require("chai")
+const getResource = require("../../src/restSchema/contextMethods/getResource")
+const cast = require("../../src/restSchema/contextMethods/cast")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
+const model = require("../../src/testHelpers/model")
+const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
+const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomFilters")
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
+const getRouteKeysFilters = require("../../src/restSchema/contextMethods/getRouteKeysFilters")
+const { ObjectId } = require("../../src/restSchema/types")
+const hook = require("../../src/restSchema/contextMethods/hook")
 
 const context = {
   cast,
@@ -32,25 +33,24 @@ const context = {
     },
     filters: {},
     hooks: {}
-  },
-  route: "create"
-};
+  }
+}
 
 describe("getResource method", () => {
   beforeEach(async () => {
-    await model.deleteMany();
-  });
+    await model.deleteMany()
+  })
 
   it("will return resource normally", async () => {
-    const resource = await model.create({
+    await model.create({
       prop1: "prop1"
-    });
+    })
 
-    let result = await getResource.call(context);
-    result = result.toObject();
+    let result = await getResource.call(context)
+    result = result.toObject()
     expect(result)
       .to.be.an("object")
-      .that.haveOwnProperty("_id");
+      .that.haveOwnProperty("_id")
 
     result = await getResource.call({
       ...context,
@@ -66,20 +66,20 @@ describe("getResource method", () => {
         },
         filters: {}
       }
-    });
+    })
 
-    result = result.toObject();
+    result = result.toObject()
     expect(result)
       .to.be.an("object")
-      .that.haveOwnProperty("_id");
-  });
+      .that.haveOwnProperty("_id")
+  })
 
   it("will return resource with changing the type", async () => {
-    const resource = await model.create({
+    await model.create({
       prop1: "1"
-    });
+    })
 
-    result = await getResource.call({
+    let result = await getResource.call({
       ...context,
       fields: undefined,
       req: {
@@ -92,22 +92,22 @@ describe("getResource method", () => {
         },
         filters: {}
       }
-    });
+    })
 
-    result = result.toObject();
+    result = result.toObject()
     expect(result)
       .to.be.an("object")
-      .that.haveOwnProperty("_id");
-  });
+      .that.haveOwnProperty("_id")
+  })
 
   it("will return resource with nested property", async () => {
-    const resource = await model.create({
+    await model.create({
       prop1: {
         nested: 1
       }
-    });
+    })
 
-    result = await getResource.call({
+    let result = await getResource.call({
       ...context,
       fields: undefined,
       getRouteKeys: () => ["prop1.nested"],
@@ -125,11 +125,11 @@ describe("getResource method", () => {
         },
         filters: {}
       }
-    });
+    })
 
-    result = result.toObject();
+    result = result.toObject()
     expect(result)
       .to.be.an("object")
-      .that.haveOwnProperty("_id");
-  });
-});
+      .that.haveOwnProperty("_id")
+  })
+})

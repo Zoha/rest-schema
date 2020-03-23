@@ -1,9 +1,9 @@
-const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute");
-const getLimit = require("../../src/restSchema/contextMethods/getLimit");
-const getSort = require("../../src/restSchema/contextMethods/getSort");
-const { expect } = require("chai");
-const getNestedField = require("../../src/restSchema/contextMethods/getNestedField");
-const getFields = require("../../src/restSchema/contextMethods/getFields");
+const { expect } = require("chai")
+const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute")
+const getLimit = require("../../src/restSchema/contextMethods/getLimit")
+const getSort = require("../../src/restSchema/contextMethods/getSort")
+const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
 
 const context = {
   getNestedField,
@@ -38,28 +38,28 @@ const context = {
     skip: 0
   },
   getLimit
-};
+}
 
 describe("getSort method", () => {
   it("return correct sorts", async () => {
-    let sort = await getSort.call({ ...context, inputs: { sort: "-prop1" } });
+    let sort = await getSort.call({ ...context, inputs: { sort: "-prop1" } })
     expect(sort)
       .to.be.an("object")
       .that.haveOwnProperty("prop1")
-      .that.equals(-1);
-    sort = await getSort.call({ ...context, inputs: { sort: "prop1" } });
+      .that.equals(-1)
+    sort = await getSort.call({ ...context, inputs: { sort: "prop1" } })
     expect(sort)
       .to.be.an("object")
       .that.haveOwnProperty("prop1")
-      .that.equals(1);
+      .that.equals(1)
 
-    sort = await getSort.call({ ...context, inputs: { sort: "prop2" } });
+    sort = await getSort.call({ ...context, inputs: { sort: "prop2" } })
     expect(sort)
       .to.be.an("object")
-      .that.not.haveOwnProperty("prop2");
-    sort = await getSort.call({ ...context, inputs: { sort: "prop3" } });
+      .that.not.haveOwnProperty("prop2")
+    sort = await getSort.call({ ...context, inputs: { sort: "prop3" } })
     expect(sort)
       .to.be.an("object")
-      .that.not.haveOwnProperty("prop3");
-  });
-});
+      .that.not.haveOwnProperty("prop3")
+  })
+})

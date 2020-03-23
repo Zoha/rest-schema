@@ -1,5 +1,5 @@
-const checkBetween = require("./between");
+const checkBetween = require("./between")
 
 module.exports = (...args) => {
-  return checkBetween(...args, true);
-};
+  return checkBetween(...args, true)
+}

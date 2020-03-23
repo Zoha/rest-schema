@@ -1,15 +1,15 @@
-const { expect } = require("chai");
-const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput");
-const sanitizeInputs = require("../../src/restSchema/contextMethods/sanitizeInputs");
-const getFields = require("../../src/restSchema/contextMethods/getFields");
-const cast = require("../../src/restSchema/contextMethods/cast");
+const { expect } = require("chai")
+const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput")
+const sanitizeInputs = require("../../src/restSchema/contextMethods/sanitizeInputs")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
+const cast = require("../../src/restSchema/contextMethods/cast")
 
 const context = {
   route: "create",
   cast,
   sanitizeInput,
   getFields
-};
+}
 
 describe("sanitizeInputs method", () => {
   it("will apply sanitizers normally", async () => {
@@ -21,8 +21,8 @@ describe("sanitizeInputs method", () => {
             type: String,
             lowercase: true,
             trim: true,
-            sanitize: (val, context) => {
-              return val + "-" + context.route;
+            sanitize: (val, ctx) => {
+              return `${val}-${ctx.route}`
             }
           },
           prop2: [
@@ -30,8 +30,8 @@ describe("sanitizeInputs method", () => {
               type: String,
               lowercase: true,
               trim: true,
-              sanitize: (val, context) => {
-                return val + "-" + context.route;
+              sanitize: (val, ctx) => {
+                return `${val}-${ctx.route}`
               }
             }
           ],
@@ -41,8 +41,8 @@ describe("sanitizeInputs method", () => {
                 type: String,
                 uppercase: true,
                 trim: true,
-                sanitize: (val, context) => {
-                  return val + "-" + context.route;
+                sanitize: (val, ctx) => {
+                  return `${val}-${ctx.route}`
                 }
               }
             }
@@ -56,19 +56,19 @@ describe("sanitizeInputs method", () => {
           nested: "hello   "
         }
       }
-    });
+    })
 
     expect(sanitized)
       .to.haveOwnProperty("prop1")
-      .to.be.equal("hello-create");
+      .to.be.equal("hello-create")
     expect(sanitized)
       .to.haveOwnProperty("prop2")
-      .that.is.an("array");
-    expect(sanitized.prop2[0]).to.be.equal("hello-create");
+      .that.is.an("array")
+    expect(sanitized.prop2[0]).to.be.equal("hello-create")
     expect(sanitized.prop3)
       .to.haveOwnProperty("nested")
-      .to.be.equal("HELLO-create");
-  });
+      .to.be.equal("HELLO-create")
+  })
 
   it("will sanitize boolean type with false value", async () => {
     const sanitized = await sanitizeInputs.call({
@@ -103,25 +103,25 @@ describe("sanitizeInputs method", () => {
         prop5: null,
         prop6: false
       }
-    });
+    })
 
     expect(sanitized)
       .to.haveOwnProperty("prop1")
-      .to.be.equal(false);
+      .to.be.equal(false)
     expect(sanitized)
       .to.haveOwnProperty("prop2")
-      .to.be.equal(false);
+      .to.be.equal(false)
     expect(sanitized)
       .to.haveOwnProperty("prop3")
-      .to.be.equal(false);
+      .to.be.equal(false)
     expect(sanitized)
       .to.haveOwnProperty("prop4")
-      .to.be.equal(false);
+      .to.be.equal(false)
     expect(sanitized)
       .to.haveOwnProperty("prop5")
-      .to.be.equal(false);
+      .to.be.equal(false)
     expect(sanitized)
       .to.haveOwnProperty("prop6")
-      .to.be.equal(false);
-  });
-});
+      .to.be.equal(false)
+  })
+})

@@ -1,3 +1,3 @@
-module.exports = (value, arguments, key, context) => {
+module.exports = value => {
   return value != null
 }

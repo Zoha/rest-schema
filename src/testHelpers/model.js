@@ -1,5 +1,6 @@
-const mongoose = require("./mongoose");
-const Mixed = mongoose.Schema.Types.Mixed;
+const mongoose = require("./mongoose")
+
+const { Mixed } = mongoose.Schema.Types
 
 const schema = mongoose.Schema(
   {
@@ -10,7 +11,7 @@ const schema = mongoose.Schema(
     prop5: Mixed
   },
   { timestamps: true }
-);
+)
 
-const model = mongoose.model("TestModelRS", schema);
-module.exports = model;
+const model = mongoose.model("TestModelRS", schema)
+module.exports = model
