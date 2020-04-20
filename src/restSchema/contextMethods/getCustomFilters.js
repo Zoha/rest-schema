@@ -1,20 +1,21 @@
 const filter = require("../helpers/filter")
+const cast = require("../helpers/cast")
 
-module.exports = async function() {
+module.exports = async function({ filters = null, route = null, routes = null } = {}) {
   const context = this
-  const { filters } = context.schema
-  const { route } = context
-  const routes = Object.values(context.getRoutes()).map(i => i.name)
+  const allFilters = filters || context.schema.filters
+  const currentRoute = cast(route).to(String) || context.route
+  const allRoutes = routes || Object.values(context.getRoutes()).map(i => i.name)
 
   // if filters property is function
-  if (typeof filters === "function") {
-    return filters(context)
+  if (typeof allFilters === "function") {
+    return allFilters(context)
   }
 
   let globalFilters
-  if (filters.global) {
+  if (allFilters.global) {
     globalFilters =
-      typeof filters.global === "function" ? await filters.global(context) : filters.global
+      typeof allFilters.global === "function" ? await allFilters.global(context) : allFilters.global
   } else {
     globalFilters = {}
   }
@@ -22,13 +23,15 @@ module.exports = async function() {
   let routeFilters
   if (routeFilters) {
     routeFilters =
-      typeof filters[route] === "function" ? await filters[route](context) : filters[route]
+      typeof allFilters[route] === "function"
+        ? await allFilters[currentRoute](context)
+        : allFilters[currentRoute]
   } else {
     routeFilters = {}
   }
 
   // filters that are not route name and not global
-  const directFilters = filter(filters, (i, k) => !routes.includes(k) && k !== "global")
+  const directFilters = filter(allFilters, (i, k) => !allRoutes.includes(k) && k !== "global")
 
   return { ...directFilters, ...globalFilters, ...routeFilters }
 }

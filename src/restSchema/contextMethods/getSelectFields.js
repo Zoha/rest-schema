@@ -136,12 +136,10 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
   return filter(result, i => i != null)
 }
 
-const getSelectFields = async context => {
+const getSelectFields = async ({ inputs, selectInputKey, context }) => {
   // get all fields that are specified in the inputs.selectKey
   // return array of select fields in format of like
   // { fields : object , shouldBeHided : boolean}
-  const inputs = context.inputs || (await context.getInputs())
-  const selectInputKey = context.routeObject.meta.select || "select"
   const selectInput = inputs[selectInputKey]
   if (!selectInput) {
     return false
@@ -178,21 +176,39 @@ const getSelectFields = async context => {
   return Promise.all(selectFields)
 }
 
-module.exports = async function(defaultResource) {
+module.exports = async function({
+  resource = null,
+  fields = null,
+  selectInputKey = null,
+  inputs = null,
+  routeObject = null,
+  selectable = null
+} = {}) {
   const context = this
-  let fields = context.fields || (await context.getFields())
-  fields = cloneDeep(fields)
-  const resource = defaultResource || context.resource || {}
+  let targetFields =
+    (fields && (await context.getFields({ fields }))) ||
+    context.fields ||
+    (await context.getFields())
+  targetFields = cloneDeep(targetFields)
+  const targetInputs = inputs || context.inputs || (await context.getInputs())
+  const targetSelectFieldKey = selectInputKey || context.routeObject.meta.select || "select"
+  const targetResource = resource || context.resource || (await context.getResource())
+  const targetRouteObject = routeObject || context.routeObject
+  const isSelectable = selectable || targetRouteObject.selectable
 
   // get fields that are specified in select input
   // this values can be for hiding the field
   // or display it
-  let selectFields = await getSelectFields(context)
+  let selectFields = await getSelectFields({
+    inputs: targetInputs,
+    selectInputKey: targetSelectFieldKey,
+    context
+  })
 
   // if select fields is false
   // or route object is not selectable
   // so selectFields should be empty
-  if (selectFields === false || !context.routeObject.selectable) {
+  if (selectFields === false || !isSelectable) {
     selectFields = []
   }
 
@@ -200,5 +216,5 @@ module.exports = async function(defaultResource) {
   // so hide by default should be true
   const hideByDefault = !!selectFields.filter(i => i.shouldBeHided === false).length
 
-  return getFields(fields, resource, context, selectFields, hideByDefault)
+  return getFields(targetFields, targetResource, context, selectFields, hideByDefault)
 }

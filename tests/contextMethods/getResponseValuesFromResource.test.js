@@ -8,6 +8,7 @@ const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
 const context = createContext(
   {
     ...defaultSchema,
+    model,
     fields: {
       prop1: String
     }
@@ -130,7 +131,10 @@ describe("getResponseValuesFromResource method", () => {
   })
 
   it("will get data with get method", async () => {
-    const resource = await model.create()
+    const resource = await model.create({
+      prop1: "ok",
+      prop2: "ok"
+    })
     const values = await getResponseValuesFromResource.call({
       ...context,
       resource,

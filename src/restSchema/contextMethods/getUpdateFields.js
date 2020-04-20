@@ -66,9 +66,12 @@ const getUpdatableFields = async (fields, context) => {
   return filter(result, i => i != null)
 }
 
-module.exports = async function() {
+module.exports = async function({ fields = null } = {}) {
   const context = this
-  const originalFields = context.fields
-  const fields = cloneDeep(originalFields)
+  const originalFields =
+    (fields && (await context.getFields({ fields }))) ||
+    context.fields ||
+    (await context.getFields())
+  fields = cloneDeep(originalFields)
   return getUpdatableFields(fields)
 }

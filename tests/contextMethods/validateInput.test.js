@@ -11,13 +11,13 @@ describe("validateInput method", () => {
   it("required validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       required: true
     }
     let value
 
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -28,7 +28,7 @@ describe("validateInput method", () => {
     value = "something"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -38,13 +38,13 @@ describe("validateInput method", () => {
   it("min validate on string", async () => {
     let error
 
-    const validations = {
+    const field = {
       min: 10
     }
     let value = "less"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -56,7 +56,7 @@ describe("validateInput method", () => {
     value = "something that is not less"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -66,13 +66,13 @@ describe("validateInput method", () => {
   it("max validate on string", async () => {
     let error
 
-    const validations = {
+    const field = {
       max: 10
     }
     let value = "something that is not less"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -84,7 +84,7 @@ describe("validateInput method", () => {
     value = "less"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -94,13 +94,13 @@ describe("validateInput method", () => {
   it("min validate on number", async () => {
     let error
 
-    const validations = {
+    const field = {
       min: 10.2
     }
     let value = 10
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -112,7 +112,7 @@ describe("validateInput method", () => {
     value = 10.3
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -122,13 +122,13 @@ describe("validateInput method", () => {
   it("max validate on number", async () => {
     let error
 
-    const validations = {
+    const field = {
       max: 10
     }
     let value = 12
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -140,7 +140,7 @@ describe("validateInput method", () => {
     value = 8
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -150,13 +150,13 @@ describe("validateInput method", () => {
   it("minLength validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       minLength: 10
     }
     let value = "less"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -168,7 +168,7 @@ describe("validateInput method", () => {
     value = "something that is not less"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -178,13 +178,13 @@ describe("validateInput method", () => {
   it("maxLength validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       maxLength: 10
     }
     let value = "something that is not less"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -196,7 +196,7 @@ describe("validateInput method", () => {
     value = "less"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -206,13 +206,13 @@ describe("validateInput method", () => {
   it("between validate on string", async () => {
     let error
 
-    const validations = {
+    const field = {
       between: [5, 6]
     }
     let value = "1234567"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -224,7 +224,7 @@ describe("validateInput method", () => {
     value = "1234"
     error = null
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -236,7 +236,7 @@ describe("validateInput method", () => {
     value = "123456"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -246,13 +246,13 @@ describe("validateInput method", () => {
   it("between validate on number", async () => {
     let error
 
-    const validations = {
+    const field = {
       between: [10.2, 11]
     }
     let value = 10.1
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -265,7 +265,7 @@ describe("validateInput method", () => {
     error = null
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -277,7 +277,7 @@ describe("validateInput method", () => {
     value = 10.3
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -287,13 +287,13 @@ describe("validateInput method", () => {
   it("betweenLength validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       betweenLength: [5, 6]
     }
     let value = "1234567"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -305,7 +305,7 @@ describe("validateInput method", () => {
     value = "1234"
     error = null
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -317,7 +317,7 @@ describe("validateInput method", () => {
     value = "123456"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -327,13 +327,13 @@ describe("validateInput method", () => {
   it("betweenLength validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       betweenLength: [5, 6]
     }
     let value = "1234567"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -345,7 +345,7 @@ describe("validateInput method", () => {
     value = "1234"
     error = null
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -357,7 +357,7 @@ describe("validateInput method", () => {
     value = "123456"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -367,13 +367,13 @@ describe("validateInput method", () => {
   it("min validate on array", async () => {
     let error
 
-    const validations = {
+    const field = {
       min: 10
     }
     let value = [1, 2, 3, 4]
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -385,7 +385,7 @@ describe("validateInput method", () => {
     value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -395,13 +395,13 @@ describe("validateInput method", () => {
   it("max validate on array", async () => {
     let error
 
-    const validations = {
+    const field = {
       max: 10
     }
     let value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -413,7 +413,7 @@ describe("validateInput method", () => {
     value = [1, 2, 3]
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -423,13 +423,13 @@ describe("validateInput method", () => {
   it("between validate on array", async () => {
     let error
 
-    const validations = {
+    const field = {
       between: [5, 6]
     }
     let value = [1, 2, 3, 4, 5, 6, 7]
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -441,7 +441,7 @@ describe("validateInput method", () => {
     value = [1, 2, 3, 4]
     error = null
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -453,7 +453,7 @@ describe("validateInput method", () => {
     value = [1, 2, 3, 4, 5, 6]
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -463,7 +463,7 @@ describe("validateInput method", () => {
   it("match validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       match: {
         create: new RegExp("ok$")
       }
@@ -471,7 +471,7 @@ describe("validateInput method", () => {
     let value = "ends with invalid"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -483,7 +483,7 @@ describe("validateInput method", () => {
     value = "ends with ok"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -493,13 +493,13 @@ describe("validateInput method", () => {
   it("enum validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       enum: ["valid1", "valid2"]
     }
     let value = "invalid"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -511,7 +511,7 @@ describe("validateInput method", () => {
     value = "valid2"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -521,7 +521,7 @@ describe("validateInput method", () => {
   it("custom validate", async () => {
     let error
 
-    const validations = {
+    const field = {
       validate: value => {
         return value.length > 5
       }
@@ -529,7 +529,7 @@ describe("validateInput method", () => {
     const value = "less"
 
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -542,7 +542,7 @@ describe("validateInput method", () => {
   it("custom validate in validate object", async () => {
     let error
 
-    const validations = {
+    const field = {
       validate: {
         validator: value => {
           return value.length > 5
@@ -553,7 +553,7 @@ describe("validateInput method", () => {
     const value = "less"
     error = null
     try {
-      await validateInput.call(context, value, validations, "field1")
+      await validateInput.call(context, { value, field, key: "field1" })
     } catch (e) {
       error = e
     }
@@ -568,13 +568,13 @@ describe("validateInput method", () => {
     })
     let error
 
-    const validations = {
+    const field = {
       unique: true
     }
     let value = "prop1"
 
     try {
-      await validateInput.call(context, value, validations, "prop1")
+      await validateInput.call(context, { value, field, key: "prop1" })
     } catch (e) {
       error = e
     }
@@ -586,7 +586,7 @@ describe("validateInput method", () => {
     value = "prop2"
     error = null
     try {
-      await validateInput.call(context, value, validations)
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }

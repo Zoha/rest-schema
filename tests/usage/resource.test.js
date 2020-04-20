@@ -415,7 +415,6 @@ describe("resource method", () => {
       .expect("Content-Type", /json/)
       .expect(res => {
         const response = JSON.parse(res.text)
-        expect(response._id).to.be.equal(dbResource._id.toString())
         expect(response)
           .to.haveOwnProperty("prop1")
           .that.is.a("string")

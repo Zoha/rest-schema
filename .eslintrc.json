@@ -1,5 +1,5 @@
 {
-  "extends": ["airbnb", "prettier", "plugin:node/recommended"],
+  "extends": ["prettier", "plugin:node/recommended"],
   "plugins": ["prettier"],
   "env": {
     "es6": true,
@@ -13,6 +13,7 @@
     "no-process-exit": "off",
     "object-shorthand": "off",
     "class-methods-use-this": "off",
+    "no-param-reassign": "off",
     "node/no-unpublished-require": [
       "error",
       {

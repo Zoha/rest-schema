@@ -20,17 +20,17 @@ const context = {
 
 describe("getSkip method", () => {
   it("return correct skip", async () => {
-    let skip = getSkip.call(context)
+    let skip = await getSkip.call(context)
     expect(skip).to.be.equal(0)
-    skip = getSkip.call({ ...context, inputs: { skip: 10 } })
+    skip = await getSkip.call({ ...context, inputs: { skip: 10 } })
     expect(skip).to.be.equal(10)
-    skip = getSkip.call({ ...context, inputs: { page: 3 } })
+    skip = await getSkip.call({ ...context, inputs: { page: 3 } })
     expect(skip).to.be.equal(20)
-    skip = getSkip.call({ ...context, inputs: { skip: 10, page: 3 } })
+    skip = await getSkip.call({ ...context, inputs: { skip: 10, page: 3 } })
     expect(skip).to.be.equal(10)
 
     // with predefined skip
-    skip = getSkip.call({
+    skip = await getSkip.call({
       ...context,
       schema: { pagination: { skip: 30 } }
     })
@@ -38,7 +38,7 @@ describe("getSkip method", () => {
 
     // with changed name of meta
 
-    skip = getSkip.call({
+    skip = await getSkip.call({
       ...context,
       routeObject: {
         ...context.routeObject,

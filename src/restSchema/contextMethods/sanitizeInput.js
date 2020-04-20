@@ -37,26 +37,25 @@ const customSanitizeHandler = async (argValue, customSanitize, context) => {
   return value
 }
 
-module.exports = async function(argValue, sanitizers) {
+module.exports = async function({ value, field }) {
   const context = this
-  let value = argValue
 
   if (value !== undefined) {
     // cast to type
-    if (sanitizers.type) {
-      value = context.cast(value).to(sanitizers.type)
+    if (field.type) {
+      value = context.cast(value).to(field.type)
     }
 
     // default value
-    if (sanitizers.default) {
+    if (field.default) {
       // if value has no value (undefined or null)
       // and field has a default property
       // get the default value for
       if (value == null) {
-        if (sanitizers.default) {
-          let defaultValue = sanitizers.default
+        if (field.default) {
+          let defaultValue = field.default
           if (isObject(defaultValue)) {
-            defaultValue = sanitizers.default[context.route]
+            defaultValue = field.default[context.route]
           }
           if (defaultValue) {
             if (isFunction(defaultValue)) {
@@ -70,23 +69,23 @@ module.exports = async function(argValue, sanitizers) {
     }
 
     // trim value
-    if (sanitizers.trim) {
-      value = sanitizeBy("trim", value, sanitizers.trim, context)
+    if (field.trim) {
+      value = sanitizeBy("trim", value, field.trim, context)
     }
 
     // to lower case
-    if (sanitizers.lowercase) {
-      value = sanitizeBy("lowercase", value, sanitizers.lowercase, context)
+    if (field.lowercase) {
+      value = sanitizeBy("lowercase", value, field.lowercase, context)
     }
 
     // to upper case
-    if (sanitizers.uppercase) {
-      value = sanitizeBy("uppercase", value, sanitizers.uppercase, context)
+    if (field.uppercase) {
+      value = sanitizeBy("uppercase", value, field.uppercase, context)
     }
   }
 
-  if (sanitizers.sanitize) {
-    return customSanitizeHandler(value, sanitizers.sanitize, context)
+  if (field.sanitize) {
+    return customSanitizeHandler(value, field.sanitize, context)
   }
 
   return value

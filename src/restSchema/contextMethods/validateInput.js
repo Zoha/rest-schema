@@ -126,13 +126,13 @@ const checkCustomValidation = async ({ value, validationArgs, key, context }) =>
   return true
 }
 
-module.exports = async function(value, validations, key = "field") {
+module.exports = async function({ value, field, key = "field" } = {}) {
   const context = this
 
   const checkValidation = async (validationName, validator) => {
     await check({
       value,
-      validationArgs: validations[validationName],
+      validationArgs: field[validationName],
       key,
       context,
       validator,
@@ -182,10 +182,10 @@ module.exports = async function(value, validations, key = "field") {
   }
 
   // check custom validations
-  if (validations.validate) {
+  if (field.validate) {
     await checkCustomValidation({
       value,
-      validationArgs: validations.validate,
+      validationArgs: field.validate,
       key,
       context
     })

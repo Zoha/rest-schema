@@ -1,7 +1,11 @@
-module.exports = async function({ setResource = true, setUpdatedResource = true } = {}) {
+module.exports = async function({
+  setResource = true,
+  setUpdatedResource = true,
+  resource = null
+} = {}) {
   const context = this
   await context.hook("beforeUpdateResource")
-  let resource = await context.getResource()
+  resource = resource || (await context.getResource())
 
   await context.model.findOneAndUpdate(
     {

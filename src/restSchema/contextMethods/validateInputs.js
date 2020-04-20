@@ -17,33 +17,16 @@ const validateInputs = async (argFields, inputs, context) => {
   const executeLoopOperation = async fieldKey => {
     // define value, validations, key
     const value = inputs[fieldKey]
-    const field = fields[fieldKey]
+    let field = fields[fieldKey]
     const key = fieldKey
-
-    let validations = {}
-    const availableValidations = [
-      "required",
-      "min",
-      "max",
-      "between",
-      "minLength",
-      "maxLength",
-      "betweenLength",
-      "match",
-      "enum",
-      "validate",
-      "unique"
-    ]
 
     if (value == null) {
       // if type of value is undefined
       // just check the required field
-      validations = {
-        required: field.required
+      field = {
+        required: field.required,
+        nestedKey: field.nestedKey
       }
-    } else {
-      // separate validation properties in the field
-      validations = filter(field, (i, k) => availableValidations.includes(k))
     }
 
     // do the validation
@@ -56,7 +39,7 @@ const validateInputs = async (argFields, inputs, context) => {
       })
     }
     try {
-      await context.validateInput(value, validations, field.nestedKey)
+      await context.validateInput({ value, field, key: field.nestedKey })
     } catch (e) {
       if (e.list) {
         e.list.forEach(err => formatError(err))
@@ -87,10 +70,13 @@ const validateInputs = async (argFields, inputs, context) => {
   return filter(validationErrors, i => i != null)
 }
 
-module.exports = async function({ setValidationErrors = true } = {}) {
+module.exports = async function({ setValidationErrors = true, fields = null, inputs = null } = {}) {
   const context = this
-  const fields = context.fields || (await context.getFields())
-  const inputs = context.inputs || (await context.getInputs())
+  fields =
+    (fields && (await context.getFields({ fields }))) ||
+    context.fields ||
+    (await context.getFields())
+  inputs = context.inputs || (await context.getInputs())
   const validationResult = await validateInputs(fields, inputs, context)
   if (setValidationErrors) {
     context.validationErrors = validationResult

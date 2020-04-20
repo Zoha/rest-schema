@@ -11,7 +11,7 @@ module.exports = async function({ collection = null, fields = null } = {}) {
   const finalResponseFromCollectionPromises = []
   Object.values(detectedCollection).forEach(async resource => {
     finalResponseFromCollectionPromises.push(
-      context.getResponseValuesFromResource(detectedFields, resource)
+      context.getResponseValuesFromResource({ fields: detectedFields, resource })
     )
   })
   const finalResponseFromCollection = await Promise.all(finalResponseFromCollectionPromises)

@@ -4,9 +4,12 @@ module.exports = async function({
   errorOnNotFound = false,
   setResource = true,
   force = false,
-  resourceId = null
+  resourceId = null,
+  model = null
 } = {}) {
   const context = this
+
+  const schemaModel = model || context.model
 
   await context.hook("beforeGetResource")
 
@@ -17,11 +20,11 @@ module.exports = async function({
   // find the resource by route keys
   let resource
   if (resourceId != null) {
-    resource = await context.model.findOne({
+    resource = await schemaModel.findOne({
       _id: resourceId
     })
   } else {
-    resource = await context.model.findOne({
+    resource = await schemaModel.findOne({
       $or: await context.getRouteKeysFilters(),
       ...context.getCustomFilters()
     })

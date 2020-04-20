@@ -7,120 +7,120 @@ const context = {
 
 describe("sanitizeInput method", () => {
   it("will trim without any sanitizer", async () => {
-    const sanitizers = {}
+    const field = {}
     const value = "hello"
-    const result = await sanitizeInput.call(context, value, sanitizers)
+    const result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal(value)
   })
 
   it("will trim input", async () => {
-    let sanitizers = {
+    let field = {
       trim: true
     }
     const value = "  hello   "
-    let result = await sanitizeInput.call(context, value, sanitizers)
+    let result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello")
 
-    sanitizers = {
+    field = {
       trim: {
         create: true
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello")
 
-    sanitizers = {
+    field = {
       trim: {
         update: true
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.not.be.equal("hello")
   })
 
   it("will uppercase input", async () => {
-    let sanitizers = {
+    let field = {
       uppercase: true
     }
     const value = "hello"
-    let result = await sanitizeInput.call(context, value, sanitizers)
+    let result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("HELLO")
 
-    sanitizers = {
+    field = {
       uppercase: {
         create: true
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("HELLO")
 
-    sanitizers = {
+    field = {
       uppercase: {
         update: true
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.not.be.equal("HELLO")
   })
 
   it("will lowercase input", async () => {
-    let sanitizers = {
+    let field = {
       lowercase: true
     }
     const value = "Hello"
-    let result = await sanitizeInput.call(context, value, sanitizers)
+    let result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello")
 
-    sanitizers = {
+    field = {
       lowercase: {
         create: true
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello")
 
-    sanitizers = {
+    field = {
       lowercase: {
         update: true
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.not.be.equal("hello")
   })
 
   it("will apply custom sanitizer", async () => {
-    let sanitizers = {
+    let field = {
       sanitize: (val, ctx) => {
         return `${val}-${ctx.route}`
       }
     }
     const value = "hello"
-    let result = await sanitizeInput.call(context, value, sanitizers)
+    let result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello-create")
 
-    sanitizers = {
+    field = {
       sanitize: {
         create: (val, ctx) => {
           return `${val}-${ctx.route}`
         }
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello-create")
 
-    sanitizers = {
+    field = {
       sanitize: {
         update: (val, ctx) => {
           return `${val}-${ctx.route}`
         }
       }
     }
-    result = await sanitizeInput.call(context, value, sanitizers)
+    result = await sanitizeInput.call(context, { value, field })
     expect(result).to.not.be.equal("hello")
   })
 
   it("will do all together", async () => {
-    const sanitizers = {
+    const field = {
       trim: true,
       lowercase: true,
       sanitize: (val, ctx) => {
@@ -128,7 +128,7 @@ describe("sanitizeInput method", () => {
       }
     }
     const value = "    HELLO   "
-    const result = await sanitizeInput.call(context, value, sanitizers)
+    const result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello-create")
   })
 })

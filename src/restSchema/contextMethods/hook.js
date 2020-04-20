@@ -3,6 +3,10 @@ module.exports = async function(hook) {
   const { schema } = context
   const { route } = context
 
+  if (!schema.hooks) {
+    return
+  }
+
   // global hooks
   if (schema.hooks[hook] && typeof schema.hooks[hook] === "function") {
     await schema.hooks[hook](context)

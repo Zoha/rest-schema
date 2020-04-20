@@ -1,11 +1,17 @@
-module.exports = async function() {
+module.exports = async function({
+  inputs = null,
+  sortKey = null,
+  defaultSort = null,
+  sortString = null
+} = {}) {
   const context = this
-  const inputs = context.inputs || (await context.getInputs())
-  const sortKey = context.routeObject.meta.sort || "sort"
-  let { sort } = context.schema.pagination
-  if (inputs[sortKey] && typeof inputs[sortKey] === "string") {
+  inputs = inputs || context.inputs || (await context.getInputs())
+  sortKey = sortKey || context.routeObject.meta.sort || "sort"
+  let sort = defaultSort || context.schema.pagination.sort
+  sortString = sortString || inputs[sortKey]
+  if (sortString && typeof sortString === "string") {
     const sortsObject = {}
-    const requestedSorts = inputs[sortKey].split(" ")
+    const requestedSorts = sortString.split(" ")
 
     const formatRequestedSort = async requestedSort => {
       if (!requestedSort) {

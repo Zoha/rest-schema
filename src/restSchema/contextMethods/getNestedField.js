@@ -1,10 +1,13 @@
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 
-module.exports = async function(targetString) {
+module.exports = async function(targetString, { fields = null } = {}) {
   const context = this
   const targetParts = targetString.split(".")
-  let nestedForwardFields = context.fields || (await context.getFields())
+  let nestedForwardFields =
+    (fields && (await context.getFields({ fields }))) ||
+    context.fields ||
+    (await context.getFields())
   nestedForwardFields = { children: nestedForwardFields }
   let foundedField
   Object.values(targetParts).every(target => {

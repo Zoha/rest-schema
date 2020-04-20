@@ -1,8 +1,10 @@
 const { expect } = require("chai")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
 const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
 
 const context = {
+  getFields,
   fields: {
     prop1: {
       ...defaultField,

@@ -17,14 +17,8 @@ const sanitizeInputs = async (argFields, argInputs, context) => {
     const value = inputs[fieldKey]
     const field = fields[fieldKey]
 
-    let sanitizes = {}
-    const availableSanitizes = ["default", "type", "sanitize", "trim", "lowercase", "uppercase"]
-
-    // separate sanitization properties in the field
-    sanitizes = filter(field, (i, k) => availableSanitizes.includes(k))
-
     // do the sanitization
-    inputs[fieldKey] = await context.sanitizeInput(value, sanitizes)
+    inputs[fieldKey] = await context.sanitizeInput({ value, field })
 
     // sanitize children
     if ((field.isNested && isArray(value)) || isObject(value)) {
@@ -45,10 +39,13 @@ const sanitizeInputs = async (argFields, argInputs, context) => {
   return filter(inputs, i => i !== undefined)
 }
 
-module.exports = async function({ setInputs = true } = {}) {
+module.exports = async function({ setInputs = true, fields = null, inputs = null } = {}) {
   const context = this
-  const fields = context.fields || (await context.getFields())
-  const inputs = context.inputs || (await context.getInputs())
+  fields =
+    (fields && (await context.getFields({ fields }))) ||
+    context.fields ||
+    (await context.getFields())
+  inputs = inputs || context.inputs || (await context.getInputs())
   const sanitizedInputs = await sanitizeInputs(fields, inputs, context)
   if (setInputs) {
     context.inputs = sanitizedInputs

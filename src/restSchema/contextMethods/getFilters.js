@@ -1,13 +1,22 @@
 const filter = require("../helpers/filter")
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
+const cast = require("../helpers/cast")
 
-module.exports = async function() {
+module.exports = async function({
+  inputs = null,
+  operators = null,
+  defaultRouteFilters = null,
+  customFilters = null,
+  filteringMeta = null
+} = {}) {
   const context = this
-  const inputs = context.inputs || (await context.getInputs())
-  const operators = context.routeObject.filteringOperators
-  const { defaultFilters } = context.schema.pagination
-  const customFilters = await context.getCustomFilters()
+  const allInputs = inputs || context.inputs || (await context.getInputs())
+  const availableOperators = operators || context.routeObject.filteringOperators
+  const defaultFilters =
+    cast(defaultRouteFilters).to(Object) || context.schema.pagination.defaultFilters
+  const staticFilters = customFilters || (await context.getCustomFilters())
+  const routeMetaList = filteringMeta || context.routeObject.meta
 
   const formatFilters = async (key, argValue) => {
     let logic
@@ -21,7 +30,7 @@ module.exports = async function() {
     const { type } = field
 
     // convert value to string and url decode it
-    const value = decodeURIComponent(context.cast(argValue).to(String))
+    const value = decodeURIComponent(cast(argValue).to(String))
 
     if (value == null) {
       return undefined
@@ -30,7 +39,7 @@ module.exports = async function() {
     // change hasOperator if string
     // starts with an operator
     let hasOperator
-    Object.keys(operators).every(operator => {
+    Object.keys(availableOperators).every(operator => {
       if (!hasOperator && value.startsWith(operator)) {
         hasOperator = true
         return false
@@ -44,7 +53,7 @@ module.exports = async function() {
     // handler to the filterValue
     if (hasOperator) {
       const regex = new RegExp(
-        `(${Object.keys(operators)
+        `(${Object.keys(availableOperators)
           .map(i => i.replace(":", "").replace("$", "\\$"))
           .join("|")})`,
         "g"
@@ -71,16 +80,16 @@ module.exports = async function() {
       Object.values(operatorSections).forEach(section => {
         const result = /(\$[^:]+:?)(.*)/.exec(section)
         const [, sectionOperator, sectionValue] = result
-        if (operators[sectionOperator]) {
+        if (availableOperators[sectionOperator]) {
           if (logic) {
-            filterValue.push(operators[sectionOperator](sectionValue, key, type))
+            filterValue.push(availableOperators[sectionOperator](sectionValue, key, type))
           } else {
-            filterValue = operators[sectionOperator](sectionValue, key, type)
+            filterValue = availableOperators[sectionOperator](sectionValue, key, type)
           }
         }
       })
     } else {
-      filterValue = context.cast(value).to(type)
+      filterValue = cast(value).to(type)
     }
 
     return logic ? { [logic]: filterValue.map(i => ({ [key]: i })) } : filterValue
@@ -88,12 +97,12 @@ module.exports = async function() {
 
   // separate inputs that are not meta
   // like select, sort, page, ...
-  let notMetaInputs = filter(inputs, (i, k) => !Object.values(context.routeObject.meta).includes(k))
+  let notMetaInputs = filter(allInputs, (i, k) => !Object.values(routeMetaList).includes(k))
 
   // check that route is filterable
   // if not filters notMetaInputs should be empty
   // and no route filter should be applied
-  if (!context.routeObject.filterable) {
+  if (!context.routeObject && context.routeObject.filterable) {
     notMetaInputs = {}
   }
 
@@ -170,6 +179,6 @@ module.exports = async function() {
   return {
     ...(isObject(defaultFilters) ? defaultFilters : {}),
     ...requestFilters,
-    ...(isObject(customFilters) ? customFilters : {})
+    ...(isObject(staticFilters) ? staticFilters : {})
   }
 }

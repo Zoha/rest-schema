@@ -1,19 +1,21 @@
 const isArray = require("../helpers/isArray")
+const cast = require("../helpers/cast")
 
-module.exports = async function({ setInputs = true } = {}) {
+module.exports = async function({ setInputs = true, req = null, inputsTarget = null } = {}) {
   const context = this
-  let inputsTarget = context.routeObject.inputsTarget || []
-  if (!isArray(inputsTarget)) {
-    inputsTarget = [inputsTarget]
+  const request = cast(req).to(Object) || context.req
+  let detectedInputsTarget = cast(inputsTarget).to(Array) || context.routeObject.inputsTarget || []
+  if (!isArray(detectedInputsTarget)) {
+    detectedInputsTarget = [detectedInputsTarget]
   }
 
   let inputs = {}
-  const inputsTargetValues = Object.values(inputsTarget)
+  const inputsTargetValues = Object.values(detectedInputsTarget)
   inputsTargetValues.forEach(target => {
-    if (!context.req[target]) {
+    if (!request[target]) {
       return
     }
-    inputs = { ...inputs, ...context.req[target] }
+    inputs = { ...inputs, ...request[target] }
   })
 
   if (setInputs) {
