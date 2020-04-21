@@ -592,4 +592,53 @@ describe("validateInput method", () => {
     }
     expect(error).to.be.equal(null)
   })
+
+  it("auth validate", async () => {
+    await model.create({
+      prop1: "prop1"
+    })
+    let error
+
+    const field = {
+      auth: async value => {
+        if (value == "error") {
+          throw new Error("error")
+        } else if (value == "false") {
+          return false
+        }
+        return true
+      }
+    }
+    let value = "error"
+
+    try {
+      await validateInput.call(context, { value, field, key: "prop1" })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("error")
+
+    value = "false"
+    error = null
+    try {
+      await validateInput.call(context, { value, field, key: "prop1" })
+    } catch (e) {
+      error = e
+    }
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("authorization failed for prop1")
+
+    value = "else"
+    error = null
+    try {
+      await validateInput.call(context, { value, field })
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.equal(null)
+  })
 })

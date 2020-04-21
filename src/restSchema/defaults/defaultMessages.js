@@ -10,7 +10,8 @@ module.exports = {
     enum: "{key} is invalid",
     default: "{key} is invalid",
     match: "{key} is invalid",
-    unique: "{key} should be unique, {value} already exists"
+    unique: "{key} should be unique, {value} already exists",
+    auth: "authorization failed for {key}"
   },
   idParamNotFound: ":id param not exists in request",
   resourceNotFound: "resource not found",

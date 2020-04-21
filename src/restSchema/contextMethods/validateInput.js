@@ -12,6 +12,7 @@ const checkBetweenLength = require("../validators/betweenLength")
 const checkMatch = require("../validators/match")
 const checkEnum = require("../validators/enum")
 const checkUnique = require("../validators/unique")
+const checkAuth = require("../validators/auth")
 
 const getErrorMessage = (type, key, value, args) => {
   let message = validationMessages[type]
@@ -46,11 +47,14 @@ const check = async ({ value, validationArgs, key, context, validator, validatio
   // define message of validation
   const message = getErrorMessage(validationName, key, value, validationArgs)
 
+  // callback validation args
+  const callbackValidators = [checkAuth]
+
   let shouldBeChecked = !!validationArgs
 
   // if is function call the function to determine
   // that should be checked or not
-  if (isFunction(validationArgs)) {
+  if (isFunction(validationArgs) && !callbackValidators.includes(checkAuth)) {
     shouldBeChecked = await validationArgs(context)
   }
   if (!shouldBeChecked) {
@@ -151,7 +155,8 @@ module.exports = async function({ value, field, key = "field" } = {}) {
     betweenLength: checkBetweenLength,
     match: checkMatch,
     enum: checkEnum,
-    unique: checkUnique
+    unique: checkUnique,
+    auth: checkAuth
   }
 
   // apply each validation
