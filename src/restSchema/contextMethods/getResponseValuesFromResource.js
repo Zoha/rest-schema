@@ -86,20 +86,15 @@ const getValues = async (argFields, values, context) => {
   return filter(result, i => i != null)
 }
 
-module.exports = async function({
-  fields = null,
-  resource = null,
-  customSelectFields = null
-} = {}) {
+module.exports = async function({ fields = null, resource = null, selectFields = null } = {}) {
   const context = this
-  const targetFields =
+  fields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
 
-  const targetResource = resource || context.resource || (await context.getResource()) || {}
-  const selectFields =
-    customSelectFields ||
-    (await context.getSelectFields({ fields: targetFields, resource: targetResource }))
-  return getValues(selectFields, targetResource, context)
+  resource = resource || context.resource || (await context.getResource()) || {}
+  selectFields =
+    selectFields || (await context.getSelectFields({ fields: fields, resource: resource }))
+  return getValues(selectFields, resource, context)
 }

@@ -1,38 +1,38 @@
 const cast = require("../helpers/cast")
 
 module.exports = async function({
-  limit = null,
+  defaultLimit = null,
   maxLimit = null,
   minLimit = null,
   limitKey = null,
   inputs = null
 } = {}) {
   const context = this
-  let detectedLimit = cast(limit).to(Number) || Number(context.schema.pagination.limit)
-  const targetInputs = inputs || context.inputs || (await context.getInputs())
-  const limitKeyInInputs = cast(limitKey).to(String) || context.routeObject.meta.limit
-  const maximumLimit = cast(maxLimit).to(Number) || context.schema.pagination.maxLimit
-  const minimumLimit = cast(minLimit).to(Number) || context.schema.pagination.minLimit
+  let initialLimit = cast(defaultLimit).to(Number) || Number(context.schema.pagination.limit)
+  inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
+  limitKey = cast(limitKey).to(String) || context.routeObject.meta.limit
+  maxLimit = cast(maxLimit).to(Number) || context.schema.pagination.maxLimit
+  minLimit = cast(minLimit).to(Number) || context.schema.pagination.minLimit
 
-  let defaultLimit = detectedLimit
+  defaultLimit = initialLimit
 
-  if (Number.isNaN(detectedLimit)) {
-    detectedLimit = 10
-    defaultLimit = detectedLimit
+  if (Number.isNaN(initialLimit)) {
+    initialLimit = 10
+    defaultLimit = initialLimit
   }
 
-  if (targetInputs[limitKeyInInputs]) {
-    detectedLimit = Number(targetInputs[limitKeyInInputs])
-    if (detectedLimit > maximumLimit || detectedLimit < minimumLimit) {
-      detectedLimit = defaultLimit
+  if (inputs[limitKey]) {
+    initialLimit = Number(inputs[limitKey])
+    if (initialLimit > maxLimit || initialLimit < minLimit) {
+      initialLimit = defaultLimit
     }
-    if (Number.isNaN(detectedLimit)) {
-      detectedLimit = 10
+    if (Number.isNaN(initialLimit)) {
+      initialLimit = 10
     }
   }
 
-  if (detectedLimit === 0) {
+  if (initialLimit === 0) {
     return 1
   }
-  return detectedLimit
+  return initialLimit
 }

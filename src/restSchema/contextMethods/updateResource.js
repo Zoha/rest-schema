@@ -1,3 +1,5 @@
+const cast = require("../helpers/cast")
+
 module.exports = async function({
   setResource = true,
   setUpdatedResource = true,
@@ -5,7 +7,7 @@ module.exports = async function({
 } = {}) {
   const context = this
   await context.hook("beforeUpdateResource")
-  resource = resource || (await context.getResource())
+  resource = cast(resource).to(Object) || (await context.getResource())
 
   await context.model.findOneAndUpdate(
     {

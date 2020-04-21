@@ -1,10 +1,12 @@
+const cast = require("../helpers/cast")
+
 module.exports = async function({ setCreateInputs = true, fields = null, inputs = null } = {}) {
   const context = this
-  const createFields =
+  fields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getCreateFields())
-  const createInputs = inputs || (await context.getInputsFromFields({ fields: createFields }))
+  const createInputs = cast(inputs).to(Object) || (await context.getInputsFromFields({ fields }))
   if (setCreateInputs) {
     context.createInputs = createInputs
   }

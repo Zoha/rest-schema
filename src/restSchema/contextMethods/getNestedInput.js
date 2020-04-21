@@ -1,7 +1,8 @@
 const get = require("../helpers/get")
+const cast = require("../helpers/cast")
 
-module.exports = async function(targetString, { inputs = null } = {}) {
+module.exports = async function({ key, inputs = null } = {}) {
   const { context } = this
-  const targetInputs = inputs || context.inputs || (await context.getInputs())
-  return get(targetInputs, targetString)
+  inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
+  return get(inputs, key)
 }

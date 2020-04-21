@@ -2,6 +2,7 @@ const filter = require("../helpers/filter")
 const isArray = require("../helpers/isArray")
 const isObject = require("../helpers/isObject")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
+const cast = require("../helpers/cast")
 
 const sanitizeInputs = async (argFields, argInputs, context) => {
   const inputs = argInputs
@@ -45,7 +46,7 @@ module.exports = async function({ setInputs = true, fields = null, inputs = null
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
-  inputs = inputs || context.inputs || (await context.getInputs())
+  inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
   const sanitizedInputs = await sanitizeInputs(fields, inputs, context)
   if (setInputs) {
     context.inputs = sanitizedInputs

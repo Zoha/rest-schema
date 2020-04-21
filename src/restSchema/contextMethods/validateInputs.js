@@ -2,6 +2,7 @@ const filter = require("../helpers/filter")
 const isArray = require("../helpers/isArray")
 const isObject = require("../helpers/isObject")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
+const cast = require("../helpers/cast")
 
 const validateInputs = async (argFields, inputs, context) => {
   if (!argFields) {
@@ -33,7 +34,7 @@ const validateInputs = async (argFields, inputs, context) => {
     const formatError = e => {
       validationErrors.push({
         value,
-        location: context.findLocationOfInput(key),
+        location: context.findLocationOfInput({ key }),
         field: field.nestedKey,
         message: e.message
       })
@@ -76,7 +77,7 @@ module.exports = async function({ setValidationErrors = true, fields = null, inp
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
-  inputs = context.inputs || (await context.getInputs())
+  inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
   const validationResult = await validateInputs(fields, inputs, context)
   if (setValidationErrors) {
     context.validationErrors = validationResult

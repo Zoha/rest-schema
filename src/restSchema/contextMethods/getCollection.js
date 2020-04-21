@@ -12,14 +12,14 @@ module.exports = async function({
     return context.collection
   }
 
-  const detectedFilters = Number(filters) || (await context.getFilters())
-  const detectedSkip = Number(skip) || (await context.getSkip())
-  const detectedLimit = Number(limit) || (await context.getLimit())
+  filters = Number(filters) || (await context.getFilters())
+  skip = Number(skip) || (await context.getSkip())
+  limit = Number(limit) || (await context.getLimit())
 
   const collection = await context.model
-    .find(detectedFilters)
-    .skip(detectedSkip)
-    .limit(detectedLimit)
+    .find(filters)
+    .skip(skip)
+    .limit(limit)
 
   if (setCollection) {
     context.collection = collection

@@ -4,6 +4,7 @@ const isObject = require("../helpers/isObject")
 const isFunction = require("../helpers/isFunction")
 const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsLengthOfInputs")
+const cast = require("../helpers/cast")
 
 const getFields = async (argFields, values, context, selectFields, hideByDefault = false) => {
   if (!argFields) {
@@ -165,7 +166,7 @@ const getSelectFields = async ({ inputs, selectInputKey, context }) => {
       fieldKey = fieldKeyIndex
     }
     selectFields.push(
-      context.getNestedField(fieldKey).then(field => {
+      context.getNestedField({ key: fieldKey }).then(field => {
         return {
           field,
           shouldBeHided
@@ -185,30 +186,30 @@ module.exports = async function({
   selectable = null
 } = {}) {
   const context = this
-  let targetFields =
+  fields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
-  targetFields = cloneDeep(targetFields)
-  const targetInputs = inputs || context.inputs || (await context.getInputs())
-  const targetSelectFieldKey = selectInputKey || context.routeObject.meta.select || "select"
-  const targetResource = resource || context.resource || (await context.getResource())
-  const targetRouteObject = routeObject || context.routeObject
-  const isSelectable = selectable || targetRouteObject.selectable
+  fields = cloneDeep(fields)
+  inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
+  selectInputKey = cast(selectInputKey).to(String) || context.routeObject.meta.select || "select"
+  resource = cast(resource).to(Object) || context.resource || (await context.getResource())
+  routeObject = cast(routeObject).to(Object) || context.routeObject
+  selectable = cast(selectable).to(Boolean) || routeObject.selectable
 
   // get fields that are specified in select input
   // this values can be for hiding the field
   // or display it
   let selectFields = await getSelectFields({
-    inputs: targetInputs,
-    selectInputKey: targetSelectFieldKey,
+    inputs: inputs,
+    selectInputKey: selectInputKey,
     context
   })
 
   // if select fields is false
   // or route object is not selectable
   // so selectFields should be empty
-  if (selectFields === false || !isSelectable) {
+  if (selectFields === false || !selectable) {
     selectFields = []
   }
 
@@ -216,5 +217,5 @@ module.exports = async function({
   // so hide by default should be true
   const hideByDefault = !!selectFields.filter(i => i.shouldBeHided === false).length
 
-  return getFields(targetFields, targetResource, context, selectFields, hideByDefault)
+  return getFields(fields, resource, context, selectFields, hideByDefault)
 }

@@ -1,3 +1,5 @@
+const cast = require("../helpers/cast")
+
 module.exports = async function({
   inputs = null,
   sortKey = null,
@@ -5,10 +7,10 @@ module.exports = async function({
   sortString = null
 } = {}) {
   const context = this
-  inputs = inputs || context.inputs || (await context.getInputs())
-  sortKey = sortKey || context.routeObject.meta.sort || "sort"
-  let sort = defaultSort || context.schema.pagination.sort
-  sortString = sortString || inputs[sortKey]
+  inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
+  sortKey = cast(sortKey).to(String) || context.routeObject.meta.sort || "sort"
+  let sort = cast(defaultSort).to(Object) || context.schema.pagination.sort
+  sortString = cast(sortString).to(String) || inputs[sortKey]
   if (sortString && typeof sortString === "string") {
     const sortsObject = {}
     const requestedSorts = sortString.split(" ")
@@ -19,7 +21,7 @@ module.exports = async function({
       }
       const requestedSortKey = requestedSort.replace(/^-/, "")
       // if type of field not found return undefined
-      const field = await context.getNestedField(requestedSortKey)
+      const field = await context.getNestedField({ key: requestedSortKey })
 
       if (field == null || !field.sortable) {
         return

@@ -68,10 +68,10 @@ const getUpdatableFields = async (fields, context) => {
 
 module.exports = async function({ fields = null } = {}) {
   const context = this
-  const originalFields =
+  fields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
-  fields = cloneDeep(originalFields)
+  fields = cloneDeep(fields)
   return getUpdatableFields(fields)
 }

@@ -9,21 +9,21 @@ module.exports = async function({
   idTarget = null
 } = {}) {
   const context = this
-  const targetRouteKeys = routeKeys || context.getRouteKeys()
+  routeKeys = cast(routeKeys).to(Array) || context.getRouteKeys()
 
-  const request = req || context.req
+  const request = cast(req).to(Object) || context.req
 
-  const requestIdTarget = idTarget || "params"
-  const requestIdKey = idKey || "id"
+  idTarget = cast(idTarget).to(String) || "params"
+  idKey = cast(idKey).to(String) || "id"
 
-  if (id == null && (!request.params || !request[requestIdTarget][requestIdKey])) {
+  if (id == null && (!request.params || !request[idTarget][idKey])) {
     throw new Error(defaultMessages.idParamNotFound)
   }
 
-  const requestId = id || request[requestIdTarget][requestIdKey]
+  const requestId = id || request[idTarget][idKey]
 
   const filters = []
-  const gettingFieldsPromises = targetRouteKeys.map(i => context.getNestedField(i))
+  const gettingFieldsPromises = routeKeys.map(i => context.getNestedField({ key: i }))
 
   const fields = await Promise.all(gettingFieldsPromises)
   fields.forEach(field => {

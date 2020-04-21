@@ -113,8 +113,8 @@ module.exports = async function({ setFields = true, fields = undefined } = {}) {
   if (fields !== undefined && !fields) {
     return null
   }
-  const fieldsToBeFormatted = fields || context.schema.fields
-  const formattedFields = await formatFields(fieldsToBeFormatted, context)
+  fields = fields || context.schema.fields
+  const formattedFields = await formatFields(fields, context)
   if (setFields) {
     context.fields = formattedFields
   }

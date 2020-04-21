@@ -3,7 +3,7 @@ module.exports = async function({ setDeletedResource = true, resource = null } =
 
   await context.hook("beforeDeleteResource")
 
-  const detectedResource =
+  resource =
     context.cast(resource).to(Object) || (await context.getResource({ errorOnNotFound: true }))
 
   await context.model.findOneAndRemove({
@@ -12,7 +12,7 @@ module.exports = async function({ setDeletedResource = true, resource = null } =
   })
 
   if (setDeletedResource) {
-    context.deletedResource = detectedResource
+    context.deletedResource = resource
   }
   await context.hook("afterDeleteResource")
 

@@ -3,7 +3,7 @@ module.exports = async function({ collection = null, fields = null } = {}) {
   await context.hook("beforeGetCollectionResponse")
   const detectedCollection =
     context.cast(collection).to(Array) || context.collection || (await context.getCollection())
-  const detectedFields =
+  fields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
@@ -11,7 +11,7 @@ module.exports = async function({ collection = null, fields = null } = {}) {
   const finalResponseFromCollectionPromises = []
   Object.values(detectedCollection).forEach(async resource => {
     finalResponseFromCollectionPromises.push(
-      context.getResponseValuesFromResource({ fields: detectedFields, resource })
+      context.getResponseValuesFromResource({ fields: fields, resource })
     )
   })
   const finalResponseFromCollection = await Promise.all(finalResponseFromCollectionPromises)

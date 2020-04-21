@@ -55,15 +55,17 @@ const context = {
 
 describe("getNestedField method", () => {
   it("will get all fields normally", async () => {
-    const prop1 = await getNestedField.call(context, "prop1")
-    const arrayNested = await getNestedField.call(context, "arrayNested")
-    const arrayNestedProp1 = await getNestedField.call(context, "arrayNested.0")
-    const arrayNestedProp2 = await getNestedField.call(context, "arrayNested.1")
+    const prop1 = await getNestedField.call(context, { key: "prop1" })
+    const arrayNested = await getNestedField.call(context, { key: "arrayNested" })
+    const arrayNestedProp1 = await getNestedField.call(context, { key: "arrayNested.0" })
+    const arrayNestedProp2 = await getNestedField.call(context, { key: "arrayNested.1" })
 
-    const objectNested = await getNestedField.call(context, "objectNested")
-    const objectNestedProp1 = await getNestedField.call(context, "objectNested.prop1")
-    const objectNestedProp1Prop1 = await getNestedField.call(context, "objectNested.prop1.0")
-    const objectNestedProp2 = await getNestedField.call(context, "objectNested.prop2")
+    const objectNested = await getNestedField.call(context, { key: "objectNested" })
+    const objectNestedProp1 = await getNestedField.call(context, { key: "objectNested.prop1" })
+    const objectNestedProp1Prop1 = await getNestedField.call(context, {
+      key: "objectNested.prop1.0"
+    })
+    const objectNestedProp2 = await getNestedField.call(context, { key: "objectNested.prop2" })
 
     expect(prop1)
       .to.be.an("object")

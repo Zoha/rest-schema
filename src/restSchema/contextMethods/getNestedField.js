@@ -1,35 +1,35 @@
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 
-module.exports = async function(targetString, { fields = null } = {}) {
+module.exports = async function({ key, fields = null } = {}) {
   const context = this
-  const targetParts = targetString.split(".")
-  let nestedForwardFields =
+  const targetParts = key.split(".")
+  fields =
     (fields && (await context.getFields({ fields }))) ||
     context.fields ||
     (await context.getFields())
-  nestedForwardFields = { children: nestedForwardFields }
+  fields = { children: fields }
   let foundedField
   Object.values(targetParts).every(target => {
-    nestedForwardFields = nestedForwardFields.children
-    if (isObject(nestedForwardFields)) {
-      if (nestedForwardFields[target] == null) {
+    fields = fields.children
+    if (isObject(fields)) {
+      if (fields[target] == null) {
         foundedField = undefined
         return false
       }
-      foundedField = nestedForwardFields[target]
-      nestedForwardFields = nestedForwardFields[target]
-    } else if (isArray(nestedForwardFields)) {
-      if (!nestedForwardFields.length || Number.isNaN(Number(target))) {
+      foundedField = fields[target]
+      fields = fields[target]
+    } else if (isArray(fields)) {
+      if (!fields.length || Number.isNaN(Number(target))) {
         foundedField = undefined
         return false
       }
-      if (nestedForwardFields.length < Number(target)) {
-        foundedField = nestedForwardFields[(Number(target) % nestedForwardFields.length) - 1]
-        nestedForwardFields = nestedForwardFields[(Number(target) % nestedForwardFields.length) - 1]
+      if (fields.length < Number(target)) {
+        foundedField = fields[(Number(target) % fields.length) - 1]
+        fields = fields[(Number(target) % fields.length) - 1]
       } else {
-        foundedField = nestedForwardFields[target]
-        nestedForwardFields = nestedForwardFields[target]
+        foundedField = fields[target]
+        fields = fields[target]
       }
     } else {
       foundedField = undefined
