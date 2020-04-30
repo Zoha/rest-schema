@@ -97,4 +97,39 @@ describe("validateInputs method", () => {
       .to.haveOwnProperty("message")
       .that.equals("prop4.nested is required")
   })
+
+  it("validate fields with map type", async () => {
+    const contextWithSchema = {
+      ...context,
+      schema: {
+        fields: {
+          prop1: {
+            type: Map,
+            of: {
+              type: String,
+              validate(val) {
+                return val == "ok"
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const validateResult = await validateInputs.call({
+      ...contextWithSchema,
+      inputs: {
+        prop1: {
+          nested1: "ok",
+          nested2: "nok"
+        }
+      }
+    })
+
+    expect(validateResult)
+      .to.be.an("array")
+      .that.have.lengthOf(1)
+
+    expect(validateResult[0].field).to.be.equal("prop1.nested2")
+  })
 })

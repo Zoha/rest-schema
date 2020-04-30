@@ -3,6 +3,7 @@ const isArray = require("../helpers/isArray")
 const isObject = require("../helpers/isObject")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const cast = require("../helpers/cast")
+const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
 const sanitizeInputs = async (argFields, argInputs, context) => {
   const inputs = argInputs
@@ -20,6 +21,14 @@ const sanitizeInputs = async (argFields, argInputs, context) => {
 
     // do the sanitization
     inputs[fieldKey] = await context.sanitizeInput({ value, field })
+
+    // process map type
+    if (field.type === Map && field.of) {
+      field.type = Object
+      field.isNested = true
+      field.isObjectNested = true
+      field.children = createMapFieldsFromInput(field.of, value, context)
+    }
 
     // sanitize children
     if ((field.isNested && isArray(value)) || isObject(value)) {

@@ -5,6 +5,7 @@ const isFunction = require("../helpers/isFunction")
 const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const cast = require("../helpers/cast")
+const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
 const getFields = async (argFields, values, context, selectFields, hideByDefault = false) => {
   if (!argFields) {
@@ -61,9 +62,7 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
 
     // check that exists in selected
     // if yes so check that selected should be hide or not
-    const thisFieldInSelectFields = selectFields.filter(
-      i => i.field.uniqueKey === field.uniqueKey
-    )[0]
+    const thisFieldInSelectFields = selectFields.find(i => i.field.nestedKey === field.nestedKey)
 
     if (thisFieldInSelectFields) {
       if (thisFieldInSelectFields.shouldBeHided === true) {
@@ -106,6 +105,14 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
           value = get
         }
       }
+    }
+
+    // process map type
+    if (field.type === Map && field.of) {
+      field.type = Object
+      field.isNested = true
+      field.isObjectNested = true
+      field.children = createMapFieldsFromInput(field.of, value, context)
     }
 
     // if value was get and not equals to null or undefined

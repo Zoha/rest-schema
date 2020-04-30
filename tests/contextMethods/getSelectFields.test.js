@@ -115,4 +115,39 @@ describe("getSelectFields method", () => {
     expect(result).to.haveOwnProperty("prop5")
     expect(result).to.not.haveOwnProperty("prop6")
   })
+
+  it("returns selected fields with map type", async () => {
+    const context = createContext(
+      {
+        ...defaultSchema,
+        fields: {
+          prop1: {
+            type: Map,
+            of: String
+          }
+        }
+      },
+      route
+    )
+    context.resource = {
+      prop1: {
+        nested1: 10,
+        nested2: 12,
+        nested3: 14
+      }
+    }
+    context.inputs = {
+      select: "prop1.nested1 prop1.nested2"
+    }
+
+    const result = await context.getSelectFields()
+
+    expect(result)
+      .to.haveOwnProperty("prop1")
+      .that.haveOwnProperty("children")
+      .that.not.haveOwnProperty("nested3")
+
+    expect(result.prop1.children.nested1).to.be.an("object")
+    expect(result.prop1.children.nested2).to.be.an("object")
+  })
 })

@@ -3,6 +3,7 @@ const isArray = require("../helpers/isArray")
 const isObject = require("../helpers/isObject")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const cast = require("../helpers/cast")
+const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
 const validateInputs = async (argFields, inputs, context) => {
   if (!argFields) {
@@ -47,6 +48,14 @@ const validateInputs = async (argFields, inputs, context) => {
       } else {
         formatError(e)
       }
+    }
+
+    // process map type
+    if (field.type === Map && field.of) {
+      field.type = Object
+      field.isNested = true
+      field.isObjectNested = true
+      field.children = createMapFieldsFromInput(field.of, value, context)
     }
 
     // validate children

@@ -1,5 +1,6 @@
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
+const cloneDeep = require("clone-deep")
 
 module.exports = async function({ key, fields = null } = {}) {
   const context = this
@@ -10,8 +11,18 @@ module.exports = async function({ key, fields = null } = {}) {
     (await context.getFields())
   fields = { children: fields }
   let foundedField
+  let path = ""
   Object.values(targetParts).every(target => {
-    fields = fields.children
+    path += target + "."
+    if (fields.type && fields.type === Map && fields.of) {
+      foundedField = cloneDeep(fields.of)
+      fields = foundedField
+
+      foundedField.nestedKey = path.replace(/\.$/, "")
+      return true
+    } else {
+      fields = fields.children
+    }
     if (isObject(fields)) {
       if (fields[target] == null) {
         foundedField = undefined
@@ -25,8 +36,9 @@ module.exports = async function({ key, fields = null } = {}) {
         return false
       }
       if (fields.length < Number(target)) {
-        foundedField = fields[(Number(target) % fields.length) - 1]
-        fields = fields[(Number(target) % fields.length) - 1]
+        foundedField = cloneDeep(fields[(Number(target) % fields.length) - 1])
+        fields = foundedField
+        foundedField.nestedKey = path.replace(/\.$/, "")
       } else {
         foundedField = fields[target]
         fields = fields[target]

@@ -3,6 +3,7 @@ const isObject = require("../helpers/isObject")
 const isFunction = require("../helpers/isFunction")
 const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsLengthOfInputs")
+const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
 const getValues = async (argFields, values, context) => {
   if (!argFields) {
@@ -61,6 +62,14 @@ const getValues = async (argFields, values, context) => {
           value = get
         }
       }
+    }
+
+    // process map type
+    if (field.type === Map && field.of) {
+      field.type = Object
+      field.isNested = true
+      field.isObjectNested = true
+      field.children = createMapFieldsFromInput(field.of, value, context)
     }
 
     // if value was get and not equals to null or undefined

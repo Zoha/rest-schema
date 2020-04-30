@@ -168,4 +168,30 @@ describe("getResponseValuesFromResource method", () => {
       .that.equals("ok")
     expect(values).to.not.haveOwnProperty("prop3")
   })
+
+  it("will get data with map type", async () => {
+    const resource = await model.create({
+      prop1: {
+        nested: 10
+      }
+    })
+    const values = await getResponseValuesFromResource.call({
+      ...context,
+      resource,
+      schema: {
+        fields: {
+          prop1: {
+            type: Map,
+            of: String
+          }
+        }
+      }
+    })
+
+    expect(values)
+      .to.haveOwnProperty("prop1")
+      .that.haveOwnProperty("nested")
+      .that.is.an("String")
+      .that.equals("10")
+  })
 })

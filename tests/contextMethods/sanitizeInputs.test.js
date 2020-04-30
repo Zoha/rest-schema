@@ -124,4 +124,32 @@ describe("sanitizeInputs method", () => {
       .to.haveOwnProperty("prop6")
       .to.be.equal(false)
   })
+
+  it("will apply sanitizers with map type", async () => {
+    const sanitized = await sanitizeInputs.call({
+      ...context,
+      schema: {
+        fields: {
+          prop1: {
+            type: Map,
+            of: {
+              type: String,
+              lowercase: true,
+              trim: true
+            }
+          }
+        }
+      },
+      inputs: {
+        prop1: {
+          nested1: "ONE",
+          nested2: "   TWO   "
+        }
+      }
+    })
+
+    expect(sanitized).to.haveOwnProperty("prop1")
+    expect(sanitized.prop1.nested1).that.be.equal("one")
+    expect(sanitized.prop1.nested2).that.be.equal("two")
+  })
 })

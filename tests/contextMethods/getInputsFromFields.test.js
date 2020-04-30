@@ -2,6 +2,7 @@ const { expect } = require("chai")
 const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
 const cast = require("../../src/restSchema/helpers/cast")
+const getFields = require("../../src/restSchema/contextMethods/getFields")
 
 describe("getInputsFromFields method", function() {
   it("will get inputs normally", async () => {
@@ -183,5 +184,40 @@ describe("getInputsFromFields method", function() {
       .to.haveOwnProperty("prop6")
       .that.equal("prop6")
     expect(fieldsInputs).to.not.haveOwnProperty("prop7")
+  })
+
+  it("will get data with map type", async () => {
+    const fields = await getFields({
+      fields: {
+        prop1: {
+          type: Map,
+          of: [String]
+        }
+      }
+    })
+
+    const inputs = {
+      prop1: {
+        nested: [123, "452"]
+      }
+    }
+
+    const context = {
+      route: "create",
+      fields,
+      inputs,
+      cast
+    }
+
+    const fieldsInputs = await getInputsFromFields.call(context, fields)
+
+    expect(fieldsInputs)
+      .to.haveOwnProperty("prop1")
+      .that.haveOwnProperty("nested")
+      .that.is.an("array")
+      .that.have.lengthOf(2)
+
+    expect(fieldsInputs.prop1.nested[0]).to.be.a("string")
+    expect(fieldsInputs.prop1.nested[1]).to.be.a("string")
   })
 })

@@ -14,6 +14,7 @@ module.exports = {
   isArrayNested: false,
   isObjectNested: false,
   children: {},
+  of: Mixed,
 
   // accessors
   creatable: true,

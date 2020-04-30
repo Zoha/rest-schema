@@ -77,6 +77,18 @@ const formatFields = async (argFields, context, prepend = "") => {
       field.type = Object
     }
 
+    // if type of field was map create a valid field for its key
+    if (field.type === Map) {
+      const ofField = await formatFields(
+        {
+          "{keyName}": field.of
+        },
+        context,
+        `${prepend + fieldKey}.`
+      )
+      field.of = ofField["{keyName}"]
+    }
+
     // if field is nested then process the children
     if (field.children) {
       if (!field.children && field.isArrayNested) {
