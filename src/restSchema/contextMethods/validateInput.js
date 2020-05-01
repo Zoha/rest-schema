@@ -13,6 +13,7 @@ const checkMatch = require("../validators/match")
 const checkEnum = require("../validators/enum")
 const checkUnique = require("../validators/unique")
 const checkAuth = require("../validators/auth")
+const uniqueItems = require("../validators/uniqueItems")
 
 const getErrorMessage = (type, key, value, args) => {
   let message = validationMessages[type]
@@ -31,13 +32,14 @@ const getErrorMessage = (type, key, value, args) => {
 
 // check that field  is require or not
 // works with mongoose checkRequired
-const check = async ({ value, validationArgs, key, context, validator, validationName }) => {
+const check = async ({ value, validationArgs, key, field, context, validator, validationName }) => {
   // if is nested -> should be checked for each route
   if (isObject(validationArgs)) {
     return check({
       value,
       validationArgs: validationArgs[context.route],
       key,
+      field,
       context,
       validator,
       validationName
@@ -64,23 +66,24 @@ const check = async ({ value, validationArgs, key, context, validator, validatio
   if (
     validator.constructor.name === "AsyncFunction" &&
     shouldBeChecked &&
-    !(await validator(value, validationArgs, key, context))
+    !(await validator(value, validationArgs, field, context))
   ) {
     throw new Error(message)
-  } else if (shouldBeChecked && !validator(value, validationArgs, key, context)) {
+  } else if (shouldBeChecked && !validator(value, validationArgs, field, context)) {
     throw new Error(message)
   }
   return true
 }
 
 // check custom validation
-const checkCustomValidation = async ({ value, validationArgs, key, context }) => {
+const checkCustomValidation = async ({ value, validationArgs, key, field, context }) => {
   // if is nested -> should be checked for each route
   if (isObject(validationArgs) && !validationArgs.validator) {
     return checkCustomValidation({
       value,
       validationArgs: validationArgs[context.route],
       key,
+      field,
       context
     })
   }
@@ -130,14 +133,16 @@ const checkCustomValidation = async ({ value, validationArgs, key, context }) =>
   return true
 }
 
-module.exports = async function({ value, field, key = "field" } = {}) {
+module.exports = async function({ value, field, key } = {}) {
   const context = this
+  key = key || field.nestedKey || "field"
 
   const checkValidation = async (validationName, validator) => {
     await check({
       value,
       validationArgs: field[validationName],
       key,
+      field,
       context,
       validator,
       validationName
@@ -156,7 +161,8 @@ module.exports = async function({ value, field, key = "field" } = {}) {
     match: checkMatch,
     enum: checkEnum,
     unique: checkUnique,
-    auth: checkAuth
+    auth: checkAuth,
+    uniqueItems: uniqueItems
   }
 
   // apply each validation
@@ -192,6 +198,7 @@ module.exports = async function({ value, field, key = "field" } = {}) {
       value,
       validationArgs: field.validate,
       key,
+      field,
       context
     })
   }

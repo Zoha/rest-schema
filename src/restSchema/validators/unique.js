@@ -1,6 +1,6 @@
-module.exports = async (value, args, key, context) => {
+module.exports = async (value, args, field, context) => {
   const foundedResource = await context.model.findOne({
-    [key]: value
+    [field.nestedKey]: value
   })
   if (foundedResource) {
     return false

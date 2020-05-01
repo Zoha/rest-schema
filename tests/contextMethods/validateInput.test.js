@@ -1,10 +1,13 @@
 const { expect } = require("chai")
 const validateInput = require("../../src/restSchema/contextMethods/validateInput")
+const getNestedInput = require("../../src/restSchema/contextMethods/getNestedInput")
 const model = require("../../src/testHelpers/model")
+const cloneDeep = require("clone-deep")
 
 const context = {
   route: "create",
-  model
+  model,
+  getNestedInput
 }
 
 describe("validateInput method", () => {
@@ -569,12 +572,13 @@ describe("validateInput method", () => {
     let error
 
     const field = {
-      unique: true
+      unique: true,
+      nestedKey: "prop1"
     }
     let value = "prop1"
 
     try {
-      await validateInput.call(context, { value, field, key: "prop1" })
+      await validateInput.call(context, { value, field })
     } catch (e) {
       error = e
     }
@@ -640,5 +644,78 @@ describe("validateInput method", () => {
       error = e
     }
     expect(error).to.be.equal(null)
+  })
+
+  it("uniqueInArray validate", async () => {
+    let error
+
+    let field = {
+      nestedKey: "prop1",
+      type: Array,
+      uniqueItems: true
+    }
+    let value = [
+      {
+        key1: "value",
+        key2: "value"
+      },
+      {
+        key1: "value",
+        key2: "value 2"
+      },
+      {
+        key1: "value",
+        key2: "value"
+      }
+    ]
+
+    let localContext = cloneDeep(context)
+
+    error = null
+    try {
+      await validateInput.call(localContext, { value, field })
+    } catch (e) {
+      error = e
+    }
+
+    if (error !== null) {
+      throw new Error("expect error to be null")
+    }
+
+    field = {
+      nestedKey: "prop1",
+      type: Array,
+      uniqueItems: i => i.key1 + i.key2
+    }
+
+    error = null
+    try {
+      await validateInput.call(localContext, { value, field })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equal("prop1 should have unique items")
+
+    field = {
+      nestedKey: "prop1",
+      type: Array,
+      uniqueItems: true
+    }
+
+    value = [1, 2, 3, 2]
+
+    error = null
+    try {
+      await validateInput.call(localContext, { value, field })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equal("prop1 should have unique items")
   })
 })

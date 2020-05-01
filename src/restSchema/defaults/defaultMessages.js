@@ -11,7 +11,8 @@ module.exports = {
     default: "{key} is invalid",
     match: "{key} is invalid",
     unique: "{key} should be unique, {value} already exists",
-    auth: "authorization failed for {key}"
+    auth: "authorization failed for {key}",
+    uniqueItems: "{key} should have unique items"
   },
   idParamNotFound: ":id param not exists in request",
   resourceNotFound: "resource not found",

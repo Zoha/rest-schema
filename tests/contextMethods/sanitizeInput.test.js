@@ -1,8 +1,12 @@
 const { expect } = require("chai")
 const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput")
+const getNestedInput = require("../../src/restSchema/contextMethods/getNestedInput")
+const cast = require("../../src/restSchema/contextMethods/cast")
 
 const context = {
-  route: "create"
+  route: "create",
+  getNestedInput,
+  cast
 }
 
 describe("sanitizeInput method", () => {
@@ -130,5 +134,40 @@ describe("sanitizeInput method", () => {
     const value = "    HELLO   "
     const result = await sanitizeInput.call(context, { value, field })
     expect(result).to.be.equal("hello-create")
+  })
+
+  it("will pick unique values in array", async () => {
+    let field = {
+      type: Object,
+      pickUniqueItems: item => item.key1 + item.key2
+    }
+
+    let value = [
+      {
+        key1: "value",
+        key2: "value"
+      },
+      {
+        key1: "value",
+        key2: "value 2"
+      },
+      {
+        key1: "value",
+        key2: "value"
+      }
+    ]
+
+    let result = await sanitizeInput.call(context, { value, field })
+    expect(result.length).to.be.equal(2)
+
+    field = {
+      type: Object,
+      pickUniqueItems: true
+    }
+
+    value = [1, 2, 3, 2]
+
+    result = await sanitizeInput.call(context, { value, field })
+    expect(result.length).to.be.equal(3)
   })
 })

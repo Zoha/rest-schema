@@ -41,7 +41,7 @@ const validateInputs = async (argFields, inputs, context) => {
       })
     }
     try {
-      await context.validateInput({ value, field, key: field.nestedKey })
+      await context.validateInput({ value, field })
     } catch (e) {
       if (e.list) {
         e.list.forEach(err => formatError(err))

@@ -1,16 +1,18 @@
 const trim = require("../sanitizers/trim")
 const uppercase = require("../sanitizers/uppercase")
 const lowercase = require("../sanitizers/lowercase")
+const pickUniqueItems = require("../sanitizers/pickUniqueItems")
 const isObject = require("../helpers/isObject")
 const isFunction = require("../helpers/isFunction")
 
 const availableSanitizers = {
   trim,
   lowercase,
-  uppercase
+  uppercase,
+  pickUniqueItems
 }
 
-const sanitizeBy = (type, value, shouldBeSanitized, context) => {
+const sanitizeBy = (type, value, shouldBeSanitized, field, context) => {
   if (isObject(shouldBeSanitized)) {
     return sanitizeBy(type, value, shouldBeSanitized[context.route], context)
   }
@@ -19,7 +21,7 @@ const sanitizeBy = (type, value, shouldBeSanitized, context) => {
     return value
   }
 
-  return availableSanitizers[type](value)
+  return availableSanitizers[type](value, shouldBeSanitized, field, context)
 }
 
 const customSanitizeHandler = async (argValue, customSanitize, context) => {
@@ -70,17 +72,22 @@ module.exports = async function({ value, field }) {
 
     // trim value
     if (field.trim) {
-      value = sanitizeBy("trim", value, field.trim, context)
+      value = sanitizeBy("trim", value, field.trim, field, context)
     }
 
     // to lower case
     if (field.lowercase) {
-      value = sanitizeBy("lowercase", value, field.lowercase, context)
+      value = sanitizeBy("lowercase", value, field.lowercase, field, context)
     }
 
     // to upper case
     if (field.uppercase) {
-      value = sanitizeBy("uppercase", value, field.uppercase, context)
+      value = sanitizeBy("uppercase", value, field.uppercase, field, context)
+    }
+
+    // pick unique items
+    if (field.pickUniqueItems) {
+      value = sanitizeBy("pickUniqueItems", value, field.pickUniqueItems, field, context)
     }
   }
 

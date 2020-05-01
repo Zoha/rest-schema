@@ -1,4 +1,4 @@
-module.exports = (value, validItems, key, context) => {
+module.exports = (value, validItems) => {
   if (validItems.includes(value)) {
     return true
   }
