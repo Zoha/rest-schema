@@ -4,7 +4,7 @@ const cast = require("../helpers/cast")
 module.exports = async function({ setInputs = true, req = null, inputsTarget = null } = {}) {
   const context = this
   req = cast(req).to(Object) || context.req
-  inputsTargets = cast(inputsTarget).to(Array) || context.routeObject.inputsTarget || []
+  let inputsTargets = cast(inputsTarget).to(Array) || context.routeObject.inputsTarget || []
   if (!isArray(inputsTargets)) {
     inputsTargets = [inputsTargets]
   }
