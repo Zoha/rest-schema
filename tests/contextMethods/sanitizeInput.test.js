@@ -170,4 +170,46 @@ describe("sanitizeInput method", () => {
     result = await sanitizeInput.call(context, { value, field })
     expect(result.length).to.be.equal(3)
   })
+
+  it("will sanitize on array", async () => {
+    let field = {
+      type: Array,
+      slice: [1]
+    }
+
+    let value = [1, 2, 3]
+
+    let result = await sanitizeInput.call(context, { value, field })
+    expect(result.length).to.be.equal(2)
+    expect(result[0]).to.be.equal(2)
+    expect(result[1]).to.be.equal(3)
+
+    field = {
+      type: Array,
+      slice: [1, 2]
+    }
+
+    result = await sanitizeInput.call(context, { value, field })
+    expect(result.length).to.be.equal(1)
+  })
+
+  it("will sanitize on string", async () => {
+    let field = {
+      type: String,
+      slice: [1]
+    }
+
+    let value = "test"
+
+    let result = await sanitizeInput.call(context, { value, field })
+    expect(result).to.be.equal("est")
+
+    field = {
+      type: String,
+      slice: [1, 2]
+    }
+
+    result = await sanitizeInput.call(context, { value, field })
+    expect(result).to.be.equal("e")
+  })
 })
