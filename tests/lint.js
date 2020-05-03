@@ -2,19 +2,20 @@ const glob = require("glob")
 const { CLIEngine } = require("eslint")
 const path = require("path")
 
+const paths = glob.sync(path.join(__dirname, "../src/") + "**/*.js")
+const engine = new CLIEngine({
+  envs: ["node", "mocha"],
+  useEslintrc: true
+})
+const results = engine.executeOnFiles(paths).results
+
 describe("ESLint", function() {
   this.timeout(8000)
-  it("test code style by lint", () => {
-    const paths = glob.sync(path.join(__dirname, "../src/") + "**/*.js")
-    const engine = new CLIEngine({
-      envs: ["node", "mocha"],
-      useEslintrc: true
-    })
-    const results = engine.executeOnFiles(paths).results
 
-    const finalMessages = []
-    results.forEach(result => {
-      const { messages, filePath } = result
+  results.forEach(result => {
+    const { messages, filePath } = result
+    it(filePath, () => {
+      const finalMessages = []
       if (messages.length > 0) {
         messages.forEach(message => {
           finalMessages.push(
@@ -24,9 +25,9 @@ describe("ESLint", function() {
           )
         })
       }
+      if (finalMessages.length > 0) {
+        throw new Error("there was errors \n" + finalMessages.join("\n"))
+      }
     })
-    if (finalMessages.length > 0) {
-      throw new Error("there was errors \n" + finalMessages.join("\n"))
-    }
   })
 })
