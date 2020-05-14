@@ -16,6 +16,7 @@ const methods = {
   getNestedField: require("./contextMethods/getNestedField"),
   getNestedInput: require("./contextMethods/getNestedInput"),
   getPage: require("./contextMethods/getPage"),
+  getRelations: require("./contextMethods/getRelations"),
   getResource: require("./contextMethods/getResource"),
   getResourceResponse: require("./contextMethods/getResourceResponse"),
   getResponseValuesFromResource: require("./contextMethods/getResponseValuesFromResource"),
@@ -44,6 +45,7 @@ module.exports = (schema, route) => {
     model: schema.model,
     route: route.name,
     routeObject: route,
+    relationFilters: {},
     ...methods
   }
 }

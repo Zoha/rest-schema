@@ -9,10 +9,18 @@ module.exports = async function({
   await context.hook("beforeUpdateResource")
   resource = cast(resource).to(Object) || (await context.getResource())
 
+  let getRouteKeysFilters = await context.getRouteKeysFilters()
+  if (!getRouteKeysFilters.length) {
+    getRouteKeysFilters = [
+      {
+        _id: null
+      }
+    ]
+  }
   await context.model.findOneAndUpdate(
     {
-      $or: await context.getRouteKeysFilters(),
-      ...context.getCustomFilters()
+      $or: getRouteKeysFilters,
+      ...(await context.getCustomFilters())
     },
     await context.getUpdateInputs()
   )

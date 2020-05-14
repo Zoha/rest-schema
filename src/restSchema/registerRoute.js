@@ -16,7 +16,7 @@ module.exports = (router, routeObject, schema) => {
   router[routeObject.method](routeObject.path, middlewareList, async (req, res, next) => {
     try {
       const context = req.rest
-      const result = await routeObject.handler(context)
+      const result = await routeObject.handler(context, req, res, next)
       if (!res.headersSent) {
         if (result) {
           if (typeof result === "object") {

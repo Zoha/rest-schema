@@ -19,6 +19,5 @@ module.exports = userSchema => {
   schema.name = nameFormatter(schema)
   // format routes
   schema.routes = routeFormatter.getRoutes(schema.routes)
-
   return schema
 }

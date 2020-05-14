@@ -1,3 +1,5 @@
+const cast = require("../helpers/cast")
+
 module.exports = async function({
   setCollection = true,
   force = false,
@@ -12,12 +14,15 @@ module.exports = async function({
     return context.collection
   }
 
-  filters = Number(filters) || (await context.getFilters())
+  filters = cast(filters).to(Object) || {}
   skip = Number(skip) || (await context.getSkip())
   limit = Number(limit) || (await context.getLimit())
 
   const collection = await context.model
-    .find(filters)
+    .find({
+      ...(await context.getFilters()),
+      ...filters
+    })
     .skip(skip)
     .limit(limit)
 

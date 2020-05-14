@@ -1,15 +1,18 @@
 const validationMessages = require("../defaults/defaultMessages")
+const cast = require("../helpers/cast")
 
 module.exports = async function({
   errorOnNotFound = false,
   setResource = true,
   force = false,
   resourceId = null,
-  model = null
+  model = null,
+  filters = null
 } = {}) {
   const context = this
 
   model = model || context.model
+  filters = cast(filters).to(Object) || {}
 
   await context.hook("beforeGetResource")
 
@@ -24,9 +27,18 @@ module.exports = async function({
       _id: resourceId
     })
   } else {
+    let getRouteKeysFilters = await context.getRouteKeysFilters()
+    if (!getRouteKeysFilters.length) {
+      getRouteKeysFilters = [
+        {
+          _id: null
+        }
+      ]
+    }
     resource = await model.findOne({
-      $or: await context.getRouteKeysFilters(),
-      ...context.getCustomFilters()
+      $or: getRouteKeysFilters,
+      ...(await context.getCustomFilters()),
+      ...filters
     })
   }
 

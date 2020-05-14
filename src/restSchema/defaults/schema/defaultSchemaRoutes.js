@@ -1,4 +1,8 @@
 const messages = require("../defaultMessages")
+const getRelationPath = require("../../helpers/getRelationPaths")
+const relationTypes = require("../../enums/relationTypes")
+const manualInvolveMiddlewareList = require("../../helpers/manualInvolveMiddlewareList")
+const injectContext = require("../../middleware/registerMiddlewareList")
 
 module.exports = {
   index: {
@@ -144,6 +148,107 @@ module.exports = {
       // if validation was passed get message from defaults
       const message = messages.validationPassed
       return { message }
+    }
+  },
+  relation: {
+    name: "relation",
+    method: "get",
+    path: "/:id/*",
+    handler: async (context, req, res, next) => {
+      // get relations object in format {schemaBuilder , type , fieldName}
+      const relations = await context.getRelations()
+
+      // get relation path details {path , fieldName}
+      const relationPath = getRelationPath(context.req.url)
+      // if relation map is invalid or field name not exists in relations
+      if (!relationPath || !Object.keys(relations).includes(relationPath.fieldName)) {
+        return next()
+      }
+
+      // get relation in list of all relations
+      const relation = relations[relationPath.fieldName]
+      // determine route related to relation type
+      let relationRoute
+
+      // if route path is for resource route and there is no more nested
+      if (
+        relation.type === relationTypes.resource &&
+        relationPath.path.split("/").filter(i => i).length === 1
+      ) {
+        relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "singleRelation")
+        if (!relationRoute) {
+          relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "single")
+        }
+      }
+      // if route path is for collection route and there is no more nested
+      else if (
+        relation.type === relationTypes.collection &&
+        relationPath.path.split("/").filter(i => i).length === 2
+      ) {
+        relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "indexRelation")
+        if (!relationRoute) {
+          relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "index")
+        }
+      }
+      // if route path is for resource route and there is more nested levels
+      else if (
+        relation.type === relationTypes.resource &&
+        relationPath.path.split("/").filter(i => i).length > 1
+      ) {
+        relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "relation")
+      }
+      // if route path is for collection route and there is more nested levels
+      else if (
+        relation.type === relationTypes.collection &&
+        relationPath.path.split("/").filter(i => i).length > 2
+      ) {
+        relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "relation")
+      }
+
+      if (!relationRoute || !relationRoute.handler) {
+        return next()
+      }
+
+      // get resource if not exists in context
+      const resource = await context.getResource()
+
+      // call next if resource not found
+      if (!resource) {
+        return next()
+      }
+
+      // switch res schema in request and create context
+      const createContext = require("../../createContext")
+      const relationContext = createContext(relation.schemaBuilder.schema, relationRoute)
+      relationContext.isRelation = true
+      relationContext.parent = context
+      const relationPathIdRegexResult = /\/[^/]+\/([^/]+)\//.exec(relationPath.path)
+      relationContext.req = {
+        ...context.req,
+        rest: relationContext,
+        url: relationPath.path,
+        params: {
+          id: relationPathIdRegexResult ? relationPathIdRegexResult[1] : ""
+        }
+      }
+
+      // get query from find method
+      const relationFilters = await relation.field.find(
+        resource,
+        context,
+        relationContext,
+        relation
+      )
+      relationContext.relationFilters = relationFilters
+
+      // call relation schema middleware list manually
+      if (!relation.field.withoutMiddleware) {
+        const middlewareList = [injectContext(relation.schemaBuilder.schema, relationRoute)]
+        await manualInvolveMiddlewareList(relationContext.req, res, middlewareList)
+      }
+
+      // call the handler and return result
+      return relationRoute.handler(relationContext, relationContext.req, res, next)
     }
   }
 }

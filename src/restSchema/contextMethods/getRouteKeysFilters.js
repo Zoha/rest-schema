@@ -6,17 +6,22 @@ module.exports = async function({
   req = null,
   id = null,
   idKey = null,
-  idTarget = null
+  idTarget = null,
+  fallbackFilters = null
 } = {}) {
   const context = this
   routeKeys = cast(routeKeys).to(Array) || context.getRouteKeys()
+  fallbackFilters = cast(fallbackFilters).to(Object) || context.relationFilters || null
 
   const request = cast(req).to(Object) || context.req
 
   idTarget = cast(idTarget).to(String) || "params"
   idKey = cast(idKey).to(String) || "id"
 
-  if (id == null && (!request.params || !request[idTarget][idKey])) {
+  if (id == null && (!request[idTarget] || !request[idTarget][idKey])) {
+    if (fallbackFilters) {
+      return fallbackFilters
+    }
     throw new Error(defaultMessages.idParamNotFound)
   }
 

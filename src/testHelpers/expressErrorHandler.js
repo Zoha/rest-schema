@@ -1,4 +1,5 @@
-module.exports = (error, req, res) => {
+module.exports = (error, req, res, next) => {
   console.log(error)
-  return res.status(500).json(error)
+  res.status(500).json(error)
+  next()
 }

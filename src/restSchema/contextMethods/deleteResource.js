@@ -6,9 +6,17 @@ module.exports = async function({ setDeletedResource = true, resource = null } =
   resource =
     context.cast(resource).to(Object) || (await context.getResource({ errorOnNotFound: true }))
 
+  let getRouteKeysFilters = await context.getRouteKeysFilters()
+  if (!getRouteKeysFilters.length) {
+    getRouteKeysFilters = [
+      {
+        _id: null
+      }
+    ]
+  }
   await context.model.findOneAndRemove({
-    $or: await context.getRouteKeysFilters(),
-    ...context.getCustomFilters()
+    $or: getRouteKeysFilters,
+    ...(await context.getCustomFilters())
   })
 
   if (setDeletedResource) {

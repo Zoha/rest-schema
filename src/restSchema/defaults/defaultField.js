@@ -1,4 +1,6 @@
 const { Mixed } = require("../types")
+const relationTypes = require("../enums/relationTypes")
+const { singular, plural } = require("pluralize")
 
 module.exports = {
   type: Mixed,
@@ -36,6 +38,37 @@ module.exports = {
   // relation
   ref: undefined,
   refPath: undefined,
+  find: (resource, ctx, relationCtx, relation) => {
+    const { fieldName, type } = relation
+    if (type === relationTypes.resource) {
+      return {
+        $or: [
+          {
+            [singular(ctx.schema.name).toLowerCase()]: resource._id
+          },
+          {
+            [plural(ctx.schema.name).toLowerCase()]: resource._id
+          },
+          {
+            _id: resource[fieldName]
+          }
+        ].filter(i => !!Object.values(i)[0])
+      }
+    }
+    return {
+      $or: [
+        {
+          _id: { $in: resource[fieldName] }
+        },
+        {
+          [plural(ctx.schema.name).toLowerCase()]: resource._id
+        },
+        {
+          [singular(ctx.schema.name).toLowerCase()]: resource._id
+        }
+      ].filter(i => !!Object.values(i)[0])
+    }
+  },
 
   // validations
   validate: undefined,
