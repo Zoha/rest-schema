@@ -26,6 +26,22 @@ const Profile = restModel(ProfileModel, {
   }
 })
 
+const CustomProfileFinderUser = restModel(
+  UserModel,
+  {
+    profile: {
+      type: ObjectId,
+      ref: "Profile",
+      find: () => ({
+        name: "nameForFind"
+      })
+    }
+  },
+  {
+    name: "customUserModelName"
+  }
+)
+
 describe("test relation routes", () => {
   beforeEach(async () => {
     await UserModel.deleteMany()
@@ -33,32 +49,32 @@ describe("test relation routes", () => {
     app.use(bodyParser.json())
     app.use("/users", User.resource())
     app.use("/profiles", Profile.resource())
+    app.use("/customProfileFinderUser", CustomProfileFinderUser.resource())
     app.use(expressErrorHandler)
   })
 
   it("single to single relation", async () => {
-    const user = await UserModel.create({})
-    const profile = await ProfileModel.create({
-      user: user._id
+    const profile = await ProfileModel.create({})
+    const user = await UserModel.create({
+      profile: profile._id
     })
-    await request(app)
-      .get(`/users/${user._id}/profile`)
-      .expect("Content-Type", /json/)
-      .expect(res => {
-        const response = JSON.parse(res.text)
-        expect(response).to.haveOwnProperty("_id")
-        expect(response)
-          .to.haveOwnProperty("user")
-          .that.equals(user._id.toString())
-      })
-
-    await request(app)
-      .get(`/users/${user._id}/profile/user`)
-      .expect("Content-Type", /json/)
-      .expect(res => {
-        const response = JSON.parse(res.text)
-        expect(response._id).to.be.equals(user._id.toString())
-      })
+    // await request(app)
+    //   .get(`/users/${user._id}/profile`)
+    //   .expect("Content-Type", /json/)
+    //   .expect(res => {
+    //     const response = JSON.parse(res.text)
+    //     expect(response).to.haveOwnProperty("_id")
+    //   })
+    // await request(app)
+    //   .get(`/users/${user._id}/profile/user`)
+    //   .expect("Content-Type", /json/)
+    //   .expect(res => {
+    //     const response = JSON.parse(res.text)
+    //     expect(response._id).to.be.equals(user._id.toString())
+    //     expect(response)
+    //       .to.haveOwnProperty("profile")
+    //       .that.equals(profile._id.toString())
+    //   })
 
     await request(app)
       .get(`/users/${user._id}/profile/user/profile`)
@@ -78,12 +94,33 @@ describe("test relation routes", () => {
   })
 
   it("if resource not founded will pass to next route", async () => {
-    const user = await UserModel.create({})
-    const profile = await ProfileModel.create({
-      user: user._id
+    const profile = await ProfileModel.create({})
+    const user = await UserModel.create({
+      profile: profile._id
     })
     await request(app)
       .get(`/users/notExists/profile`)
       .expect(404)
+  })
+
+  it("single relation with custom find method on field", async () => {
+    const profile = await ProfileModel.create({})
+    const user = await UserModel.create({
+      profile: profile._id
+    })
+    const profile2 = await ProfileModel.create({
+      name: "nameForFind"
+    })
+
+    // this will find profile 2 instead of profile 1 because
+    // we are using custom finder user resource that
+    // will find profile that its name equals nameForFind
+    await request(app)
+      .get(`/customProfileFinderUser/${user._id}/profile`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equal(profile2._id.toString())
+      })
   })
 })

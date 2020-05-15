@@ -27,19 +27,20 @@ module.exports = async function({
       _id: resourceId
     })
   } else {
-    let getRouteKeysFilters = await context.getRouteKeysFilters()
-    if (!getRouteKeysFilters.length) {
-      getRouteKeysFilters = [
-        {
-          _id: null
-        }
-      ]
+    let getRouteKeysFilters = {
+      $or: await context.getRouteKeysFilters()
     }
-    resource = await model.findOne({
-      $or: getRouteKeysFilters,
+    if (!getRouteKeysFilters.$or.length) {
+      getRouteKeysFilters = {}
+    }
+    let finalFilters = {
+      ...getRouteKeysFilters,
       ...(await context.getCustomFilters()),
       ...filters
-    })
+    }
+    if (Object.keys(finalFilters).length) {
+      resource = await model.findOne(finalFilters)
+    }
   }
 
   if (errorOnNotFound && !resource) {

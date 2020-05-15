@@ -2,7 +2,9 @@ const mongoose = require("./mongoose")
 
 const schema = mongoose.Schema(
   {
-    name: String
+    profile: {
+      type: mongoose.Schema.Types.ObjectId
+    }
   },
   { timestamps: true }
 )

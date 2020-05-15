@@ -1,4 +1,4 @@
-module.exports = async function({ setDeletedResource = true, resource = null } = {}) {
+module.exports = async function({ setDeletedResource = true, resource = null, filters = {} } = {}) {
   const context = this
 
   await context.hook("beforeDeleteResource")
@@ -6,18 +6,19 @@ module.exports = async function({ setDeletedResource = true, resource = null } =
   resource =
     context.cast(resource).to(Object) || (await context.getResource({ errorOnNotFound: true }))
 
-  let getRouteKeysFilters = await context.getRouteKeysFilters()
-  if (!getRouteKeysFilters.length) {
-    getRouteKeysFilters = [
-      {
-        _id: null
-      }
-    ]
+  let getRouteKeysFilters = {
+    $or: await context.getRouteKeysFilters()
   }
-  await context.model.findOneAndRemove({
-    $or: getRouteKeysFilters,
+  if (!getRouteKeysFilters.$or.length) {
+    getRouteKeysFilters = {}
+  }
+  let finalFilters = {
+    ...getRouteKeysFilters,
     ...(await context.getCustomFilters())
-  })
+  }
+  if (Object.keys(finalFilters).length) {
+    await context.model.findOneAndRemove(finalFilters)
+  }
 
   if (setDeletedResource) {
     context.deletedResource = resource
