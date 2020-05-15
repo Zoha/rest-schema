@@ -1,12 +1,16 @@
 const cast = require("../helpers/cast")
+const deepMergeFilters = require("../helpers/deepMergeFilters")
 
 module.exports = async function({
   setResource = true,
   setUpdatedResource = true,
-  resource = null
+  resource = null,
+  filters = null
 } = {}) {
   const context = this
   await context.hook("beforeUpdateResource")
+  filters = context.cast(filters).to(Object) || {}
+
   resource = cast(resource).to(Object) || (await context.getResource())
 
   let getRouteKeysFilters = {
@@ -15,10 +19,11 @@ module.exports = async function({
   if (!getRouteKeysFilters.$or.length) {
     getRouteKeysFilters = {}
   }
-  let finalFilters = {
-    ...getRouteKeysFilters,
-    ...(await context.getCustomFilters())
-  }
+  let finalFilters = deepMergeFilters([
+    getRouteKeysFilters,
+    await context.getCustomFilters(),
+    filters
+  ])
   if (Object.keys(finalFilters).length) {
     await context.model.findOneAndUpdate(finalFilters, await context.getUpdateInputs())
   }

@@ -3,8 +3,9 @@ const { expect } = require("chai")
 const express = require("express")
 const request = require("supertest")
 const bodyParser = require("body-parser")
-const UserModel = require("../../src/testHelpers/UserModel")
-const ProfileModel = require("../../src/testHelpers/ProfileModel")
+const UserModel = require("../../src/testHelpers/userModel")
+const ProfileModel = require("../../src/testHelpers/profileModel")
+const RoleModel = require("../../src/testHelpers/roleModel")
 const expressErrorHandler = require("../../src/testHelpers/expressErrorHandler")
 const restModel = require("../../src/restSchema/schema")
 const { ObjectId } = require("../../src/restSchema/types")
@@ -16,6 +17,10 @@ const User = restModel(UserModel, {
   profile: {
     type: ObjectId,
     ref: "Profile"
+  },
+  role: {
+    type: ObjectId,
+    ref: "Role"
   }
 })
 
@@ -24,6 +29,15 @@ const Profile = restModel(ProfileModel, {
     type: ObjectId,
     ref: "User"
   }
+})
+
+const Role = restModel(RoleModel, {
+  users: [
+    {
+      type: ObjectId,
+      ref: "User"
+    }
+  ]
 })
 
 const CustomProfileFinderUser = restModel(
@@ -46,9 +60,11 @@ describe("test relation routes", () => {
   beforeEach(async () => {
     await UserModel.deleteMany()
     await ProfileModel.deleteMany()
+    await RoleModel.deleteMany()
     app.use(bodyParser.json())
     app.use("/users", User.resource())
     app.use("/profiles", Profile.resource())
+    app.use("/roles", Role.resource())
     app.use("/customProfileFinderUser", CustomProfileFinderUser.resource())
     app.use(expressErrorHandler)
   })
@@ -58,23 +74,23 @@ describe("test relation routes", () => {
     const user = await UserModel.create({
       profile: profile._id
     })
-    // await request(app)
-    //   .get(`/users/${user._id}/profile`)
-    //   .expect("Content-Type", /json/)
-    //   .expect(res => {
-    //     const response = JSON.parse(res.text)
-    //     expect(response).to.haveOwnProperty("_id")
-    //   })
-    // await request(app)
-    //   .get(`/users/${user._id}/profile/user`)
-    //   .expect("Content-Type", /json/)
-    //   .expect(res => {
-    //     const response = JSON.parse(res.text)
-    //     expect(response._id).to.be.equals(user._id.toString())
-    //     expect(response)
-    //       .to.haveOwnProperty("profile")
-    //       .that.equals(profile._id.toString())
-    //   })
+    await request(app)
+      .get(`/users/${user._id}/profile`)
+      .expect("Content-Type", /json/)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.haveOwnProperty("_id")
+      })
+    await request(app)
+      .get(`/users/${user._id}/profile/user`)
+      .expect("Content-Type", /json/)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equals(user._id.toString())
+        expect(response)
+          .to.haveOwnProperty("profile")
+          .that.equals(profile._id.toString())
+      })
 
     await request(app)
       .get(`/users/${user._id}/profile/user/profile`)
@@ -121,6 +137,45 @@ describe("test relation routes", () => {
       .expect(res => {
         const response = JSON.parse(res.text)
         expect(response._id).to.be.equal(profile2._id.toString())
+      })
+  })
+
+  it("single to many relations", async () => {
+    const role = await RoleModel.create({
+      name: "admin"
+    })
+
+    const user1 = await UserModel.create({
+      role: role._id
+    })
+
+    const user2 = await UserModel.create({
+      role: role._id
+    })
+
+    await request(app)
+      .get(`/roles/${role._id}/users`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(2)
+        expect(response[0]._id).to.be.equal(user1._id.toString())
+      })
+
+    await request(app)
+      .get(`/roles/${role._id}/users/${user2._id}`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equal(user2._id.toString())
+      })
+
+    await request(app)
+      .get(`/roles/${role._id}/users/${user2._id}/role`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equal(role._id.toString())
       })
   })
 })

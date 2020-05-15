@@ -1,5 +1,12 @@
-module.exports = async function({ setDeletedResource = true, resource = null, filters = {} } = {}) {
+const deepMergeFilters = require("../helpers/deepMergeFilters")
+
+module.exports = async function({
+  setDeletedResource = true,
+  resource = null,
+  filters = null
+} = {}) {
   const context = this
+  filters = context.cast(filters).to(Object) || {}
 
   await context.hook("beforeDeleteResource")
 
@@ -12,10 +19,11 @@ module.exports = async function({ setDeletedResource = true, resource = null, fi
   if (!getRouteKeysFilters.$or.length) {
     getRouteKeysFilters = {}
   }
-  let finalFilters = {
-    ...getRouteKeysFilters,
-    ...(await context.getCustomFilters())
-  }
+  let finalFilters = deepMergeFilters([
+    getRouteKeysFilters,
+    await context.getCustomFilters(),
+    filters
+  ])
   if (Object.keys(finalFilters).length) {
     await context.model.findOneAndRemove(finalFilters)
   }

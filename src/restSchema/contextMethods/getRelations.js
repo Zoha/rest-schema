@@ -24,9 +24,9 @@ module.exports = async function({ fields = null } = {}) {
       }
       if (ref) {
         const relationSchemaBuilder =
-          field.ref.constructor && field.ref.constructor.name === "SchemaBuilder"
-            ? field.ref
-            : getSchemaModel(field.ref)
+          ref && ref.constructor && ref.constructor.name === "SchemaBuilder"
+            ? ref
+            : getSchemaModel(ref)
         if (relationSchemaBuilder) {
           relations[fieldName] = {
             schemaBuilder: relationSchemaBuilder,

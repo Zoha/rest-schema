@@ -4,6 +4,9 @@ const schema = mongoose.Schema(
   {
     profile: {
       type: mongoose.Schema.Types.ObjectId
+    },
+    role: {
+      type: mongoose.Schema.Types.ObjectId
     }
   },
   { timestamps: true }

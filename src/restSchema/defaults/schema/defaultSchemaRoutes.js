@@ -171,9 +171,12 @@ module.exports = {
       let relationRoute
 
       // if route path is for resource route and there is no more nested
+      // or was for collection and there is an id specified for that list
       if (
-        relation.type === relationTypes.resource &&
-        relationPath.path.split("/").filter(i => i).length === 1
+        (relation.type === relationTypes.resource &&
+          relationPath.path.split("/").filter(i => i).length === 1) ||
+        (relation.type === relationTypes.collection &&
+          relationPath.path.split("/").filter(i => i).length === 2)
       ) {
         relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "singleRelation")
         if (!relationRoute) {
@@ -183,7 +186,7 @@ module.exports = {
       // if route path is for collection route and there is no more nested
       else if (
         relation.type === relationTypes.collection &&
-        relationPath.path.split("/").filter(i => i).length === 2
+        relationPath.path.split("/").filter(i => i).length === 1
       ) {
         relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "indexRelation")
         if (!relationRoute) {
@@ -222,11 +225,16 @@ module.exports = {
       const relationContext = createContext(relation.schemaBuilder.schema, relationRoute)
       relationContext.isRelation = true
       relationContext.parent = context
-      const relationPathIdRegexResult = /\/[^/]+\/([^/]+)\//.exec(relationPath.path)
+      relationContext.res = context.res
+      const relationPathIdRegexResult = /\/[^/]+\/([^/]+)/.exec(relationPath.path)
+      let url = relationPath.path
+      if (relation.type == relationTypes.collection && relationRoute.name == "relation") {
+        url = relationPath.path.replace(/\/[^/]+/, "")
+      }
       relationContext.req = {
         ...context.req,
         rest: relationContext,
-        url: relationPath.path,
+        url,
         params: {
           id: relationPathIdRegexResult ? relationPathIdRegexResult[1] : ""
         }
@@ -240,7 +248,6 @@ module.exports = {
         relation
       )
       relationContext.relationFilters = relationFilters
-
       // call relation schema middleware list manually
       if (!relation.field.withoutMiddleware) {
         const middlewareList = [injectContext(relation.schemaBuilder.schema, relationRoute)]

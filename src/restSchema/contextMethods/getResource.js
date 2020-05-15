@@ -1,5 +1,6 @@
 const validationMessages = require("../defaults/defaultMessages")
 const cast = require("../helpers/cast")
+const deepMergeFilters = require("../helpers/deepMergeFilters")
 
 module.exports = async function({
   errorOnNotFound = false,
@@ -33,11 +34,11 @@ module.exports = async function({
     if (!getRouteKeysFilters.$or.length) {
       getRouteKeysFilters = {}
     }
-    let finalFilters = {
-      ...getRouteKeysFilters,
-      ...(await context.getCustomFilters()),
-      ...filters
-    }
+    let finalFilters = deepMergeFilters([
+      getRouteKeysFilters,
+      await context.getCustomFilters(),
+      filters
+    ])
     if (Object.keys(finalFilters).length) {
       resource = await model.findOne(finalFilters)
     }

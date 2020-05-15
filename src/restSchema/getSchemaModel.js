@@ -10,7 +10,7 @@ const formatName = name => {
 const getSchemaModel = name => {
   const formattedModel = formatName(name)
   if (definedSchemaList[formattedModel] == null) {
-    throw new Error(`there is no schema with ${formattedModel} name`)
+    definedSchemaList[formattedModel] = {}
   }
   return definedSchemaList[formattedModel]
 }
