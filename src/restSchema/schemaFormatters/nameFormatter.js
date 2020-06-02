@@ -1,3 +1,5 @@
+const { RestSchemaError } = require("../errors")
+
 module.exports = schema => {
   const { name } = schema
   if (name) {
@@ -5,7 +7,7 @@ module.exports = schema => {
   }
   const { model } = schema
   if (!model) {
-    throw new Error("model is not defined for getting schema name")
+    throw new RestSchemaError("model is not defined for getting schema name")
   }
   if (model.collection && model.collection.collectionName) {
     return model.collection.collectionName

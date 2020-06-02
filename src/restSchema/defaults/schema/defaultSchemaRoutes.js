@@ -3,6 +3,7 @@ const getRelationPath = require("../../helpers/getRelationPaths")
 const relationTypes = require("../../enums/relationTypes")
 const manualInvolveMiddlewareList = require("../../helpers/manualInvolveMiddlewareList")
 const injectContext = require("../../middleware/registerMiddlewareList")
+const { ValidationError } = require("../../errors")
 
 module.exports = {
   index: {
@@ -58,7 +59,7 @@ module.exports = {
       // mean that we don't have any validation errors
       const validationResult = await context.validateInputs()
       if (validationResult.length) {
-        return context.res.status(400).json(validationResult)
+        throw new ValidationError("some of validations are failed", validationResult)
       }
 
       // create resource using model

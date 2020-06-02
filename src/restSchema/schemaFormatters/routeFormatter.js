@@ -1,5 +1,6 @@
 const defaultRoutes = require("../defaults/schema/defaultSchemaRoutes")
 const defaultRoute = require("../defaults/defaultRoute")
+const { InvalidArgumentError } = require("../errors")
 
 const getRoute = route => {
   if (typeof route == "object") {
@@ -11,7 +12,7 @@ const getRoute = route => {
   } else if (typeof route === "string" && defaultRoutes[route]) {
     return defaultRoutes[route]
   }
-  throw new Error("route name not exists")
+  throw new InvalidArgumentError("route name not exists")
 }
 
 const getRoutes = routes => {

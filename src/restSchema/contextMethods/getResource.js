@@ -1,6 +1,7 @@
 const validationMessages = require("../defaults/defaultMessages")
 const cast = require("../helpers/cast")
 const deepMergeFilters = require("../helpers/deepMergeFilters")
+const { NotFoundError } = require("../errors")
 
 module.exports = async function({
   errorOnNotFound = false,
@@ -45,7 +46,7 @@ module.exports = async function({
   }
 
   if (errorOnNotFound && !resource) {
-    throw new Error(validationMessages.resourceNotFound)
+    throw new NotFoundError(validationMessages.resourceNotFound)
   }
 
   if (setResource && !!resource) {

@@ -14,6 +14,7 @@ const checkEnum = require("../validators/enum")
 const checkUnique = require("../validators/unique")
 const checkAuth = require("../validators/auth")
 const uniqueItems = require("../validators/uniqueItems")
+const { RestSchemaError } = require("../errors")
 
 const getErrorMessage = (type, key, value, args) => {
   let message = validationMessages[type]
@@ -68,9 +69,9 @@ const check = async ({ value, validationArgs, key, field, context, validator, va
     shouldBeChecked &&
     !(await validator(value, validationArgs, field, context))
   ) {
-    throw new Error(message)
+    throw new RestSchemaError(message)
   } else if (shouldBeChecked && !validator(value, validationArgs, field, context)) {
-    throw new Error(message)
+    throw new RestSchemaError(message)
   }
   return true
 }
@@ -127,7 +128,7 @@ const checkCustomValidation = async ({ value, validationArgs, key, field, contex
   }
 
   if (!result) {
-    throw new Error(message)
+    throw new RestSchemaError(message)
   }
 
   return true

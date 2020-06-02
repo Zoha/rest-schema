@@ -1,6 +1,7 @@
 const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const { addSchemaModel } = require("./addSchemaModel")
 const { getSchemaModel } = require("./getSchemaModel")
+const { InvalidArgumentError } = require("./errors")
 
 module.exports = (model, fields, options = {}) => {
   if (fields !== undefined) {
@@ -11,7 +12,7 @@ module.exports = (model, fields, options = {}) => {
     return getSchemaModel(model)
   }
 
-  throw new Error(
+  throw new InvalidArgumentError(
     `model name should be a string, ${typeof model} given. remember that for creating schema second parameter is required`
   )
 }

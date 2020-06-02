@@ -1,5 +1,6 @@
 const defaultMessages = require("../defaults/defaultMessages")
 const cast = require("../helpers/cast")
+const { RestSchemaError } = require("../errors")
 
 module.exports = async function({
   routeKeys = null,
@@ -22,7 +23,7 @@ module.exports = async function({
     if (fallbackFilters) {
       return fallbackFilters
     }
-    throw new Error(defaultMessages.idParamNotFound)
+    throw new RestSchemaError(defaultMessages.idParamNotFound)
   }
 
   const requestId = id || request[idTarget][idKey]

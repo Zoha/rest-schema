@@ -14,29 +14,21 @@ module.exports = (router, routeObject, schema) => {
 
   // registering the route
   router[routeObject.method](routeObject.path, middlewareList, async (req, res, next) => {
+    const context = req.rest
     try {
-      const context = req.rest
       const result = await routeObject.handler(context, req, res, next)
       if (!res.headersSent) {
-        if (result) {
-          if (typeof result === "object") {
-            return res.json(result)
-          }
-          return res.send(result)
+        const response = result || context.response
+        if (response != null) {
+          return context.schema.wrappers.response(response, req, res, next)
         }
-
-        if (context.response) {
-          if (typeof context.response === "object") {
-            return res.json(context.response)
-          }
-          return res.send(context.response)
-        }
-
         return next()
       }
-    } catch (e) {
-      next(e)
+    } catch (err) {
+      if (!res.headersSent) {
+        return context.schema.wrappers.error(err, context, req, res, next)
+      }
+      return next(err)
     }
-    return true
   })
 }
