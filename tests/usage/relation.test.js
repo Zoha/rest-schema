@@ -6,6 +6,8 @@ const bodyParser = require("body-parser")
 const UserModel = require("../../src/testHelpers/userModel")
 const ProfileModel = require("../../src/testHelpers/profileModel")
 const RoleModel = require("../../src/testHelpers/roleModel")
+const CommentModel = require("../../src/testHelpers/commentModel")
+const PermissionModel = require("../../src/testHelpers/permissionModel")
 const expressErrorHandler = require("../../src/testHelpers/expressErrorHandler")
 const restModel = require("../../src/restSchema/schema")
 const { ObjectId } = require("../../src/restSchema/types")
@@ -21,7 +23,13 @@ const User = restModel(UserModel, {
   role: {
     type: ObjectId,
     ref: "Role"
-  }
+  },
+  comments: [
+    {
+      type: ObjectId,
+      ref: "Comment"
+    }
+  ]
 })
 
 const Profile = restModel(ProfileModel, {
@@ -36,6 +44,28 @@ const Role = restModel(RoleModel, {
     {
       type: ObjectId,
       ref: "User"
+    }
+  ],
+  permissions: [
+    {
+      type: ObjectId,
+      ref: "Permission"
+    }
+  ]
+})
+
+const Comment = restModel(CommentModel, {
+  user: {
+    type: ObjectId,
+    ref: "User"
+  }
+})
+
+const Permission = restModel(PermissionModel, {
+  roles: [
+    {
+      type: ObjectId,
+      ref: "Role"
     }
   ]
 })
@@ -56,15 +86,19 @@ const CustomProfileFinderUser = restModel(
   }
 )
 
-describe("test relation routes", () => {
+describe("relation routes", () => {
   beforeEach(async () => {
     await UserModel.deleteMany()
     await ProfileModel.deleteMany()
     await RoleModel.deleteMany()
+    await CommentModel.deleteMany()
+    await PermissionModel.deleteMany()
     app.use(bodyParser.json())
     app.use("/users", User.resource())
     app.use("/profiles", Profile.resource())
     app.use("/roles", Role.resource())
+    app.use("/comments", Comment.resource())
+    app.use("/permissions", Permission.resource())
     app.use("/customProfileFinderUser", CustomProfileFinderUser.resource())
     app.use(expressErrorHandler)
   })
@@ -176,6 +210,142 @@ describe("test relation routes", () => {
       .expect(res => {
         const response = JSON.parse(res.text)
         expect(response._id).to.be.equal(role._id.toString())
+      })
+  })
+
+  it("user and comments relations", async () => {
+    const user1 = await UserModel.create({
+      name: "username1"
+    })
+    const user2 = await UserModel.create({
+      name: "username2"
+    })
+
+    const comment1 = await CommentModel.create({
+      body: "comment1",
+      user: user1
+    })
+
+    const comment2 = await CommentModel.create({
+      body: "comment2",
+      user: user1
+    })
+
+    const comment3 = await CommentModel.create({
+      body: "comment3",
+      user: user2
+    })
+
+    await request(app)
+      .get(`/users/${user1._id}/comments`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(2)
+        expect(response[0]._id).to.be.equal(comment1._id.toString())
+        expect(response[1]._id).to.be.equal(comment2._id.toString())
+      })
+    await request(app)
+      .get(`/users/${user2._id}/comments`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(1)
+        expect(response[0]._id).to.be.equal(comment3._id.toString())
+      })
+
+    await request(app)
+      .get(`/users/${user2._id}/comments/${comment3._id}`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equal(comment3._id.toString())
+      })
+
+    await request(app)
+      .get(`/users/${user2._id}/comments/${comment3._id}/user`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equal(user2._id.toString())
+      })
+
+    await request(app)
+      .get(`/comments/${comment3._id}/user`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equal(user2._id.toString())
+      })
+  })
+
+  it("roles and permissions relation", async () => {
+    const permission1 = await PermissionModel.create({
+      name: "username1"
+    })
+    const permission2 = await PermissionModel.create({
+      name: "username1"
+    })
+    const permission3 = await PermissionModel.create({
+      name: "username1"
+    })
+    const role1 = await RoleModel.create({
+      name: "admin",
+      permissions: [permission1, permission2]
+    })
+    const role2 = await RoleModel.create({
+      name: "admin",
+      permissions: [permission2, permission3]
+    })
+    const user = await UserModel.create({
+      role: role1
+    })
+
+    await request(app)
+      .get(`/permissions/${permission2._id}/roles`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(2)
+        expect(response[0]._id).to.be.equal(role1._id.toString())
+        expect(response[1]._id).to.be.equal(role2._id.toString())
+      })
+
+    await request(app)
+      .get(`/permissions/${permission1._id}/roles`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(1)
+        expect(response[0]._id).to.be.equal(role1._id.toString())
+      })
+
+    await request(app)
+      .get(`/permissions/${permission2._id}/roles/${role2._id}/permissions`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(2)
+        expect(response[0]._id).to.be.equal(permission2._id.toString())
+        expect(response[1]._id).to.be.equal(permission3._id.toString())
+      })
+
+    await request(app)
+      .get(`/permissions/${permission1._id}/roles/${role1._id}/users`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response[0]._id).to.be.equal(user._id.toString())
+      })
+
+    await request(app)
+      .get(`/roles/${role2._id}/permissions`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(2)
+        expect(response[0]._id).to.be.equal(permission2._id.toString())
+        expect(response[1]._id).to.be.equal(permission3._id.toString())
       })
   })
 })
