@@ -13,6 +13,11 @@ module.exports = userSchema => {
     ...schemaDefaults.pagination,
     ...(userSchema.pagination || {})
   }
+  // merge pagination meta
+  schema.wrappers = {
+    ...schemaDefaults.wrappers,
+    ...(userSchema.wrappers || {})
+  }
   // format schema model
   schema.model = modelFormatter(schema.model)
   // get schema name

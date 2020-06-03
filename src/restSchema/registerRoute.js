@@ -20,13 +20,39 @@ module.exports = (router, routeObject, schema) => {
       if (!res.headersSent) {
         const response = result || context.response
         if (response != null) {
-          return context.schema.wrappers.response(response, req, res, next)
+          // apply wrapper
+          const wrapperResponse = context.schema.wrappers.response(response, req, res, next)
+
+          if (res.headersSent) {
+            return
+          }
+
+          // if wrapper returns response
+          if (wrapperResponse) {
+            if (typeof wrapperResponse === "object") {
+              return res.json(wrapperResponse)
+            }
+            return res.send(wrapperResponse)
+          }
         }
         return next()
       }
     } catch (err) {
       if (!res.headersSent) {
-        return context.schema.wrappers.error(err, context, req, res, next)
+        // apply error response
+        const wrapperResponse = context.schema.wrappers.error(err, context, req, res, next)
+
+        if (res.headersSent) {
+          return
+        }
+
+        // if wrapper returns response
+        if (wrapperResponse) {
+          if (typeof wrapperResponse === "object") {
+            return res.json(wrapperResponse)
+          }
+          return res.send(wrapperResponse)
+        }
       }
       return next(err)
     }
