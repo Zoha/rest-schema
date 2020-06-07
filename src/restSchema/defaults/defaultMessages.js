@@ -14,7 +14,8 @@ module.exports = {
     auth: "authorization failed for {key}",
     uniqueItems: "{key} should have unique items"
   },
-  idParamNotFound: ":id param not exists in request",
+  idParamNotFound: ":id param does not exists in request",
   resourceNotFound: "resource not found",
-  validationPassed: "validation passed, request is valid"
+  validationPassed: "validation passed, request is valid",
+  inactiveRouteMessage: "route is inactive"
 }

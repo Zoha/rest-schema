@@ -1,4 +1,5 @@
 const cast = require("../helpers/cast")
+const message = require("./defaultMessages")
 
 module.exports = {
   // basic info of route
@@ -17,6 +18,9 @@ module.exports = {
     skip: "skip",
     page: "page"
   },
+
+  // default route handler
+  handler: () => ({ message: message.inactiveRouteMessage }),
 
   // custom operators fro filtering data
   // this operators will be applied in getFilters method
