@@ -1,4 +1,3 @@
-const defaultMessages = require("../defaults/defaultMessages")
 const cast = require("../helpers/cast")
 const { RestSchemaError } = require("../errors")
 
@@ -14,6 +13,7 @@ module.exports = async function({
   routeKeys = cast(routeKeys).to(Array) || context.getRouteKeys()
   fallbackFilters = cast(fallbackFilters).to(Object) || context.relationFilters || null
 
+  const messages = await context.getMessages()
   const request = cast(req).to(Object) || context.req
 
   idTarget = cast(idTarget).to(String) || "params"
@@ -23,7 +23,7 @@ module.exports = async function({
     if (fallbackFilters) {
       return fallbackFilters
     }
-    throw new RestSchemaError(defaultMessages.idParamNotFound)
+    throw new RestSchemaError(messages.idParamNotFound)
   }
 
   const requestId = id || request[idTarget][idKey]

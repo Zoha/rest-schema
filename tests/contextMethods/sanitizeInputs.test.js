@@ -3,12 +3,14 @@ const sanitizeInput = require("../../src/restSchema/contextMethods/sanitizeInput
 const sanitizeInputs = require("../../src/restSchema/contextMethods/sanitizeInputs")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
 const cast = require("../../src/restSchema/contextMethods/cast")
+const defaults = require("../../src/restSchema/defaults")
 
 const context = {
   route: "create",
   cast,
   sanitizeInput,
-  getFields
+  getFields,
+  defaults
 }
 
 describe("sanitizeInputs method", () => {

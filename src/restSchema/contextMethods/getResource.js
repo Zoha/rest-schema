@@ -1,4 +1,3 @@
-const validationMessages = require("../defaults/defaultMessages")
 const cast = require("../helpers/cast")
 const deepMergeFilters = require("../helpers/deepMergeFilters")
 const { NotFoundError } = require("../errors")
@@ -13,6 +12,7 @@ module.exports = async function({
 } = {}) {
   const context = this
 
+  const validationMessages = (await context.getMessages()).validations
   model = model || context.model
   filters = cast(filters).to(Object) || {}
 

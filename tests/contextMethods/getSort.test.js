@@ -4,11 +4,13 @@ const getLimit = require("../../src/restSchema/contextMethods/getLimit")
 const getSort = require("../../src/restSchema/contextMethods/getSort")
 const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
+const defaults = require("../../src/restSchema/defaults")
 
 const context = {
   getNestedField,
   getFields,
   route: "create",
+  defaults,
   routeObject: {
     ...defaultRouteObject
   },

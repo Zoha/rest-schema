@@ -1,21 +1,26 @@
-const schemaDefaults = require("../defaults/defaultSchema")
+const globalDefaults = require("../defaults")
 const modelFormatter = require("./modelFormatter")
 const nameFormatter = require("./nameFormatter")
 const routeFormatter = require("./routeFormatter")
+const cloneDeep = require("clone-deep")
 
 module.exports = userSchema => {
   // merge defaults and passed
-  const schema = { ...schemaDefaults, ...userSchema }
+  const defaults = userSchema.defaults || cloneDeep(globalDefaults)
+  const clonedSchemaDefaults = defaults.defaultSchema
+  const schema = { ...clonedSchemaDefaults, ...userSchema }
+  // define default data, cloned global defaults, or userSchema defaults
+  schema.defaults = defaults
   // merge fields
-  schema.fields = { ...schemaDefaults.fields, ...(userSchema.fields || {}) }
+  schema.fields = { ...clonedSchemaDefaults.fields, ...(userSchema.fields || {}) }
   // merge pagination meta
   schema.pagination = {
-    ...schemaDefaults.pagination,
+    ...clonedSchemaDefaults.pagination,
     ...(userSchema.pagination || {})
   }
   // merge pagination meta
   schema.wrappers = {
-    ...schemaDefaults.wrappers,
+    ...clonedSchemaDefaults.wrappers,
     ...(userSchema.wrappers || {})
   }
   // format schema model
@@ -23,6 +28,6 @@ module.exports = userSchema => {
   // get schema name
   schema.name = nameFormatter(schema)
   // format routes
-  schema.routes = routeFormatter.getRoutes(schema.routes)
+  schema.routes = routeFormatter.getRoutes(schema.routes, defaults)
   return schema
 }

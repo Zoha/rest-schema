@@ -2,11 +2,15 @@ const { expect } = require("chai")
 const validateInput = require("../../src/restSchema/contextMethods/validateInput")
 const validateInputs = require("../../src/restSchema/contextMethods/validateInputs")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
+const getMessages = require("../../src/restSchema/contextMethods/getMessages")
+const defaults = require("../../src/restSchema/defaults")
 
 const context = {
   route: "create",
   validateInput,
   getFields,
+  getMessages,
+  defaults,
   findLocationOfInput() {
     return "body"
   }

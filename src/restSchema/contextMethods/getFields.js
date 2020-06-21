@@ -1,11 +1,11 @@
 const deepmerge = require("deepmerge")
 const isArray = require("../helpers/isArray")
 const isObject = require("../helpers/isObject")
-const defaultField = require("../defaults/defaultField")
 const types = require("../types")
 const filter = require("../helpers/filter")
 
 const formatFields = async (argFields, context, prepend = "") => {
+  const defaultField = context.defaults.defaultField
   let fields = argFields
   if (!fields) {
     return {}

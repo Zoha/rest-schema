@@ -3,11 +3,13 @@ const validateInput = require("../../src/restSchema/contextMethods/validateInput
 const getNestedInput = require("../../src/restSchema/contextMethods/getNestedInput")
 const model = require("../../src/testHelpers/model")
 const cloneDeep = require("clone-deep")
+const getMessages = require("../../src/restSchema/contextMethods/getMessages")
 
 const context = {
   route: "create",
   model,
-  getNestedInput
+  getNestedInput,
+  getMessages
 }
 
 describe("validateInput method", () => {

@@ -1,7 +1,9 @@
 const { expect } = require("chai")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
+const defaults = require("../../src/restSchema/defaults")
 
 const context = {
+  defaults,
   schema: {
     fields: {
       prop1: String

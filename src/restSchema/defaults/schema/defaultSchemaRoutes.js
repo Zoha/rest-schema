@@ -1,4 +1,3 @@
-const messages = require("../defaultMessages")
 const getRelationPath = require("../../helpers/getRelationPaths")
 const relationTypes = require("../../enums/relationTypes")
 const manualInvolveMiddlewareList = require("../../helpers/manualInvolveMiddlewareList")
@@ -147,6 +146,7 @@ module.exports = {
         return context.res.status(400).json(validationResult)
       }
       // if validation was passed get message from defaults
+      const messages = await context.getMessages()
       const message = messages.validationPassed
       return { message }
     }

@@ -3,6 +3,7 @@ const getInputsFromFields = require("../../src/restSchema/contextMethods/getInpu
 const defaultField = require("../../src/restSchema/defaults/defaultField")
 const cast = require("../../src/restSchema/helpers/cast")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
+const defaults = require("../../src/restSchema/defaults")
 
 describe("getInputsFromFields method", function() {
   it("will get inputs normally", async () => {
@@ -71,6 +72,7 @@ describe("getInputsFromFields method", function() {
     const context = {
       fields,
       inputs,
+      defaults,
       cast
     }
     const fieldsInputs = await getInputsFromFields.call(context, fields)
@@ -163,7 +165,8 @@ describe("getInputsFromFields method", function() {
       route: "create",
       fields,
       inputs,
-      cast
+      cast,
+      defaults
     }
 
     const fieldsInputs = await getInputsFromFields.call(context, fields)
@@ -187,14 +190,17 @@ describe("getInputsFromFields method", function() {
   })
 
   it("will get data with map type", async () => {
-    const fields = await getFields({
-      fields: {
-        prop1: {
-          type: Map,
-          of: [String]
+    const fields = await getFields.call(
+      { defaults },
+      {
+        fields: {
+          prop1: {
+            type: Map,
+            of: [String]
+          }
         }
       }
-    })
+    )
 
     const inputs = {
       prop1: {
@@ -206,7 +212,8 @@ describe("getInputsFromFields method", function() {
       route: "create",
       fields,
       inputs,
-      cast
+      cast,
+      defaults
     }
 
     const fieldsInputs = await getInputsFromFields.call(context, fields)

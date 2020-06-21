@@ -10,6 +10,8 @@ const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
 const getRouteKeysFilters = require("../../src/restSchema/contextMethods/getRouteKeysFilters")
 const { ObjectId } = require("../../src/restSchema/types")
 const hook = require("../../src/restSchema/contextMethods/hook")
+const getMessages = require("../../src/restSchema/contextMethods/getMessages")
+const defaults = require("../../src/restSchema/defaults")
 
 const context = {
   cast,
@@ -19,6 +21,8 @@ const context = {
   model,
   getRouteKeysFilters,
   hook,
+  getMessages,
+  defaults,
   getRoutes: () => [defaultRoute],
   getRouteKeys: () => ["prop1", "_id"],
   req: {

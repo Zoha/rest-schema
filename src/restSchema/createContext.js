@@ -1,4 +1,6 @@
-/* eslint-disable global-require */
+const defaults = require("./defaults")
+const cloneDeep = require("clone-deep")
+
 const methods = {
   cast: require("./contextMethods/cast"),
   createResource: require("./contextMethods/createResource"),
@@ -13,6 +15,7 @@ const methods = {
   getInputs: require("./contextMethods/getInputs"),
   getInputsFromFields: require("./contextMethods/getInputsFromFields"),
   getLimit: require("./contextMethods/getLimit"),
+  getMessages: require("./contextMethods/getMessages"),
   getNestedField: require("./contextMethods/getNestedField"),
   getNestedInput: require("./contextMethods/getNestedInput"),
   getPage: require("./contextMethods/getPage"),
@@ -45,6 +48,7 @@ module.exports = (schema, route) => {
     model: schema.model,
     route: route.name,
     routeObject: route,
+    defaults: schema.defaults || cloneDeep(defaults),
     relationFilters: {},
     ...methods
   }

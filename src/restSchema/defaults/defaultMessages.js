@@ -17,5 +17,6 @@ module.exports = {
   idParamNotFound: ":id param does not exists in request",
   resourceNotFound: "resource not found",
   validationPassed: "validation passed, request is valid",
-  inactiveRouteMessage: "route is inactive"
+  inactiveRouteMessage: "route is inactive",
+  listOfErrors: "list of errors"
 }

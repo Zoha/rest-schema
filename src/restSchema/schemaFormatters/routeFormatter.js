@@ -1,8 +1,12 @@
-const defaultRoutes = require("../defaults/schema/defaultSchemaRoutes")
-const defaultRoute = require("../defaults/defaultRoute")
 const { InvalidArgumentError } = require("../errors")
+const defaults = require("../defaults")
 
-const getRoute = route => {
+const getRoute = (route, customDefaults) => {
+  if (!customDefaults) {
+    customDefaults = defaults
+  }
+  const defaultRoutes = customDefaults.defaultSchema.routes
+  const defaultRoute = customDefaults.defaultRoute
   if (typeof route == "object") {
     let defaultValues = {}
     if (route.name) {
@@ -12,13 +16,14 @@ const getRoute = route => {
   } else if (typeof route === "string" && defaultRoutes[route]) {
     return defaultRoutes[route]
   }
+
   throw new InvalidArgumentError("route name not exists")
 }
 
-const getRoutes = routes => {
+const getRoutes = (routes, defaults) => {
   let optionRoutes = []
   for (let route of Object.values(routes)) {
-    optionRoutes.push(getRoute(route))
+    optionRoutes.push(getRoute(route, defaults))
   }
   return optionRoutes
 }

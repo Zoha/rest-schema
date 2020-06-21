@@ -1,7 +1,6 @@
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
-const validationMessages = require("../defaults/defaultMessages").validations
 const checkRequired = require("../validators/required")
 const checkMin = require("../validators/min")
 const checkMax = require("../validators/max")
@@ -16,8 +15,8 @@ const checkAuth = require("../validators/auth")
 const uniqueItems = require("../validators/uniqueItems")
 const { RestSchemaError } = require("../errors")
 
-const getErrorMessage = (type, key, value, args) => {
-  let message = validationMessages[type]
+const getErrorMessage = (type, key, value, args, messages) => {
+  let message = messages.validations[type]
   message = message.replace(new RegExp("\\{key\\}", "g"), key)
   message = message.replace(new RegExp("\\{value\\}", "g"), value)
   if (isArray(args)) {
@@ -33,7 +32,16 @@ const getErrorMessage = (type, key, value, args) => {
 
 // check that field  is require or not
 // works with mongoose checkRequired
-const check = async ({ value, validationArgs, key, field, context, validator, validationName }) => {
+const check = async ({
+  value,
+  validationArgs,
+  key,
+  field,
+  context,
+  validator,
+  validationName,
+  messages
+}) => {
   // if is nested -> should be checked for each route
   if (isObject(validationArgs)) {
     return check({
@@ -43,12 +51,13 @@ const check = async ({ value, validationArgs, key, field, context, validator, va
       field,
       context,
       validator,
-      validationName
+      validationName,
+      messages
     })
   }
 
   // define message of validation
-  const message = getErrorMessage(validationName, key, value, validationArgs)
+  const message = await getErrorMessage(validationName, key, value, validationArgs, messages)
 
   // callback validation args
   const callbackValidators = [checkAuth]
@@ -77,7 +86,7 @@ const check = async ({ value, validationArgs, key, field, context, validator, va
 }
 
 // check custom validation
-const checkCustomValidation = async ({ value, validationArgs, key, field, context }) => {
+const checkCustomValidation = async ({ value, validationArgs, key, field, context, messages }) => {
   // if is nested -> should be checked for each route
   if (isObject(validationArgs) && !validationArgs.validator) {
     return checkCustomValidation({
@@ -85,7 +94,8 @@ const checkCustomValidation = async ({ value, validationArgs, key, field, contex
       validationArgs: validationArgs[context.route],
       key,
       field,
-      context
+      context,
+      messages
     })
   }
 
@@ -95,7 +105,7 @@ const checkCustomValidation = async ({ value, validationArgs, key, field, contex
     return true
   }
 
-  let message = getErrorMessage("default", key, value)
+  let message = await getErrorMessage("default", key, value, undefined, messages)
 
   let result
 
@@ -137,6 +147,7 @@ const checkCustomValidation = async ({ value, validationArgs, key, field, contex
 module.exports = async function({ value, field, key } = {}) {
   const context = this
   key = key || field.nestedKey || "field"
+  const messages = await context.getMessages()
 
   const checkValidation = async (validationName, validator) => {
     await check({
@@ -146,7 +157,8 @@ module.exports = async function({ value, field, key } = {}) {
       field,
       context,
       validator,
-      validationName
+      validationName,
+      messages
     })
   }
 
@@ -172,7 +184,7 @@ module.exports = async function({ value, field, key } = {}) {
   const validationPromises = []
   const errors = []
   Object.keys(validationHandlers).forEach(validationName => {
-    if (validationHandlers[validationName]) {
+    if (field[validationName]) {
       const validationHandler = validationHandlers[validationName]
       validationPromises.push(
         checkValidation(validationName, validationHandler).catch(err => {
@@ -188,7 +200,7 @@ module.exports = async function({ value, field, key } = {}) {
     if (errors.length === 1) {
       throw errors[0]
     }
-    const error = new Error("a list of error")
+    const error = new Error(messages.listOfErrors)
     error.list = errors
     throw error
   }
@@ -200,7 +212,8 @@ module.exports = async function({ value, field, key } = {}) {
       validationArgs: field.validate,
       key,
       field,
-      context
+      context,
+      messages
     })
   }
 }

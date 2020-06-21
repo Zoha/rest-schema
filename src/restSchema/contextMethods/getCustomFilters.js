@@ -12,7 +12,9 @@ module.exports = async function({
   filters = filters || context.schema.filters
   route = cast(route).to(String) || context.route
   relationFilters = cast(relationFilters).to(Object) || context.relationFilters
-  routes = (routes && getRoutes(routes)) || Object.values(context.getRoutes()).map(i => i.name)
+  routes =
+    (routes && getRoutes(routes, context.schema.defaults)) ||
+    Object.values(context.getRoutes()).map(i => i.name)
 
   // if filters property is function
   if (typeof filters === "function") {

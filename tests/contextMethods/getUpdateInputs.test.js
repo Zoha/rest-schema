@@ -5,6 +5,7 @@ const cast = require("../../src/restSchema/helpers/cast")
 const getUpdateFields = require("../../src/restSchema/contextMethods/getUpdateFields")
 const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
+const defaults = require("../../src/restSchema/defaults")
 
 describe("getUpdateInputs method", function() {
   it("will get inputs normally", async () => {
@@ -23,7 +24,8 @@ describe("getUpdateInputs method", function() {
       getUpdateFields,
       getInputsFromFields,
       cast,
-      getFields
+      getFields,
+      defaults
     }
     const fieldsInputs = await getUpdateInputs.call(context)
 
@@ -52,7 +54,8 @@ describe("getUpdateInputs method", function() {
       getUpdateFields,
       getInputsFromFields,
       cast,
-      getFields
+      getFields,
+      defaults
     }
     const fieldsInputs = await getUpdateInputs.call(context, {
       setUpdateInputs: false

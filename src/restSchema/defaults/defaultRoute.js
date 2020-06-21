@@ -1,5 +1,4 @@
 const cast = require("../helpers/cast")
-const message = require("./defaultMessages")
 
 module.exports = {
   // basic info of route
@@ -20,7 +19,10 @@ module.exports = {
   },
 
   // default route handler
-  handler: () => ({ message: message.inactiveRouteMessage }),
+  handler: async context => {
+    const messages = await context.getMessages()
+    return { message: messages.inactiveRouteMessage }
+  },
 
   // custom operators fro filtering data
   // this operators will be applied in getFilters method
