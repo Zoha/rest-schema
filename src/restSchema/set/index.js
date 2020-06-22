@@ -9,6 +9,8 @@ const setDefaultSchemaFields = setDefaultSchema.setDefaultSchemaFields
 const setDefaultSchemaPagination = setDefaultSchema.setDefaultSchemaPagination
 const setDefaultSchemaRoutes = setDefaultSchema.setDefaultSchemaRoutes
 const setDefaultSchemaWrappers = setDefaultSchema.setDefaultSchemaWrappers
+const addHook = require("./addHook")
+const addMiddleware = require("./addMiddleware")
 
 module.exports = {
   setDefaultField,
@@ -21,5 +23,7 @@ module.exports = {
   setDefaultSchemaFields,
   setDefaultSchemaPagination,
   setDefaultSchemaRoutes,
-  setDefaultSchemaWrappers
+  setDefaultSchemaWrappers,
+  addHook,
+  addMiddleware
 }

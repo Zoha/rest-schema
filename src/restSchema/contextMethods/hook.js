@@ -1,7 +1,29 @@
+const getPluginHooksFor = (context, hook) => {
+  let hooks = []
+  if (context.defaults && context.defaults.defaultPluginHooks) {
+    const defaultHooks = context.defaults.defaultPluginHooks
+    if (defaultHooks.global && defaultHooks.global[hook]) {
+      hooks = hooks.concat(defaultHooks.global[hook])
+    }
+    if (defaultHooks[context.route] && defaultHooks[context.route][hook]) {
+      hooks = hooks.concat(defaultHooks[context.route][hook])
+    }
+  }
+  return hooks
+}
+
 module.exports = async function(hook) {
   const context = this
   const { schema } = context
   const { route } = context
+
+  // plugin hooks as array
+  const pluginHooks = getPluginHooksFor(context, hook)
+  if (pluginHooks.length) {
+    for (let i = 0; i < pluginHooks.length; i += 1) {
+      await pluginHooks(context)
+    }
+  }
 
   if (!schema.hooks) {
     return
