@@ -15,6 +15,10 @@ module.exports = class schemaBuilder {
     return resource(this.schema)
   }
 
+  use(callback) {
+    return callback(this)
+  }
+
   setDefaultField(...args) {
     args[1] = args[1] || {}
     args[1].target = this.defaults.defaultField
