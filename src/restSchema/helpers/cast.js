@@ -6,11 +6,15 @@ const objectCast = require("../cast/object")
 const objectIdCast = require("../cast/objectId")
 const stringCast = require("../cast/string")
 const types = require("../types")
+const CustomType = require("../customType")
 
 module.exports = (value, type) => {
   const convert = to => {
     if (value === undefined) {
       return undefined
+    }
+    if (to instanceof CustomType) {
+      return to.cast(type)
     }
     switch (to) {
       case "Boolean":
