@@ -3,10 +3,10 @@ const { expect } = require("chai")
 const express = require("express")
 const request = require("supertest")
 const bodyParser = require("body-parser")
-const { resource } = require("../../src/restSchema")
 const model = require("../../src/testHelpers/model")
 const expressErrorHandler = require("../../src/testHelpers/expressErrorHandler")
 const { ValidationError } = require("../../src/restSchema/errors")
+const { schema: createSchema } = require("../../src/restSchema/index")
 
 const app = express()
 
@@ -38,11 +38,13 @@ const schema = {
   }
 }
 
+const ModelSchema = createSchema(model, schema.fields, { ...schema })
+
 describe("schema wrappers", () => {
   beforeEach(async () => {
     await model.deleteMany()
     app.use(bodyParser.json())
-    app.use("/tests", resource(schema))
+    app.use("/tests", ModelSchema.resource(schema))
     app.use(expressErrorHandler)
   })
 

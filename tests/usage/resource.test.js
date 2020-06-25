@@ -3,10 +3,10 @@ const { expect } = require("chai")
 const express = require("express")
 const request = require("supertest")
 const bodyParser = require("body-parser")
-const { resource } = require("../../src/restSchema")
 const model = require("../../src/testHelpers/model")
 const expressErrorHandler = require("../../src/testHelpers/expressErrorHandler")
 const { Mixed } = require("../../src/restSchema/types")
+const { schema: createSchema } = require("../../src/restSchema/index")
 
 const app = express()
 
@@ -33,11 +33,13 @@ const schema = {
   routeKeys: ["prop1", "prop3.nested", "_id"]
 }
 
+const ModelSchema = createSchema(model, schema.fields, { ...schema })
+
 describe("resource method", () => {
   beforeEach(async () => {
     await model.deleteMany()
     app.use(bodyParser.json())
-    app.use("/test", resource(schema))
+    app.use("/test", ModelSchema.resource(schema))
     app.use(expressErrorHandler)
   })
 
