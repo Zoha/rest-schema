@@ -8,6 +8,22 @@ const stringCast = require("../cast/string")
 const types = require("../types")
 const CustomType = require("../customType")
 
+/**
+ * @callback RSToCallback
+ * @param {*} to
+ * @returns {*} converted value
+ */
+
+/**
+ * @typedef {Object} RSConvertTo
+ * @property {RSToCallback} to
+ */
+
+/**
+ * @param  {*} value
+ * @param  {*} [type]
+ * @returns {RSConvertTo} object that contains to property
+ */
 module.exports = (value, type) => {
   const convert = to => {
     if (value === undefined) {

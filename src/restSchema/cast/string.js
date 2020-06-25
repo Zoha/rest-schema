@@ -1,3 +1,8 @@
+/**
+ *
+ * @param {*} val - value to cast
+ * @returns {String|null}
+ */
 module.exports = function castString(value) {
   // If null or undefined
   if (value == null) {

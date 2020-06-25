@@ -67,7 +67,7 @@ const check = async ({
   // if is function call the function to determine
   // that should be checked or not
   if (isFunction(validationArgs) && !callbackValidators.includes(checkAuth)) {
-    shouldBeChecked = await validationArgs(context)
+    shouldBeChecked = await validationArgs(value, context, key)
   }
   if (!shouldBeChecked) {
     return true

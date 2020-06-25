@@ -7,6 +7,11 @@ const formatName = name => {
   return upperCaseFirst(singular(name))
 }
 
+/**
+ * adds new schema to restSchema
+ * @param {schema} RSSchema schema
+ * @returns {RsSchemaBuilder} added schema
+ */
 const addSchemaModel = schema => {
   let schemaName = schema.name
   if (schemaName == null) {

@@ -34,6 +34,7 @@ module.exports = {
   lowercase: false,
   uppercase: false,
   default: undefined,
+  pickUniqueItems: false,
 
   // relation
   ref: undefined,

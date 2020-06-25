@@ -1,3 +1,8 @@
+/**
+ *
+ * @param {*} val - value to cast
+ * @returns {Number|null}
+ */
 module.exports = function castNumber(value) {
   let val = value
   if (Number.isNaN(val)) {

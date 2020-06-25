@@ -1,5 +1,10 @@
-const { ObjectId } = require("mongoose").Types
+const { ObjectId } = require("mongodb")
 
+/**
+ *
+ * @param {*} val - value to cast
+ * @returns {ObjectId|null}
+ */
 module.exports = function castObjectId(value) {
   if (value == null) {
     return value

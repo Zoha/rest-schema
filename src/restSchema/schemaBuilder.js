@@ -84,4 +84,16 @@ module.exports = class schemaBuilder {
     args[1].target = this.defaults.defaultSchema.wrappers
     return setters.something(...args)
   }
+
+  addMiddleware(...args) {
+    args[1] = args[1] || {}
+    args[1].target = this.defaults.defaultPluginMiddlewareList
+    return setters.addMiddleware(...args)
+  }
+
+  addHook(...args) {
+    args[1] = args[1] || {}
+    args[1].target = this.defaults.defaultPluginHooks
+    return setters.addHook(...args)
+  }
 }

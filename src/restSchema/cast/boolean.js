@@ -1,3 +1,8 @@
+/**
+ *
+ * @param {*} val - value to cast
+ * @returns {Boolean}
+ */
 module.exports = function castBoolean(value) {
   if (module.exports.convertToTrue.has(value)) {
     return true
