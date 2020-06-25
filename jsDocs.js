@@ -182,28 +182,28 @@
 
 /**
  * @typedef {object} RSMessagesValidations
- * @property {String} required
- * @property {String} min
- * @property {String} minLength
- * @property {String} max
- * @property {String} maxLength
- * @property {String} between
- * @property {String} betweenLength
- * @property {String} enum
- * @property {String} default
- * @property {String} match
- * @property {String} unique
- * @property {String} auth
- * @property {String} uniqueItems
+ * @property {string} required
+ * @property {string} min
+ * @property {string} minLength
+ * @property {string} max
+ * @property {string} maxLength
+ * @property {string} between
+ * @property {string} betweenLength
+ * @property {string} enum
+ * @property {string} default
+ * @property {string} match
+ * @property {string} unique
+ * @property {string} auth
+ * @property {string} uniqueItems
  */
 
 /**
  * @typedef {object} RSMessages
- * @property {String} idParamNotFound
- * @property {String} resourceNotFound
- * @property {String} validationPassed
- * @property {String} inactiveRouteMessage
- * @property {String} listOfErrors
+ * @property {string} idParamNotFound
+ * @property {string} resourceNotFound
+ * @property {string} validationPassed
+ * @property {string} inactiveRouteMessage
+ * @property {string} listOfErrors
  * @property {RSMessagesValidations} validations
  */
 
@@ -214,7 +214,7 @@
  * @property {RSSchemaWrappers} wrappers
  * @property {Object} filters
  * @property {*} middleware
- * @property {Array.<String>} routeKeys
+ * @property {Array.<string>} routeKeys
  * @property {*} hooks
  * @property {RSSchemaFields} fields
  */
@@ -225,13 +225,13 @@
  */
 
 /**
- * @callback RSMiddlewareList
- * @param {Object.<string,Array<function>>}
+ * @typedef {Object} RsHooks
+ * @param {Object.<string,Array.<function>>}
  */
 
 /**
- * @callback RsHooks
- * @param {Object.<string,Object<string,function>>}
+ * @typedef {Object} RsHooks
+ * @param {Object.<string,Object.<string,function>>}
  */
 
 /**
@@ -319,8 +319,14 @@
  */
 
 /**
+ * @callback RSSchemaBuilderConstructor
+ * @param {RSSchema} schema
+ */
+
+/**
  * @typedef {*} RSSchemaBuilder
  * @class
+ * @property {RSSchemaBuilderConstructor} constructor
  * @property {RSSchema} schema
  * @property {RSRouteMethod} resource
  * @property {string} name
@@ -389,7 +395,8 @@
 
 /**
  * add new or return existing model
- * @param {String|*} model
+ * @callback RSSchemaModelBuilder
+ * @param {string|*} model
  * @param {RSSchemaFields} fields
  * @param {RSSchema} options
  */

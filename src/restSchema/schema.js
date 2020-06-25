@@ -2,8 +2,12 @@ const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const { addSchemaModel } = require("./addSchemaModel")
 const { getSchemaModel } = require("./getSchemaModel")
 const { InvalidArgumentError } = require("./errors")
+require("../../jsDocs")
 
-module.exports = (model, fields, options = {}) => {
+/**
+ * @type {import("../../jsDocs").RSSchemaModelBuilder}
+ */
+const schemaModelBuilder = (model, fields, options = {}) => {
   if (fields !== undefined) {
     const schema = schemaFormatter({ model, fields, ...options })
     return addSchemaModel(schema)
@@ -16,3 +20,5 @@ module.exports = (model, fields, options = {}) => {
     `model name should be a string, ${typeof model} given. remember that for creating schema second parameter is required`
   )
 }
+
+module.exports = schemaModelBuilder

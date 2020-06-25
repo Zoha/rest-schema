@@ -3,6 +3,10 @@ const cloneDeep = require("clone-deep")
 const defaults = require("./defaults")
 const setters = require("./set")
 
+/**
+ * @class
+ * @type {import("../../jsDocs").RSSchemaBuilder}
+ */
 module.exports = class schemaBuilder {
   constructor(schema) {
     this.defaults = cloneDeep(defaults)
