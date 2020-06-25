@@ -1,7 +1,9 @@
-const { resource } = require("./index")
 const cloneDeep = require("clone-deep")
 const defaults = require("./defaults")
 const setters = require("./set")
+const express = require("express")
+const registerRoute = require("./registerRoute")
+const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 
 /**
  * @class
@@ -16,7 +18,16 @@ class SchemaBuilder {
   }
 
   resource() {
-    return resource(this.schema)
+    // format schema and merge it with default
+    const schema = schemaFormatter(this.schema)
+    // create express router
+    const router = express.Router()
+    // register routes
+    Object.values(schema.routes).forEach(route => {
+      registerRoute(router, route, schema)
+    })
+
+    return router
   }
 
   use(callback) {
