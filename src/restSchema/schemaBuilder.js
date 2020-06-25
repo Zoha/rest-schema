@@ -7,7 +7,7 @@ const setters = require("./set")
  * @class
  * @type {import("../../jsDocs").RSSchemaBuilder}
  */
-class schemaBuilder {
+class SchemaBuilder {
   constructor(schema) {
     this.defaults = cloneDeep(defaults)
     this.schema = schema
@@ -102,4 +102,4 @@ class schemaBuilder {
   }
 }
 
-module.exports = schemaBuilder
+module.exports = SchemaBuilder
