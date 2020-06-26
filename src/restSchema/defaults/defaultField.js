@@ -82,5 +82,6 @@ module.exports = {
   maxLength: undefined,
   betweenLength: undefined,
   match: undefined,
-  enum: undefined
+  enum: undefined,
+  existsIn: undefined
 }

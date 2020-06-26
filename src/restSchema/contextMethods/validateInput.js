@@ -13,6 +13,7 @@ const checkEnum = require("../validators/enum")
 const checkUnique = require("../validators/unique")
 const checkAuth = require("../validators/auth")
 const uniqueItems = require("../validators/uniqueItems")
+const checkExistsIn = require("../validators/existsIn")
 const { RestSchemaError } = require("../errors")
 
 const getErrorMessage = (type, key, value, args, messages) => {
@@ -175,7 +176,8 @@ module.exports = async function({ value, field, key } = {}) {
     enum: checkEnum,
     unique: checkUnique,
     auth: checkAuth,
-    uniqueItems: uniqueItems
+    uniqueItems: uniqueItems,
+    existsIn: checkExistsIn
   }
 
   // apply each validation

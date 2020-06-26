@@ -4,6 +4,7 @@ const setters = require("./set")
 const express = require("express")
 const registerRoute = require("./registerRoute")
 const schemaFormatter = require("./schemaFormatters/schemaFormatter")
+const createContext = require("./createContext")
 
 /**
  * @class
@@ -15,6 +16,18 @@ class SchemaBuilder {
     this.schema = schema
     this.schema.defaults = this.defaults
     this.name = schema.name
+    this.tempContext = this.createTempContext()
+  }
+
+  createTempContext() {
+    // create base context
+    const context = createContext(
+      this.schema,
+      this.schema.routes.filter(i => i.name == "single")
+    )
+    context.req = {}
+    context.res = {}
+    return context
   }
 
   resource() {

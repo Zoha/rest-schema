@@ -4,6 +4,7 @@ const getNestedInput = require("../../src/restSchema/contextMethods/getNestedInp
 const model = require("../../src/testHelpers/model")
 const cloneDeep = require("clone-deep")
 const getMessages = require("../../src/restSchema/contextMethods/getMessages")
+const schemaMaker = require("../../src/restSchema/schema")
 
 const context = {
   route: "create",
@@ -13,6 +14,10 @@ const context = {
 }
 
 describe("validateInput method", () => {
+  beforeEach(async () => {
+    await model.deleteMany()
+  })
+
   it("required validate", async () => {
     let error
 
@@ -719,5 +724,79 @@ describe("validateInput method", () => {
     expect(error)
       .to.haveOwnProperty("message")
       .that.equal("prop1 should have unique items")
+  })
+
+  it("existsIn validate", async () => {
+    // create model 2 schema builder
+    const schema2 = schemaMaker(
+      model,
+      {
+        prop1: String
+      },
+      { name: "SchemaSample", routeKeys: ["prop1"] }
+    )
+
+    const value = "test"
+
+    // try and check validate for existsIn validate
+    let error = null
+    try {
+      await validateInput.call(context, {
+        value,
+        field: {
+          type: String,
+          existsIn: "SchemaSample"
+        }
+      })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("this field does not exists")
+
+    await model.create({
+      prop1: "something not create"
+    })
+
+    // try and check validate for existsIn validate
+    error = null
+    try {
+      await validateInput.call(context, {
+        value,
+        field: {
+          type: String,
+          existsIn: "SchemaSample"
+        }
+      })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("this field does not exists")
+
+    // check again
+    await model.create({
+      prop1: "test"
+    })
+    error = null
+    try {
+      await validateInput.call(context, {
+        value,
+        field: {
+          type: String,
+          existsIn: "SchemaSample"
+        }
+      })
+    } catch (e) {
+      error = e
+    }
+
+    if (error !== null) {
+      throw new Error("expect error to be null")
+    }
   })
 })

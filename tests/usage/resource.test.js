@@ -402,6 +402,7 @@ describe("resource method", () => {
         expect(response).to.not.haveOwnProperty("prop3")
         expect(response).to.not.haveOwnProperty("prop4")
         expect(response).to.not.haveOwnProperty("prop5")
+        expect(response).to.haveOwnProperty("_id")
       })
 
     await request(app)

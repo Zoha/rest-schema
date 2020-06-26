@@ -98,6 +98,7 @@
  * @property {Array.<number>|Object.<string,Array.<number>>} betweenLength
  * @property {RegExp|Object.<string,RegExp>} match
  * @property {Array.<string|number>|Object.<string,Array.<string|number>>} enum
+ * @property {string|Object.<string,string>} existsIn
  */
 
 /**
@@ -195,6 +196,7 @@
  * @property {string} unique
  * @property {string} auth
  * @property {string} uniqueItems
+ * @property {string} existsIn
  */
 
 /**
