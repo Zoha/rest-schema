@@ -1,6 +1,3 @@
-const express = require("express")
-const registerRoute = require("./registerRoute")
-const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const use = require("./use")
 const schema = require("./schema")
 const defaults = require("./defaults")

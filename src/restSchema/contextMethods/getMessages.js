@@ -1,5 +1,3 @@
-const defaults = require("../defaults")
-
 const { defaultMessages } = require("../defaults")
 
 module.exports = function() {

@@ -1,17 +1,12 @@
 const { expect } = require("chai")
 const validateInput = require("../../src/restSchema/contextMethods/validateInput")
-const getNestedInput = require("../../src/restSchema/contextMethods/getNestedInput")
 const model = require("../../src/testHelpers/model")
 const cloneDeep = require("clone-deep")
-const getMessages = require("../../src/restSchema/contextMethods/getMessages")
 const schemaMaker = require("../../src/restSchema/schema")
+const createContext = require("../../src/restSchema/createContext")
+const { defaultSchema } = require("../../src/restSchema/defaults")
 
-const context = {
-  route: "create",
-  model,
-  getNestedInput,
-  getMessages
-}
+const context = createContext({ ...defaultSchema, model }, defaultSchema.routes.create)
 
 describe("validateInput method", () => {
   beforeEach(async () => {
@@ -798,5 +793,37 @@ describe("validateInput method", () => {
     if (error !== null) {
       throw new Error("expect error to be null")
     }
+  })
+
+  it("ignore unique validate when is the same resource", async () => {
+    const created = await model.create({
+      prop1: "prop1"
+    })
+    let error = null
+
+    const field = {
+      unique: true,
+      nestedKey: "prop1"
+    }
+    let value = "prop1"
+
+    try {
+      await validateInput.call(
+        {
+          ...context,
+          route: "update",
+          req: {
+            params: {
+              id: created._id.toString()
+            }
+          }
+        },
+        { value, field }
+      )
+    } catch (e) {
+      error = e
+    }
+
+    expect(error).to.be.equal(null)
   })
 })
