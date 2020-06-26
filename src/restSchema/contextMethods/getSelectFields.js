@@ -194,7 +194,7 @@ module.exports = async function({
 } = {}) {
   const context = this
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
   fields = cloneDeep(fields)

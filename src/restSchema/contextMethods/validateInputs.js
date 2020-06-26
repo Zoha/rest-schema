@@ -83,7 +83,7 @@ const validateInputs = async (argFields, inputs, context) => {
 module.exports = async function({ setValidationErrors = true, fields = null, inputs = null } = {}) {
   const context = this
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
   inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())

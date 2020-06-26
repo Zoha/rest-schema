@@ -4,7 +4,7 @@ const relationTypes = require("../enums/relationTypes")
 module.exports = async function({ fields = null } = {}) {
   const context = this
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
 

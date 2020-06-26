@@ -98,7 +98,7 @@ const getValues = async (argFields, values, context) => {
 module.exports = async function({ fields = null, resource = null, selectFields = null } = {}) {
   const context = this
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
 

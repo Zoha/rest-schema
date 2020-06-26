@@ -6,7 +6,7 @@ module.exports = async function({ key, fields = null } = {}) {
   const context = this
   const targetParts = key.split(".")
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
   fields = { children: fields }

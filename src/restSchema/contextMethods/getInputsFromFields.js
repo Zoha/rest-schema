@@ -97,7 +97,7 @@ const getInputs = async (argFields, inputs, context) => {
 module.exports = async function({ fields = null } = {}) {
   const context = this
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
   return getInputs(fields, context.inputs, context)

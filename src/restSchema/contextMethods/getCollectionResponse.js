@@ -4,7 +4,7 @@ module.exports = async function({ collection = null, fields = null } = {}) {
   const detectedCollection =
     context.cast(collection).to(Array) || context.collection || (await context.getCollection())
   fields =
-    (fields && (await context.getFields({ fields }))) ||
+    (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
 
