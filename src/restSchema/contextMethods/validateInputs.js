@@ -4,8 +4,9 @@ const isObject = require("../helpers/isObject")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const cast = require("../helpers/cast")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
+const cloneDeep = require("clone-deep")
 
-const validateInputs = async (argFields, inputs, context) => {
+const validateInputs = async (argFields, inputs, context, checkRequired) => {
   if (!argFields) {
     return isArray(inputs) ? [] : {}
   }
@@ -19,15 +20,23 @@ const validateInputs = async (argFields, inputs, context) => {
   const executeLoopOperation = async fieldKey => {
     // define value, validations, key
     const value = inputs[fieldKey]
-    let field = fields[fieldKey]
+    let field = cloneDeep(fields[fieldKey])
     const key = fieldKey
+
+    if (!checkRequired) {
+      delete field.required
+    }
 
     if (value == null) {
       // if type of value is undefined
       // just check the required field
-      field = {
-        required: field.required,
-        nestedKey: field.nestedKey
+      if (checkRequired) {
+        field = {
+          required: field.required,
+          nestedKey: field.nestedKey
+        }
+      } else {
+        field = null
       }
     }
 
@@ -41,7 +50,9 @@ const validateInputs = async (argFields, inputs, context) => {
       })
     }
     try {
-      await context.validateInput({ value, field })
+      if (field) {
+        await context.validateInput({ value, field })
+      }
     } catch (e) {
       if (e.list) {
         e.list.forEach(err => formatError(err))
@@ -51,7 +62,7 @@ const validateInputs = async (argFields, inputs, context) => {
     }
 
     // process map type
-    if (field.type === Map && field.of) {
+    if (field && field.type === Map && field.of) {
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
@@ -59,8 +70,13 @@ const validateInputs = async (argFields, inputs, context) => {
     }
 
     // validate children
-    if ((field.isNested && isArray(value)) || isObject(value)) {
-      const childrenValidationErrors = await validateInputs(field.children, value, context)
+    if ((field && field.isNested && isArray(value)) || isObject(value)) {
+      const childrenValidationErrors = await validateInputs(
+        field.children,
+        value,
+        context,
+        checkRequired
+      )
       childrenValidationErrors.forEach(error => {
         validationErrors.push(error)
       })
@@ -80,14 +96,19 @@ const validateInputs = async (argFields, inputs, context) => {
   return filter(validationErrors, i => i != null)
 }
 
-module.exports = async function({ setValidationErrors = true, fields = null, inputs = null } = {}) {
+module.exports = async function({
+  setValidationErrors = true,
+  fields = null,
+  inputs = null,
+  checkRequired = true
+} = {}) {
   const context = this
   fields =
     (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
   inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
-  const validationResult = await validateInputs(fields, inputs, context)
+  const validationResult = await validateInputs(fields, inputs, context, checkRequired)
   if (setValidationErrors) {
     context.validationErrors = validationResult
   }

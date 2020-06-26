@@ -136,4 +136,32 @@ describe("validateInputs method", () => {
 
     expect(validateResult[0].field).to.be.equal("prop1.nested2")
   })
+
+  it("will not required if check required was false", async () => {
+    const contextWithSchema = {
+      ...context,
+      schema: {
+        fields: {
+          prop1: {
+            type: String,
+            required: true
+          }
+        }
+      }
+    }
+
+    const validateResult = await validateInputs.call(
+      {
+        ...contextWithSchema,
+        inputs: {}
+      },
+      {
+        checkRequired: false
+      }
+    )
+
+    expect(validateResult)
+      .to.be.an("array")
+      .that.have.lengthOf(0)
+  })
 })

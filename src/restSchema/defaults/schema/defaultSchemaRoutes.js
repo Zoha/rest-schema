@@ -92,7 +92,7 @@ module.exports = {
       // all validation errors
       // if validation error was empty
       // mean that we don't have any validation errors
-      const validationResult = await context.validateInputs()
+      const validationResult = await context.validateInputs({ checkRequired: false })
       if (validationResult.length) {
         return context.res.status(400).json(validationResult)
       }
