@@ -38,7 +38,11 @@ const getInputs = async (argFields, inputs, context) => {
         }
         if (defaultValue) {
           if (isFunction(defaultValue)) {
-            value = await defaultValue(context)
+            try {
+              value = await defaultValue(value, context)
+            } catch (e) {
+              value = null
+            }
           } else {
             value = defaultValue
           }

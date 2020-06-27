@@ -62,7 +62,9 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
 
     // check that exists in selected
     // if yes so check that selected should be hide or not
-    const thisFieldInSelectFields = selectFields.find(i => i.field.nestedKey === field.nestedKey)
+    const thisFieldInSelectFields = selectFields.find(
+      i => i.field && i.field.nestedKey === field.nestedKey
+    )
 
     if (thisFieldInSelectFields) {
       if (thisFieldInSelectFields.shouldBeHided === true) {
