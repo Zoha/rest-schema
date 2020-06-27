@@ -1,19 +1,7 @@
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
-const checkRequired = require("../validators/required")
-const checkMin = require("../validators/min")
-const checkMax = require("../validators/max")
-const checkBetween = require("../validators/between")
-const checkMinLength = require("../validators/minLength")
-const checkMaxLength = require("../validators/maxLength")
-const checkBetweenLength = require("../validators/betweenLength")
-const checkMatch = require("../validators/match")
-const checkEnum = require("../validators/enum")
-const checkUnique = require("../validators/unique")
-const checkAuth = require("../validators/auth")
-const uniqueItems = require("../validators/uniqueItems")
-const checkExistsIn = require("../validators/existsIn")
+const validationHandlers = require("../validators")
 const { RestSchemaError } = require("../errors")
 
 const getErrorMessage = (type, key, value, args, messages) => {
@@ -61,13 +49,13 @@ const check = async ({
   const message = await getErrorMessage(validationName, key, value, validationArgs, messages)
 
   // callback validation args
-  const callbackValidators = [checkAuth]
+  const callbackValidators = [validationHandlers.auth, validationHandlers.uniqueItems]
 
   let shouldBeChecked = !!validationArgs
 
   // if is function call the function to determine
   // that should be checked or not
-  if (isFunction(validationArgs) && !callbackValidators.includes(checkAuth)) {
+  if (isFunction(validationArgs) && !callbackValidators.includes(validator)) {
     shouldBeChecked = await validationArgs(value, context, key)
   }
   if (!shouldBeChecked) {
@@ -161,23 +149,6 @@ module.exports = async function({ value, field, key } = {}) {
       validationName,
       messages
     })
-  }
-
-  // all validations that should be applied
-  const validationHandlers = {
-    required: checkRequired,
-    min: checkMin,
-    max: checkMax,
-    between: checkBetween,
-    minLength: checkMinLength,
-    maxLength: checkMaxLength,
-    betweenLength: checkBetweenLength,
-    match: checkMatch,
-    enum: checkEnum,
-    unique: checkUnique,
-    auth: checkAuth,
-    uniqueItems: uniqueItems,
-    existsIn: checkExistsIn
   }
 
   // apply each validation

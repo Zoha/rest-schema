@@ -1,18 +1,6 @@
-const trim = require("../sanitizers/trim")
-const uppercase = require("../sanitizers/uppercase")
-const lowercase = require("../sanitizers/lowercase")
-const pickUniqueItems = require("../sanitizers/pickUniqueItems")
 const isObject = require("../helpers/isObject")
 const isFunction = require("../helpers/isFunction")
-const slice = require("../sanitizers/slice")
-
-const availableSanitizers = {
-  trim,
-  slice,
-  lowercase,
-  uppercase,
-  pickUniqueItems
-}
+const availableSanitizers = require("../sanitizers")
 
 const sanitizeBy = (type, value, shouldBeSanitized, field, context) => {
   if (isObject(shouldBeSanitized)) {

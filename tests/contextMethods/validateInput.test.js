@@ -826,4 +826,36 @@ describe("validateInput method", () => {
 
     expect(error).to.be.equal(null)
   })
+
+  it("requiredUpdate validate", async () => {
+    const created = await model.create({
+      prop1: "prop1"
+    })
+    let error = null
+
+    const field = {
+      requiredUpdate: true,
+      nestedKey: "prop1"
+    }
+    let value = null
+
+    try {
+      await validateInput.call(
+        {
+          ...context,
+          route: "update",
+          req: {
+            params: {
+              id: created._id.toString()
+            }
+          }
+        },
+        { value, field }
+      )
+    } catch (e) {
+      error = e
+    }
+
+    expect(error).to.not.be.equal(null)
+  })
 })

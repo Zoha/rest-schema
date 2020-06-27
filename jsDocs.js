@@ -99,6 +99,7 @@
  * @property {RegExp|Object.<string,RegExp>} match
  * @property {Array.<string|number>|Object.<string,Array.<string|number>>} enum
  * @property {string|Object.<string,string>} existsIn
+ * @property {boolean|Object.<string,boolean>} requiredUpdate
  */
 
 /**
@@ -197,6 +198,7 @@
  * @property {string} auth
  * @property {string} uniqueItems
  * @property {string} existsIn
+ * @property {string} requiredUpdate
  */
 
 /**
