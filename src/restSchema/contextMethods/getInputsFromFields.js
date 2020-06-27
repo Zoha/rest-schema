@@ -55,7 +55,8 @@ const getInputs = async (argFields, inputs, context) => {
       }
       if (set) {
         if (isFunction(set)) {
-          value = await set(value, context)
+          // this method will not throw any error
+          value = await set(value, context).catch(() => {})
         } else if (!isFunction(set)) {
           value = set
         }
