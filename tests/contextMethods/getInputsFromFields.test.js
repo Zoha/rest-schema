@@ -186,7 +186,7 @@ describe("getInputsFromFields method", function() {
     expect(fieldsInputs)
       .to.haveOwnProperty("prop6")
       .that.equal("prop6")
-    expect(fieldsInputs).to.not.haveOwnProperty("prop7")
+    expect(fieldsInputs).to.haveOwnProperty("prop7")
   })
 
   it("will get data with map type", async () => {

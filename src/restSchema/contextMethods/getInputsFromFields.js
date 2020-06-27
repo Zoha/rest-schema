@@ -54,7 +54,7 @@ const getInputs = async (argFields, inputs, context) => {
         set = field.set[context.route]
       }
       if (set) {
-        if (isFunction(set) && value != null) {
+        if (isFunction(set)) {
           value = await set(value, context)
         } else if (!isFunction(set)) {
           value = set
