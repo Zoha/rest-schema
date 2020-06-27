@@ -4,6 +4,7 @@ const isFunction = require("../helpers/isFunction")
 const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
+const isAsync = require("../helpers/isAsync")
 
 const getInputs = async (argFields, inputs, context) => {
   if (!argFields) {
@@ -55,8 +56,11 @@ const getInputs = async (argFields, inputs, context) => {
       }
       if (set) {
         if (isFunction(set)) {
-          // this method will not throw any error
-          value = await set(value, context).catch(() => {})
+          try {
+            value = await set(value, context)
+          } catch (e) {
+            value = null
+          }
         } else if (!isFunction(set)) {
           value = set
         }
