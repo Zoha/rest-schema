@@ -1,5 +1,7 @@
 const injectContext = require("./middleware/injectContext")
 const registerMiddlewareList = require("./middleware/registerMiddlewareList")
+const beforeHook = require("./middleware/beforeHook")
+const afterMiddlewareHook = require("./middleware/afterMiddlewareHook")
 
 module.exports = (router, routeObject, schema) => {
   // register middleware
@@ -7,10 +9,13 @@ module.exports = (router, routeObject, schema) => {
   // and will be injected if route need them
 
   // inject context to request
-  const middlewareList = [injectContext(schema, routeObject)]
+  const middlewareList = [injectContext(schema, routeObject), beforeHook]
 
   // inject middleware list
   middlewareList.push(registerMiddlewareList(schema, routeObject))
+
+  // for calling afterMiddleware hook
+  middlewareList.push(afterMiddlewareHook)
 
   // registering the route
   router[routeObject.method](routeObject.path, middlewareList, async (req, res, next) => {
@@ -24,14 +29,17 @@ module.exports = (router, routeObject, schema) => {
           const wrapperResponse = context.schema.wrappers.response(response, req, res, next)
 
           if (res.headersSent) {
+            await context.hook("after")
             return
           }
 
           // if wrapper returns response
           if (wrapperResponse) {
             if (typeof wrapperResponse === "object") {
+              await context.hook("after")
               return res.json(wrapperResponse)
             }
+            await context.hook("after")
             return res.send(wrapperResponse)
           }
         }
@@ -43,17 +51,21 @@ module.exports = (router, routeObject, schema) => {
         const wrapperResponse = context.schema.wrappers.error(err, context, req, res, next)
 
         if (res.headersSent) {
+          await context.hook("error")
           return
         }
 
         // if wrapper returns response
         if (wrapperResponse) {
           if (typeof wrapperResponse === "object") {
+            await context.hook("error")
             return res.json(wrapperResponse)
           }
+          await context.hook("error")
           return res.send(wrapperResponse)
         }
       }
+      await context.hook("error")
       return next(err)
     }
   })
