@@ -114,14 +114,14 @@ class SchemaBuilder {
   }
 
   addMiddleware(...args) {
-    args[1] = args[1] || {}
-    args[1].target = this.defaults.defaultPluginMiddlewareList
+    args[2] = args[2] || {}
+    args[2].target = this.defaults.defaultPluginMiddlewareList
     return setters.addMiddleware(...args)
   }
 
   addHook(...args) {
-    args[1] = args[1] || {}
-    args[1].target = this.defaults.defaultPluginHooks
+    args[3] = args[3] || {}
+    args[3].target = this.defaults.defaultPluginHooks
     return setters.addHook(...args)
   }
 }
