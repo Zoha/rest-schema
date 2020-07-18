@@ -6,7 +6,7 @@ const cloneDeep = require("clone-deep")
 
 module.exports = userSchema => {
   // merge defaults and passed
-  const defaults = userSchema.defaults || cloneDeep(globalDefaults)
+  const defaults = { ...cloneDeep(globalDefaults), ...(userSchema.defaults || {}) }
   const clonedSchemaDefaults = defaults.defaultSchema
   const schema = { ...clonedSchemaDefaults, ...userSchema }
   // define default data, cloned global defaults, or userSchema defaults
