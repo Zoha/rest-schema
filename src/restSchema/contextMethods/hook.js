@@ -21,7 +21,7 @@ module.exports = async function(hook) {
   const pluginHooks = getPluginHooksFor(context, hook)
   if (pluginHooks.length) {
     for (let i = 0; i < pluginHooks.length; i += 1) {
-      await pluginHooks(context)
+      await pluginHooks[i](context)
     }
   }
 
