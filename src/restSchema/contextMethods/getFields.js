@@ -3,6 +3,9 @@ const isArray = require("../helpers/isArray")
 const isObject = require("../helpers/isObject")
 const types = require("../types")
 const filter = require("../helpers/filter")
+const CustomType = require("../customType")
+const isFunction = require("../helpers/isFunction")
+const isPlainObject = require("is-plain-object")
 
 const formatFields = async (argFields, context, prepend = "") => {
   const defaultField = context.defaults.defaultField
@@ -38,7 +41,7 @@ const formatFields = async (argFields, context, prepend = "") => {
       field = await field(context)
     }
 
-    if (!isObject(field)) {
+    if (!isObject(field) && !(field instanceof CustomType)) {
       // if type of field is not object by default
       // like message : String -> so convert it
       // to an object with type that equals to value
@@ -55,7 +58,7 @@ const formatFields = async (argFields, context, prepend = "") => {
       .substring(7)
 
     // deep merge field values with default field values
-    field = deepmerge(defaultField, field)
+    field = deepmerge(defaultField, field, { isMergeableObject: isPlainObject })
 
     // if field is array nested
     // change type to Array and
@@ -70,7 +73,7 @@ const formatFields = async (argFields, context, prepend = "") => {
     // if field is object nested
     // change type to Object and
     // process fields as children
-    else if (isObject(field.type)) {
+    else if (isObject(field.type) && !(field.type instanceof CustomType)) {
       field.children = field.type
       field.isNested = true
       field.isObjectNested = true
@@ -95,6 +98,17 @@ const formatFields = async (argFields, context, prepend = "") => {
         field.children = []
       } else {
         field.children = await formatFields(field.children, context, `${prepend + fieldKey}.`)
+      }
+    }
+
+    // if type of field is custom type
+    // apply field options for it
+    if (field.type instanceof CustomType) {
+      field = {
+        ...field,
+        ...(isFunction(field.type.getFieldOptions)
+          ? await field.type.getFieldOptions(context, field)
+          : {})
       }
     }
 
