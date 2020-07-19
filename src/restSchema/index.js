@@ -5,6 +5,7 @@ const set = require("./set")
 const enums = require("./enums")
 const types = require("./types")
 const CustomType = require("./customType")
+const errors = require("./errors")
 
 module.exports = {
   use,
@@ -16,5 +17,7 @@ module.exports = {
   CustomType,
   Schema: schema,
   Model: schema,
-  model: schema
+  model: schema,
+  errors,
+  ...errors
 }
