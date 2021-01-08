@@ -31,7 +31,7 @@ const getValues = async (argFields, values, context) => {
     // and field has a default property
     // get the default value for
 
-    if (value == null && field.default) {
+    if (value == null && field.default != null) {
       if (field.default) {
         let defaultValue = field.default
         if (isObject(defaultValue)) {
@@ -56,7 +56,7 @@ const getValues = async (argFields, values, context) => {
         get = field.get[context.route]
       }
       if (get) {
-        if (isFunction(get) && value != null) {
+        if (isFunction(get) && (value != null || (!field.creatable && !field.updatable))) {
           value = await get(value, context)
         } else if (!isFunction(get)) {
           value = get
