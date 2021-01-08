@@ -16,6 +16,6 @@ module.exports = async function({ collection = null, fields = null } = {}) {
   })
   const finalResponseFromCollection = await Promise.all(finalResponseFromCollectionPromises)
   context.response = finalResponseFromCollection
-  await context.hook("beforeGetCollectionResponse")
+  await context.hook("afterGetCollectionResponse")
   return finalResponseFromCollection
 }
