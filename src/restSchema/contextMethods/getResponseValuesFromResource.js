@@ -5,7 +5,7 @@ const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
-const getValues = async (argFields, values, context) => {
+const getValues = async (argFields, values, context, originalResource) => {
   if (!argFields) {
     return isArray(values) ? [] : {}
   }
@@ -39,7 +39,10 @@ const getValues = async (argFields, values, context) => {
         }
         if (defaultValue) {
           if (isFunction(defaultValue)) {
-            value = await defaultValue(context)
+            value = await defaultValue({
+              ...context,
+              resource: originalResource
+            })
           } else {
             value = defaultValue
           }
@@ -57,7 +60,10 @@ const getValues = async (argFields, values, context) => {
       }
       if (get) {
         if (isFunction(get) && (value != null || (!field.creatable && !field.updatable))) {
-          value = await get(value, context)
+          value = await get(value, {
+            ...context,
+            resource: originalResource
+          })
         } else if (!isFunction(get)) {
           value = get
         }
@@ -75,7 +81,7 @@ const getValues = async (argFields, values, context) => {
     // if value was get and not equals to null or undefined
     // process the nested values for the field
     if (value != null && field.isNested && (isObject(value) || isArray(value))) {
-      value = await getValues(field.children, value, context)
+      value = await getValues(field.children, value, context, originalResource)
     }
 
     // add to final result
@@ -105,5 +111,5 @@ module.exports = async function({ fields = null, resource = null, selectFields =
   resource = resource || context.resource || (await context.getResource()) || {}
   selectFields =
     selectFields || (await context.getSelectFields({ fields: fields, resource: resource }))
-  return getValues(selectFields, resource, context)
+  return getValues(selectFields, resource, context, resource)
 }
