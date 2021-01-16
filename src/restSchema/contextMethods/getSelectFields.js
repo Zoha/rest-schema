@@ -7,7 +7,14 @@ const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsL
 const cast = require("../helpers/cast")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
-const getFields = async (argFields, values, context, selectFields, hideByDefault = false) => {
+const getFields = async (
+  argFields,
+  values,
+  context,
+  selectFields,
+  originalResource,
+  hideByDefault = false
+) => {
   if (!argFields) {
     return isArray(values) ? [] : {}
   }
@@ -76,7 +83,7 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
     // if value have no value (undefined or null)
     // and field has a default property
     // get the default value for
-    if (value == null && field.default) {
+    if (value == null && field.default != null) {
       if (field.default) {
         let defaultValue = field.default
         if (isObject(defaultValue)) {
@@ -84,7 +91,10 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
         }
         if (defaultValue) {
           if (isFunction(defaultValue)) {
-            value = await defaultValue(context)
+            value = await defaultValue({
+              ...context,
+              resource: originalResource
+            })
           } else {
             value = defaultValue
           }
@@ -101,8 +111,11 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
         get = field.get[context.route]
       }
       if (get) {
-        if (isFunction(get) && value != null) {
-          value = await get(value, context)
+        if (isFunction(get) && (value != null || (!field.creatable && !field.updatable))) {
+          value = await get(value, {
+            ...context,
+            resource: originalResource
+          })
         } else if (!isFunction(get)) {
           value = get
         }
@@ -120,7 +133,14 @@ const getFields = async (argFields, values, context, selectFields, hideByDefault
     // if value was get and not equals to null or undefined
     // process the nested values for the field
     if (value != null && field.isNested && (isObject(value) || isArray(value))) {
-      field.children = await getFields(field.children, value, context, selectFields, hideByDefault)
+      field.children = await getFields(
+        field.children,
+        value,
+        context,
+        selectFields,
+        originalResource,
+        hideByDefault
+      )
 
       if (Object.values(field.children).length) {
         include = true
@@ -226,5 +246,5 @@ module.exports = async function({
   // so hide by default should be true
   const hideByDefault = !!selectFields.filter(i => i.shouldBeHided === false).length
 
-  return getFields(fields, resource, context, selectFields, hideByDefault)
+  return getFields(fields, resource, context, selectFields, resource, hideByDefault)
 }
