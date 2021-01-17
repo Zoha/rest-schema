@@ -6,7 +6,8 @@ module.exports = async function({
   filters = null,
   skip = null,
   limit = null,
-  sort = null
+  sort = null,
+  filtersMeta = null
 } = {}) {
   const context = this
   await context.hook("beforeGetCollection")
@@ -19,12 +20,16 @@ module.exports = async function({
   skip = Number(skip) || (await context.getSkip())
   limit = Number(limit) || (await context.getLimit())
   sort = cast(sort).to(Object) || (await context.getSort())
+  filtersMeta = cast(filtersMeta).to(Object) || {}
 
   const collection = await context.model
-    .find({
-      ...(await context.getFilters()),
-      ...filters
-    })
+    .find(
+      {
+        ...(await context.getFilters()),
+        ...filters
+      },
+      filtersMeta
+    )
     .sort(sort)
     .skip(skip)
     .limit(limit)
