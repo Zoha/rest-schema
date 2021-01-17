@@ -32,20 +32,18 @@ const getValues = async (argFields, values, context, originalResource) => {
     // get the default value for
 
     if (value == null && field.default != null) {
-      if (field.default) {
-        let defaultValue = field.default
-        if (isObject(defaultValue)) {
-          defaultValue = field.default[context.route]
-        }
-        if (defaultValue) {
-          if (isFunction(defaultValue)) {
-            value = await defaultValue({
-              ...context,
-              resource: originalResource
-            })
-          } else {
-            value = defaultValue
-          }
+      let defaultValue = field.default
+      if (isObject(defaultValue)) {
+        defaultValue = field.default[context.route]
+      }
+      if (defaultValue != null) {
+        if (isFunction(defaultValue)) {
+          value = await defaultValue({
+            ...context,
+            resource: originalResource
+          })
+        } else {
+          value = defaultValue
         }
       }
     }
