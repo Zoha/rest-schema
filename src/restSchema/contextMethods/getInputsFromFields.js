@@ -5,7 +5,7 @@ const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
-const getInputs = async (argFields, inputs, context) => {
+const getInputs = async (argFields, inputs, context, originalResource) => {
   if (!argFields) {
     return isArray(inputs) ? [] : {}
   }
@@ -29,22 +29,19 @@ const getInputs = async (argFields, inputs, context) => {
     // if value have no value (undefined or null)
     // and field has a default property
     // get the default value for
-    if (value == null && field.default) {
-      if (field.default) {
-        let defaultValue = field.default
-        if (isObject(defaultValue)) {
-          defaultValue = field.default[context.route]
-        }
-        if (defaultValue) {
-          if (isFunction(defaultValue)) {
-            try {
-              value = await defaultValue(value, context)
-            } catch (e) {
-              value = null
-            }
-          } else {
-            value = defaultValue
-          }
+    if (value == null && field.default != null) {
+      let defaultValue = field.default
+      if (isObject(defaultValue)) {
+        defaultValue = field.default[context.route]
+      }
+      if (defaultValue != null) {
+        if (isFunction(defaultValue)) {
+          value = await defaultValue({
+            ...context,
+            resource: originalResource
+          })
+        } else {
+          value = defaultValue
         }
       }
     }
@@ -60,7 +57,10 @@ const getInputs = async (argFields, inputs, context) => {
       if (set) {
         if (isFunction(set)) {
           try {
-            value = await set(value, context)
+            value = await set(value, {
+              ...context,
+              resource: originalResource
+            })
           } catch (e) {
             value = null
           }
@@ -81,7 +81,7 @@ const getInputs = async (argFields, inputs, context) => {
     // if value was set and not equals to null or undefined
     // process the nested values for the field
     if (value != null && field.isNested && (isObject(value) || isArray(value))) {
-      value = await getInputs(field.children, value, context)
+      value = await getInputs(field.children, value, context, originalResource)
     }
 
     // add to final result
@@ -108,5 +108,5 @@ module.exports = async function({ fields = null } = {}) {
     (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
-  return getInputs(fields, context.inputs, context)
+  return getInputs(fields, context.inputs, context, context.resource)
 }
