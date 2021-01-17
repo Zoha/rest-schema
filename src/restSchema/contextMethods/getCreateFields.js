@@ -72,5 +72,5 @@ module.exports = async function({ fields = null } = {}) {
     context.fields ||
     (await context.getFields())
   const clonedFields = cloneDeep(fields)
-  return getCreatableFields(clonedFields)
+  return getCreatableFields(clonedFields, context)
 }
