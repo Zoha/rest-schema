@@ -4,7 +4,6 @@ module.exports = async function({ setCreateInputs = true, fields = null, inputs 
   const context = this
   fields =
     (fields && (await context.getFields({ fields, setFields: false }))) ||
-    context.fields ||
     (await context.getCreateFields())
   const createInputs = cast(inputs).to(Object) || (await context.getInputsFromFields({ fields }))
   if (setCreateInputs) {
