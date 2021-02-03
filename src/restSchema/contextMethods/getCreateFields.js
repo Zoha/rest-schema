@@ -38,6 +38,11 @@ const getCreatableFields = async (fields, context) => {
       // if creatable is boolean
       // and its value is true
       result[fieldKey] = field
+    } else if (field.default) {
+      result[fieldKey] = {
+        ...field,
+        set: field.default
+      }
     }
 
     // if field is nested process children and filter them too
