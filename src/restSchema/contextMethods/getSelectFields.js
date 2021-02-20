@@ -135,7 +135,7 @@ const getFields = async (
         field.children,
         value,
         context,
-        selectFields,
+        Object.values(thisFieldInSelectFields?.field.children || []).map(i => ({ field: i })),
         originalResource,
         hideByDefault
       )
