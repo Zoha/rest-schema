@@ -41,7 +41,16 @@ const formatFields = async (argFields, context, prepend = "") => {
       field = await field(context)
     }
 
-    if (!isObject(field) && !(field instanceof CustomType)) {
+    if (
+      (!isObject(field) ||
+        (field.type == null &&
+          field.required == null &&
+          field.creatable == null &&
+          field.updatable == null &&
+          field.set == null &&
+          field.get == null)) &&
+      !(field instanceof CustomType)
+    ) {
       // if type of field is not object by default
       // like message : String -> so convert it
       // to an object with type that equals to value
