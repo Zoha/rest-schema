@@ -70,6 +70,9 @@ module.exports = {
     $null: () => {
       return null
     },
+    $notNull: () => {
+      return { $ne: null }
+    },
     "$regex:": v => {
       return { $regex: new RegExp(v) }
     },
