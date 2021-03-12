@@ -1,6 +1,7 @@
 /**
+ *
  * @param {*} val - value to cast
- * @returns {array|null}
+ * @returns {Array|null}
  */
 module.exports = val => {
   if (val == null) {
