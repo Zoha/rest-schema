@@ -1,7 +1,7 @@
 /**
  *
- * @param {*} val - value to cast
- * @returns {Number|null}
+ * @param {*} value - value to cast
+ * @returns {number|null}
  */
 module.exports = function castNumber(value) {
   let val = value

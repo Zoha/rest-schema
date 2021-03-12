@@ -1,6 +1,6 @@
 /**
  *
- * @param {*} val - value to cast
+ * @param {*} value - value to cast
  * @returns {null|Date}
  */
 module.exports = function castDate(value) {
@@ -22,6 +22,7 @@ module.exports = function castDate(value) {
   }
 
   if (value instanceof Number || typeof value === "number") {
+    value = Number(value)
     date = new Date(value)
   } else if (
     typeof value === "string" &&
