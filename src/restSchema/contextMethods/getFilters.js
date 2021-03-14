@@ -78,7 +78,7 @@ module.exports = async function({
       // get value and the operator in each operator section
       // and call its handler to get the value
       Object.values(operatorSections).forEach(section => {
-        const result = /(\$[^:]+:?)(.*)/.exec(section)
+        const result = /(\$[^:]+):?(.*)/.exec(section)
         const [, sectionOperator, sectionValue] = result
         if (operators[sectionOperator]) {
           if (logic) {

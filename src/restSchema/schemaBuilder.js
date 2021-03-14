@@ -6,10 +6,6 @@ const registerRoute = require("./registerRoute")
 const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const createContext = require("./createContext")
 
-/**
- * @class
- * @type {import("../../jsDocs").RSSchemaBuilder}
- */
 class SchemaBuilder {
   constructor(schema) {
     this.defaults = cloneDeep(defaults)

@@ -2,7 +2,7 @@ const { Mixed } = require("../types")
 const relationTypes = require("../enums/relationTypes")
 const { singular, plural } = require("pluralize")
 
-module.exports = {
+const defaultField = {
   type: Mixed,
 
   // define key in schema
@@ -85,3 +85,5 @@ module.exports = {
   enum: undefined,
   existsIn: undefined
 }
+
+module.exports = defaultField

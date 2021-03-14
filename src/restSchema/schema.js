@@ -2,11 +2,7 @@ const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const { addSchemaModel } = require("./addSchemaModel")
 const { getSchemaModel } = require("./getSchemaModel")
 const { InvalidArgumentError } = require("./errors")
-require("../../jsDocs")
 
-/**
- * @type {import("../../jsDocs").RSSchemaModelBuilder}
- */
 const schemaModelBuilder = (model, fields, options = {}) => {
   if (fields !== undefined) {
     const schema = schemaFormatter({ model, fields, ...options })

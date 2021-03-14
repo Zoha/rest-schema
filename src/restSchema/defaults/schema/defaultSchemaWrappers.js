@@ -9,7 +9,7 @@ module.exports = {
   },
   error(error, context, req, res, next) {
     if (error instanceof RestSchemaError) {
-      return error.handler(context, req, res, next)
+      return error.handler(context, req, res)
     }
     return next(error)
   }
