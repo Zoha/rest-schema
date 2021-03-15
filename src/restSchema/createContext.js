@@ -42,6 +42,12 @@ const methods = {
   getCollectionResponse: require("./contextMethods/getCollectionResponse")
 }
 
+/**
+ *
+ * @param {import("../../typeDefs/schema").schema} schema
+ * @param {import("../../typeDefs/route").route} route
+ * @returns {import("../../typeDefs/context").context}
+ */
 module.exports = (schema, route) => {
   return {
     schema,
@@ -53,3 +59,5 @@ module.exports = (schema, route) => {
     ...methods
   }
 }
+
+module.exports.contextMethods = methods

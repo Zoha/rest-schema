@@ -1,6 +1,27 @@
 const cast = require("../helpers/cast")
 const deepMergeFilters = require("../helpers/deepMergeFilters")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.setResource]
+ * @param {boolean} [args.setUpdatedResource]
+ * @param {resource} [args.resource]
+ * @param {object} [args.filters]
+ * @returns {Promise.<resource>}
+ */
 module.exports = async function({
   setResource = true,
   setUpdatedResource = true,
@@ -13,7 +34,8 @@ module.exports = async function({
 
   resource = cast(resource).to(Object) || (await context.getResource())
 
-  let getRouteKeysFilters = {
+  let getRouteKeysFilters = {}
+  getRouteKeysFilters = {
     $or: await context.getRouteKeysFilters()
   }
   if (!getRouteKeysFilters.$or.length) {

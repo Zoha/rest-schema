@@ -6,6 +6,25 @@ const cast = require("../helpers/cast")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 const cloneDeep = require("clone-deep")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ *
+ * @param {fields} argFields
+ * @param {object} inputs
+ * @param {context} context
+ * @param {boolean} checkRequired
+ */
 const validateInputs = async (argFields, inputs, context, checkRequired) => {
   if (!argFields) {
     return isArray(inputs) ? [] : {}
@@ -66,7 +85,7 @@ const validateInputs = async (argFields, inputs, context, checkRequired) => {
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
-      field.children = createMapFieldsFromInput(field.of, value, context)
+      field.children = createMapFieldsFromInput(field.of, value)
     }
 
     // validate children
@@ -96,6 +115,15 @@ const validateInputs = async (argFields, inputs, context, checkRequired) => {
   return filter(validationErrors, i => i != null)
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.setValidationErrors]
+ * @param {fields} [args.fields]
+ * @param {object} [args.inputs]
+ * @param {boolean} [args.checkRequired]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({
   setValidationErrors = true,
   fields = null,

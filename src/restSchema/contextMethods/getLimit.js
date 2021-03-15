@@ -1,5 +1,27 @@
 const cast = require("../helpers/cast")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {number} [args.defaultLimit]
+ * @param {number} [args.maxLimit]
+ * @param {number} [args.minLimit]
+ * @param {string} [args.limitKey]
+ * @param {object} [args.inputs]
+ * @returns {Promise.<number>}
+ */
 module.exports = async function({
   defaultLimit = null,
   maxLimit = null,

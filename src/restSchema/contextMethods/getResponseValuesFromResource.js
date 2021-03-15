@@ -5,6 +5,26 @@ const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ *
+ * @param {fields} argFields
+ * @param {object} values
+ * @param {context} context
+ * @param {resource} originalResource
+ * @returns {Promise<*>}
+ */
 const getValues = async (argFields, values, context, originalResource) => {
   if (!argFields) {
     return isArray(values) ? [] : {}
@@ -73,7 +93,7 @@ const getValues = async (argFields, values, context, originalResource) => {
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
-      field.children = createMapFieldsFromInput(field.of, value, context)
+      field.children = createMapFieldsFromInput(field.of, value)
     }
 
     // if value was get and not equals to null or undefined
@@ -99,6 +119,14 @@ const getValues = async (argFields, values, context, originalResource) => {
   return filter(result, i => i != null)
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {fields} [args.fields]
+ * @param {resource} [args.resource]
+ * @param {fields} [args.selectFields]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({ fields = null, resource = null, selectFields = null } = {}) {
   const context = this
   fields =
@@ -106,7 +134,7 @@ module.exports = async function({ fields = null, resource = null, selectFields =
     context.fields ||
     (await context.getFields())
 
-  resource = resource || context.resource || (await context.getResource()) || {}
+  resource = resource || context.resource || (await context.getResource())
   selectFields =
     selectFields || (await context.getSelectFields({ fields: fields, resource: resource }))
   return getValues(selectFields, resource, context, resource)

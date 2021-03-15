@@ -1,10 +1,5 @@
-// @ts-nocheck
-/// <reference path="../node_modules/@types/express/index.d.ts"/>
-/// <reference path="../node_modules/@types/express-serve-static-core/index.d.ts"/>
-
-// TODO fix context
 /**
- * @typedef {{ok : true}} context
+ * @typedef {import('./context').context} context
  */
 
 /**
@@ -14,6 +9,7 @@
 /**
  * @typedef {import("./field").fields} fields
  * @typedef {import("./route").routes} routes
+ * @typedef {import("../src/restSchema/defaults").defaults} defaults
  *
  * @typedef {object} pagination
  * @property {number} [page]
@@ -22,22 +18,23 @@
  * @property {number} [maxLimit]
  * @property {string} [sort]
  * @property {object} [defaultFilters]
+ * @property {number} [skip]
  *
  * @callback errorCallback
  * @param {import("../src/restSchema/errors/restSchemaError")} err
- * @param {Request} req
- * @param {Response} res
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
  * @param {function} next
  *
  * @callback responseCallback
  * @param {Response} res
  * @param {context} ctx
  *
- * @typedef {object} wrapper
+ * @typedef {object} wrappers
  * @property {responseCallback} response
  * @property {errorCallback} error
  *
- * @typedef {import('@types/express-serve-static-core/index').RequestHandler} requestHandler
+ * @typedef {import('express').RequestHandler} requestHandler
  *
  * @typedef {object} routesSpecificMiddleware
  * @property {(requestHandler | Array.<requestHandler>)} [create]
@@ -75,6 +72,7 @@
  * @property {(hookHandler|Promise.<hookHandler>)} [afterMiddleware]
  *
  * @typedef {object} hooksListWithRoute
+ * @property {hooksList} [global]
  * @property {hooksList} [create]
  * @property {hooksList} [update]
  * @property {hooksList} [delete]
@@ -83,19 +81,26 @@
  * @property {hooksList} [count]
  * @property {hooksList} [validate]
  *
- * @typedef {(hooksList | hooksListWithRoute)} hooks
+ * @typedef {(hooksList & hooksListWithRoute)} hooks
+ */
+
+/**
+ * @typedef {import("mongoose").Model} model
  */
 
 /**
  * @typedef {object} schema
+ * @property {model} [model]
  * @property {fields} [fields]
  * @property {routes} [routes]
  * @property {pagination} [pagination]
- * @property {wrapper} [wrapper]
+ * @property {wrappers} [wrappers]
  * @property {object} [filters]
  * @property {middleware} [middleware]
  * @property {Array.<string>} [routeKeys]
- * @property {hooks} [routeKeys]
+ * @property {hooks} [hooks]
+ * @property {defaults} [defaults]
+ * @property {string} [name]
  *
  */
 

@@ -1,3 +1,22 @@
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {Array.<resource>} [args.collection]
+ * @param {fields} [args.fields]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({ collection = null, fields = null } = {}) {
   const context = this
   await context.hook("beforeGetCollectionResponse")

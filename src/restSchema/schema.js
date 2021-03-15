@@ -3,6 +3,13 @@ const { addSchemaModel } = require("./addSchemaModel")
 const { getSchemaModel } = require("./getSchemaModel")
 const { InvalidArgumentError } = require("./errors")
 
+/**
+ *
+ * @param {import("../../typeDefs/schema").model} model
+ * @param {import("../../typeDefs/field").fields} fields
+ * @param {import("../../typeDefs/schema").schema} options
+ * @returns {import("./schemaBuilder")}
+ */
 const schemaModelBuilder = (model, fields, options = {}) => {
   if (fields !== undefined) {
     const schema = schemaFormatter({ model, fields, ...options })

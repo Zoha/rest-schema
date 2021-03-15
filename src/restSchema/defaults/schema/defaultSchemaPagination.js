@@ -4,5 +4,6 @@ module.exports = {
   page: 1,
   limit: 10,
   minLimit: 1,
-  maxLimit: 50
+  maxLimit: 50,
+  skip: 0
 }

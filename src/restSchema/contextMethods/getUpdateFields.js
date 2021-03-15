@@ -4,7 +4,24 @@ const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
 const isBoolean = require("../helpers/isBoolean")
 const filter = require("../helpers/filter")
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
 
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ *
+ * @param {fields} fields
+ * @param {context} context
+ * @returns
+ */
 const getUpdatableFields = async (fields, context) => {
   if (!fields) {
     return {}
@@ -66,6 +83,12 @@ const getUpdatableFields = async (fields, context) => {
   return filter(result, i => i != null)
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {fields} [args.fields]
+ * @returns {Promise.<fields>}
+ */
 module.exports = async function({ fields = null } = {}) {
   const context = this
   fields =

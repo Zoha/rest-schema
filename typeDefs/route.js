@@ -2,9 +2,8 @@
  * @typedef {import("./field").fieldType} fieldType
  */
 
-// TODO fix context
 /**
- * @typedef {{ok : true}} context
+ * @typedef {import('./context').context} context
  */
 
 /**
@@ -47,15 +46,15 @@
  * @typedef {object} route
  * @property {(routeHandlerCallback|Promise<routeHandlerCallback>)} handler
  * @property {('create' | 'update' |'delete' | 'index' |'single' | 'validate' |'count' | string)} [name]
- * @property {('get'|'post'|'delete'|'put'|'patch')} [method]
+ * @property {('get' | 'post' | 'delete' | 'put' | 'patch' | string)} [method]
  * @property {string} [path]
- * @property {Array.<('query'|'body'|'header')>} [inputsTarget]
+ * @property {Array.<('query'|'body'|'header'|string)>} [inputsTarget]
  * @property {boolean} [selectable]
  * @property {boolean} [filterable]
  * @property {routeMeta} [meta]
  * @property {filteringOperators} [filteringOperators]
  *
- * @typedef {Array.<(route | 'create' | 'update' | 'delete' | 'count' | 'single' | 'validate' | 'single')>} routes
+ * @typedef {Array.<route | 'create' | 'update' | 'delete' | 'count' | 'single' | 'validate' | 'single'>| Object<string , route>} routes
  */
 
 module.exports = {}

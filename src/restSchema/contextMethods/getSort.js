@@ -1,5 +1,26 @@
 const cast = require("../helpers/cast")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {string} [args.sortKey]
+ * @param {object} [args.inputs]
+ * @param {object} [args.defaultSort]
+ * @param {string} [args.sortString]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({
   inputs = null,
   sortKey = null,

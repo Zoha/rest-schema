@@ -1,4 +1,5 @@
-const { ObjectId, Mixed } = require("mongoose").Schema.Types
+const { Mixed } = require("mongoose").Schema.Types
+const ObjectId = require("./CustomObjectId")
 
 module.exports = Object.freeze({
   String: String,

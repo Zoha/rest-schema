@@ -7,6 +7,32 @@ const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsL
 const cast = require("../helpers/cast")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").field} field
+ */
+
+/**
+ *
+ * @param {fields} argFields
+ * @param {object|array} values
+ * @param {context} context
+ * @param {field[]} selectFields
+ * @param {resource} originalResource
+ * @param {boolean} [hideByDefault]
+ * @returns
+ */
 const getFields = async (
   argFields,
   values,
@@ -125,7 +151,7 @@ const getFields = async (
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
-      field.children = createMapFieldsFromInput(field.of, value, context)
+      field.children = createMapFieldsFromInput(field.of, value)
     }
 
     // if value was get and not equals to null or undefined
@@ -135,7 +161,11 @@ const getFields = async (
         field.children,
         value,
         context,
-        Object.values(thisFieldInSelectFields?.field.children || []).map(i => ({ field: i })),
+        Object.values(
+          thisFieldInSelectFields && thisFieldInSelectFields.fields
+            ? thisFieldInSelectFields.field.children || []
+            : []
+        ).map(i => ({ field: i })),
         originalResource,
         hideByDefault
       )
@@ -164,6 +194,14 @@ const getFields = async (
   return filter(result, i => i != null)
 }
 
+/**
+ *
+ * @param {object} args
+ * @param {object} args.inputs
+ * @param {string} args.selectInputKey
+ * @param {context} args.context
+ * @returns
+ */
 const getSelectFields = async ({ inputs, selectInputKey, context }) => {
   // get all fields that are specified in the inputs.selectKey
   // return array of select fields in format of like
@@ -204,6 +242,17 @@ const getSelectFields = async ({ inputs, selectInputKey, context }) => {
   return Promise.all(selectFields)
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {resource} [args.resource]
+ * @param {fields} [args.fields]
+ * @param {string} [args.selectInputKey]
+ * @param {object} [args.inputs]
+ * @param {import("../../../typeDefs/route").route} [args.routeObject]
+ * @param {boolean} [args.selectable]
+ * @returns {Promise.<fields>}
+ */
 module.exports = async function({
   resource = null,
   fields = null,

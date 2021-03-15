@@ -1,6 +1,24 @@
 const { getSchemaModel } = require("../getSchemaModel")
 const relationTypes = require("../enums/relationTypes")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {fields} [args.fields]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({ fields = null } = {}) {
   const context = this
   fields =

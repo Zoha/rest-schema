@@ -2,6 +2,33 @@ const cast = require("../helpers/cast")
 const deepMergeFilters = require("../helpers/deepMergeFilters")
 const { NotFoundError } = require("../errors")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").model} model
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.errorOnNotFound]
+ * @param {boolean} [args.setResource]
+ * @param {boolean} [args.force]
+ * @param {*} [args.resourceId]
+ * @param {model} [args.model]
+ * @param {object} [args.filters]
+ * @returns {Promise.<resource>}
+ */
 module.exports = async function({
   errorOnNotFound = false,
   setResource = true,
@@ -29,7 +56,8 @@ module.exports = async function({
       _id: resourceId
     })
   } else {
-    let getRouteKeysFilters = {
+    let getRouteKeysFilters = {}
+    getRouteKeysFilters = {
       $or: await context.getRouteKeysFilters()
     }
     if (!getRouteKeysFilters.$or.length) {

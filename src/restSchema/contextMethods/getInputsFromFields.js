@@ -5,6 +5,26 @@ const filter = require("../helpers/filter")
 const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsLengthOfInputs")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ *
+ * @param {fields} argFields
+ * @param {object} inputs
+ * @param {context} context
+ * @param {resource} originalResource
+ * @returns
+ */
 const getInputs = async (argFields, inputs, context, originalResource) => {
   if (!argFields) {
     return isArray(inputs) ? [] : {}
@@ -75,7 +95,7 @@ const getInputs = async (argFields, inputs, context, originalResource) => {
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
-      field.children = createMapFieldsFromInput(field.of, value, context)
+      field.children = createMapFieldsFromInput(field.of, value)
     }
 
     // if value was set and not equals to null or undefined
@@ -102,6 +122,12 @@ const getInputs = async (argFields, inputs, context, originalResource) => {
   return filter(result, i => i != null)
 }
 
+/**
+ * @this
+ * @param {object} [args]
+ * @param {fields} [args.fields]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({ fields = null } = {}) {
   const context = this
   fields =

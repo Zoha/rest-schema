@@ -16,9 +16,8 @@ const {
  * @typedef {(ArrayConstructor|BooleanConstructor|StringConstructor|ObjectId|MapConstructor|ArrayBufferConstructor|NumberConstructor|DateConstructor|ObjectConstructor)} fieldType
  */
 
-// TODO fix context
 /**
- * @typedef {{ok : true}} context
+ * @typedef {import('./context').context} context
  */
 
 /**
@@ -143,7 +142,7 @@ const {
  * @property {boolean} [isNested]
  * @property {boolean} [isArrayNested]
  * @property {boolean} [isObjectNested]
- * @property {(field[]| Object.<string , field>)} [children]
+ * @property {fields} [children]
  * @property {fieldType} [of]
  *
  * @property {(objectForBoolean | boolean | fieldPropHandler)} [creatable]
@@ -179,9 +178,12 @@ const {
  * @property {Array<string> | objectForStringArray | fieldPropHandler} [enum]
  * @property {objectForString | string | fieldPropHandler} [existsIn]
  *
+ * @callback fieldsFunction
+ * @param {context} context
+ * @return {(fields|Promise.<fields>)}
  *
  * @typedef {(fieldProps & Object.<string , *>)} field
- * @typedef {Object.<string , fieldProps>} fields
+ * @typedef {(fieldsFunction | Object.<string , fieldProps>)} fields
  */
 
 module.exports = {}

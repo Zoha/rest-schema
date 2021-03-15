@@ -7,6 +7,25 @@ const CustomType = require("../customType")
 const isFunction = require("../helpers/isFunction")
 const isPlainObject = require("is-plain-object")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ *
+ * @param {fields} argFields
+ * @param {context} context
+ * @param {string} [prepend]
+ * @returns
+ */
 const formatFields = async (argFields, context, prepend = "") => {
   const defaultField = context.defaults.defaultField
   let fields = argFields
@@ -67,6 +86,7 @@ const formatFields = async (argFields, context, prepend = "") => {
       .substring(7)
 
     // deep merge field values with default field values
+    // @ts-ignore
     field = deepmerge(defaultField, field, { isMergeableObject: isPlainObject })
 
     // if field is array nested
@@ -143,6 +163,13 @@ const formatFields = async (argFields, context, prepend = "") => {
   return filter(formattedFields, i => i != null)
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.setFields]
+ * @param {fields} [args.fields]
+ * @returns {Promise.<fields>}
+ */
 module.exports = async function({ setFields = true, fields = undefined } = {}) {
   const context = this
   if (fields !== undefined && !fields) {

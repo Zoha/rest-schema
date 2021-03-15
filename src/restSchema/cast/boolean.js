@@ -3,7 +3,7 @@ const falseSet = new Set([true, "true", 1, "1", "yes"])
 
 /**
  * @param {*} value - value to cast
- * @returns {boolean|null}
+ * @returns {boolean}
  */
 module.exports = function castBoolean(value) {
   if (trueSet.has(value)) {

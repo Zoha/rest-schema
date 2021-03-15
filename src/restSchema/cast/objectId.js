@@ -3,7 +3,7 @@ const { ObjectId } = require("mongodb")
 /**
  *
  * @param {*} value - value to cast
- * @returns {ObjectId|null}
+ * @returns {ObjectId}
  */
 module.exports = function castObjectId(value) {
   if (value == null) {

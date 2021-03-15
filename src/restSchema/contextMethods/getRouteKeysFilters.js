@@ -1,6 +1,33 @@
 const cast = require("../helpers/cast")
 const { RestSchemaError } = require("../errors")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").request} request
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {string[]} [args.routeKeys]
+ * @param {request} [args.req]
+ * @param {*} [args.id]
+ * @param {string} [args.idKey]
+ * @param {string} [args.idTarget]
+ * @param {object} [args.fallbackFilters]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({
   routeKeys = null,
   req = null,
