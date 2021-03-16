@@ -106,6 +106,8 @@
  * @property {string[]} [routeKeys]
  * @property {number} [total]
  * @property {validationErrors} [validationErrors]
+ * @property {boolean} [isRelation]
+ * @property {context} [parent]
  *
  *
  * @typedef {contextProps & contextMethods} context

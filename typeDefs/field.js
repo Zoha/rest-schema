@@ -13,6 +13,10 @@ const {
 } = require("../src/restSchema/types")
 
 /**
+ * @typedef {import("./context").resource} resource
+ */
+
+/**
  * @typedef {(ArrayConstructor|BooleanConstructor|StringConstructor|ObjectId|MapConstructor|ArrayBufferConstructor|NumberConstructor|DateConstructor|ObjectConstructor)} fieldType
  */
 
@@ -124,11 +128,17 @@ const {
  * @property {RegExp} [validate]
  * @property {RegExp} [count]
  *
+ * @typedef relation
+ * @property {import("../src/restSchema/schemaBuilder")} schemaBuilder
+ * @property {("collection"|"resource")} type
+ * @property {field} field
+ * @property {string} fieldName
+ *
  * @callback findCallback
- * @param {object} [resource] TODO fix this
+ * @param {resource} [resource]
  * @param {context} [ctx]
  * @param {context} [relationCtx]
- * @param {object} [relation] TODO : fix this
+ * @param {relation} [relation]
  * @returns {object}
  */
 
