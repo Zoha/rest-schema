@@ -14,6 +14,10 @@ const cloneDeep = require("clone-deep")
  * @typedef {import("../../../typeDefs/field").fields} fields
  */
 /**
+ * @typedef {import("../../../typeDefs/field").fieldType} fieldType
+ */
+
+/**
  * @typedef {import("../../../typeDefs/field").field} field
  */
 
@@ -33,6 +37,7 @@ module.exports = async function({ key, fields = null }) {
     (await context.getFields())
   /** @type {*} */
   let operateFields = { children: fields }
+  /** @type {field} */
   let foundedField
   let path = ""
   Object.values(targetParts).every(target => {

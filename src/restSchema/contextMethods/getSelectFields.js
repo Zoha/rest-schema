@@ -161,11 +161,7 @@ const getFields = async (
         field.children,
         value,
         context,
-        Object.values(
-          thisFieldInSelectFields && thisFieldInSelectFields.fields
-            ? thisFieldInSelectFields.field.children || []
-            : []
-        ).map(i => ({ field: i })),
+        selectFields,
         originalResource,
         hideByDefault
       )
@@ -239,6 +235,7 @@ const getSelectFields = async ({ inputs, selectInputKey, context }) => {
       })
     )
   })
+
   return Promise.all(selectFields)
 }
 

@@ -1,5 +1,5 @@
 const trueSet = new Set([true, "true", 1, "1", "yes"])
-const falseSet = new Set([true, "true", 1, "1", "yes"])
+const falseSet = new Set([false, "false", 0, "0", "no", null])
 
 /**
  * @param {*} value - value to cast

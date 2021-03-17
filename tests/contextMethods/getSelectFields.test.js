@@ -60,6 +60,7 @@ describe("getSelectFields method", () => {
     const result = await context.getSelectFields()
 
     expect(result).to.haveOwnProperty("prop1")
+
     expect(result).to.haveOwnProperty("prop2")
     expect(result).to.haveOwnProperty("prop3")
 

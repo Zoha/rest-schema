@@ -153,7 +153,7 @@ const {
  * @property {boolean} [isArrayNested]
  * @property {boolean} [isObjectNested]
  * @property {fields} [children]
- * @property {fieldType} [of]
+ * @property {(field[]| Object.<string , field> | fieldType)} [of]
  *
  * @property {(objectForBoolean | boolean | fieldPropHandler)} [creatable]
  * @property {(objectForBoolean | boolean | fieldPropHandler)} [updatable]
@@ -193,7 +193,7 @@ const {
  * @return {(fields|Promise.<fields>)}
  *
  * @typedef {(fieldProps & Object.<string , *>)} field
- * @typedef {(fieldsFunction | Object.<string , fieldProps>)} fields
+ * @typedef {(fieldsFunction & Object.<string , fieldProps>)} fields
  */
 
 module.exports = {}
