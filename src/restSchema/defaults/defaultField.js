@@ -3,7 +3,7 @@ const relationTypes = require("../enums/relationTypes")
 const { singular, plural } = require("pluralize")
 
 const defaultField = {
-  type: Mixed,
+  type: "Mixed",
 
   // define key in schema
   // will be defined in get fields method
