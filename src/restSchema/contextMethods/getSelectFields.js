@@ -254,7 +254,12 @@ const getSelectPacks = ({ inputs, selectInputKey }) => {
   // { fields : object , shouldBeHided : boolean}
   const selectInput = inputs[selectInputKey]
   if (!selectInput) {
-    return
+    return {
+      key: "",
+      showChildrenByDefault: true,
+      show: true,
+      children: []
+    }
   }
 
   let arrayOfSelectInput = []
