@@ -43,7 +43,7 @@
  * @typedef {(filteringOperatorsDefaults | Object.<string , filteringOperatorCallback>)} filteringOperators
  *
  *
- * @typedef {object} route
+ * @typedef {object } routeProps
  * @property {(routeHandlerCallback|Promise<routeHandlerCallback>)} handler
  * @property {('create' | 'update' |'delete' | 'index' |'single' | 'validate' |'count' | string)} [name]
  * @property {('get' | 'post' | 'delete' | 'put' | 'patch' | string)} [method]
@@ -53,6 +53,8 @@
  * @property {boolean} [filterable]
  * @property {routeMeta} [meta]
  * @property {filteringOperators} [filteringOperators]
+ *
+ * @typedef {routeProps & Object<string , any>} route
  *
  * @typedef {Array.<route | 'create' | 'update' | 'delete' | 'count' | 'single' | 'validate' | 'single'>| Object<string , route>} routes
  */

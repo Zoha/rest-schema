@@ -74,9 +74,15 @@ const sanitizeInputs = async (argFields, argInputs, context) => {
  * @param {boolean} [args.setInputs]
  * @param {fields} [args.fields]
  * @param {object} [args.inputs]
+ * @param {boolean} [args.setDirtyInputs]
  * @returns {Promise.<object>}
  */
-module.exports = async function({ setInputs = true, fields = null, inputs = null } = {}) {
+module.exports = async function({
+  setInputs = true,
+  fields = null,
+  inputs = null,
+  setDirtyInputs = false
+} = {}) {
   const context = this
   fields =
     (fields && (await context.getFields({ fields, setFields: false }))) ||
@@ -86,6 +92,12 @@ module.exports = async function({ setInputs = true, fields = null, inputs = null
   const sanitizedInputs = await sanitizeInputs(fields, inputs, context)
   if (setInputs) {
     context.inputs = sanitizedInputs
+  }
+  if (setDirtyInputs) {
+    await context.getDirtyInputs({
+      setDirtyInputs: true,
+      inputs: sanitizedInputs
+    })
   }
   return sanitizedInputs
 }

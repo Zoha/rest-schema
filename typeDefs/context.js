@@ -7,11 +7,13 @@
  */
 
 /**
- * @typedef {import("mongoose").Document} resource
+ * @typedef {import("mongoose").Document} resourceDocument
+ * @typedef {resourceDocument & Object<string , any>} resource
  */
 
 /**
- * @typedef {import("mongoose").Model} model
+ * @typedef {import("mongoose").Model} modelDocument
+ * @typedef {modelDocument & Object<string , any>} model
  */
 
 /**
@@ -19,7 +21,8 @@
  */
 
 /**
- * @typedef {import("../src/restSchema/defaults").defaults} defaults
+ * @typedef {import("../src/restSchema/defaults").defaults} defaultDefaults
+ * @typedef {defaultDefaults & Object<string , *>} defaults
  */
 
 /**
@@ -62,6 +65,7 @@
  * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
  * @property {import('../src/restSchema/contextMethods/validateInputs')} validateInputs
  * @property {import('../src/restSchema/contextMethods/getCollectionResponse')} getCollectionResponse
+ * @property {import('../src/restSchema/contextMethods/getDirtyInputs')} getDirtyInputs
  *
  */
 
@@ -94,8 +98,8 @@
  * @property {resource} [deletedResource]
  * @property {resource} [deletedResource]
  * @property {Array.<resource>} [collection]
- * @property {Request} [req]
- * @property {Response} [res]
+ * @property {request} [req]
+ * @property {response} [res]
  * @property {function} [next]
  * @property {fields} [fields]
  * @property {object} [response]
@@ -108,6 +112,7 @@
  * @property {validationErrors} [validationErrors]
  * @property {boolean} [isRelation]
  * @property {context} [parent]
+ * @property {object} [dirtyInputs]
  *
  *
  * @typedef {contextProps & contextMethods} context

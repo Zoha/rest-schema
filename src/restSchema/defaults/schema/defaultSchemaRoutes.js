@@ -3,7 +3,9 @@ const relationTypes = require("../../enums/relationTypes")
 const manualInvolveMiddlewareList = require("../../helpers/manualInvolveMiddlewareList")
 const injectContext = require("../../middleware/registerMiddlewareList")
 const { ValidationError } = require("../../errors")
+const URL = require("url")
 
+/** @type {Object<string , import("../../../../typeDefs/route").route>} */
 module.exports = {
   index: {
     name: "index",
@@ -85,7 +87,7 @@ module.exports = {
       // sanitize inputs
       // this method will convert input types
       // and also apply all sanitizers
-      await context.sanitizeInputs()
+      await context.sanitizeInputs({ setDirtyInputs: true })
 
       // validate fields
       // this method will return an array that contains
@@ -160,7 +162,8 @@ module.exports = {
       const relations = await context.getRelations()
 
       // get relation path details {path , fieldName}
-      const relationPath = getRelationPath(context.req.url)
+      const requestUrl = new URL.URL(context.req.url, "https://example.com").pathname
+      const relationPath = getRelationPath(requestUrl)
       // if relation map is invalid or field name not exists in relations
       if (!relationPath || !Object.keys(relations).includes(relationPath.fieldName)) {
         return next()

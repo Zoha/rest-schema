@@ -14,6 +14,10 @@ const { ObjectId } = require("../../src/restSchema/types")
 
 const app = express()
 
+const sleep = async time => {
+  return new Promise(resolve => setTimeout(resolve, time))
+}
+
 const User = restModel(UserModel, {
   profile: {
     type: ObjectId,
@@ -35,6 +39,9 @@ const Profile = restModel(ProfileModel, {
   user: {
     type: ObjectId,
     ref: "User"
+  },
+  field: {
+    type: String
   }
 })
 
@@ -103,7 +110,9 @@ describe("relation routes", () => {
   })
 
   it("single to single relation", async () => {
-    const profile = await ProfileModel.create({})
+    const profile = await ProfileModel.create({
+      field: "something"
+    })
     const user = await UserModel.create({
       profile: profile._id
     })
@@ -114,6 +123,14 @@ describe("relation routes", () => {
         const response = JSON.parse(res.text)
         expect(response).to.haveOwnProperty("_id")
       })
+    await request(app)
+      .get(`/users/${user._id}/profile?select=field`)
+      .expect("Content-Type", /json/)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.haveOwnProperty("field")
+      })
+
     await request(app)
       .get(`/users/${user._id}/profile/user`)
       .expect("Content-Type", /json/)
@@ -216,20 +233,21 @@ describe("relation routes", () => {
     const user2 = await UserModel.create({
       name: "username2"
     })
+    await sleep(1)
     const user1 = await UserModel.create({
       name: "username1"
     })
-
+    await sleep(1)
     const comment3 = await CommentModel.create({
       body: "comment3",
       user: user2
     })
-
+    await sleep(1)
     const comment2 = await CommentModel.create({
       body: "comment2",
       user: user1
     })
-
+    await sleep(1)
     const comment1 = await CommentModel.create({
       body: "comment1",
       user: user1
@@ -282,24 +300,25 @@ describe("relation routes", () => {
     const permission3 = await PermissionModel.create({
       name: "username1"
     })
-
+    await sleep(1)
     const permission2 = await PermissionModel.create({
       name: "username1"
     })
-
+    await sleep(1)
     const permission1 = await PermissionModel.create({
       name: "username1"
     })
-
+    await sleep(1)
     const role2 = await RoleModel.create({
       name: "admin",
       permissions: [permission2, permission3]
     })
+    await sleep(1)
     const role1 = await RoleModel.create({
       name: "admin",
       permissions: [permission1, permission2]
     })
-
+    await sleep(1)
     const user = await UserModel.create({
       role: role1
     })

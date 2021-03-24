@@ -39,7 +39,8 @@ const methods = {
   updateResource: require("./contextMethods/updateResource"),
   validateInput: require("./contextMethods/validateInput"),
   validateInputs: require("./contextMethods/validateInputs"),
-  getCollectionResponse: require("./contextMethods/getCollectionResponse")
+  getCollectionResponse: require("./contextMethods/getCollectionResponse"),
+  getDirtyInputs: require("./contextMethods/getDirtyInputs")
 }
 
 /**

@@ -45,11 +45,6 @@ const getUpdatableFields = async (fields, context) => {
       ) {
         result[fieldKey] = field
       }
-
-      // else check updatable value
-      else {
-        result[fieldKey] = field
-      }
     } else if (isFunction(field.updatable) && (await field.updatable(context))) {
       result[fieldKey] = field
     } else if (isBoolean(field.updatable) && field.updatable !== false) {

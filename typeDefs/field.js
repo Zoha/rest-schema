@@ -192,8 +192,8 @@ const {
  * @param {context} context
  * @return {(fields|Promise.<fields>)}
  *
- * @typedef {(fieldProps & Object.<string , *>)} field
- * @typedef {(fieldsFunction & Object.<string , fieldProps>)} fields
+ * @typedef {(fieldProps | Object.<string , *>)} field
+ * @typedef {(fieldsFunction | Object.<string , field>)} fields
  */
 
 module.exports = {}

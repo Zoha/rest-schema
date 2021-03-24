@@ -44,11 +44,6 @@ const getCreatableFields = async (fields, context) => {
       ) {
         result[fieldKey] = field
       }
-
-      // else check creatable value
-      else {
-        result[fieldKey] = field
-      }
       // @ts-ignore
     } else if (isFunction(field.creatable) && (await field.creatable(context))) {
       result[fieldKey] = field
