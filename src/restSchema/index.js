@@ -1,3 +1,5 @@
+/** @module rest-schema */
+
 const use = require("./use")
 const schema = require("./schema")
 const defaults = require("./defaults")
@@ -6,6 +8,12 @@ const enums = require("./enums")
 const types = require("./types")
 const CustomType = require("./customType")
 const errors = require("./errors")
+
+// type defs
+require("../../typeDefs/context")
+require("../../typeDefs/field")
+require("../../typeDefs/route")
+require("../../typeDefs/schema")
 
 module.exports = {
   use,
