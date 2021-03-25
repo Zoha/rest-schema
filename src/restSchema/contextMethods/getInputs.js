@@ -23,10 +23,19 @@ const cast = require("../helpers/cast")
  * @param {boolean} [args.setInputs]
  * @param {request} [args.req]
  * @param {string[]} [args.inputsTarget]
+ * @param {boolean} [args.force]
  * @returns {Promise.<object>}
  */
-module.exports = async function({ setInputs = true, req = null, inputsTarget = null } = {}) {
+module.exports = async function({
+  setInputs = true,
+  req = null,
+  inputsTarget = null,
+  force = false
+} = {}) {
   const context = this
+  if (context.inputs && !force) {
+    return context.inputs
+  }
   req = cast(req).to(Object) || context.req
   let inputsTargets = cast(inputsTarget).to(Array) || context.routeObject.inputsTarget || []
   if (!isArray(inputsTargets)) {

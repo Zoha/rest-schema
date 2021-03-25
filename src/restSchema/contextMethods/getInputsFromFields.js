@@ -123,16 +123,18 @@ const getInputs = async (argFields, inputs, context, originalResource) => {
 }
 
 /**
- * @this
+ * @this {context}
  * @param {object} [args]
  * @param {fields} [args.fields]
+ * @param {object} [args.inputs]
  * @returns {Promise.<object>}
  */
-module.exports = async function({ fields = null } = {}) {
+module.exports = async function({ fields = null, inputs = null } = {}) {
   const context = this
   fields =
     (fields && (await context.getFields({ fields, setFields: false }))) ||
     context.fields ||
     (await context.getFields())
-  return getInputs(fields, context.inputs, context, context.resource)
+  inputs = this.cast(inputs).to(Object) || (await context.getInputs())
+  return getInputs(fields, inputs, context, context.resource)
 }

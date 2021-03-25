@@ -62,7 +62,12 @@ const getFields = async (argFields, values, context, selectFields, originalResou
     }
     if (hide) {
       if (isFunction(hide)) {
-        if (await hide(context)) {
+        if (
+          await hide({
+            ...context,
+            resource: originalResource
+          })
+        ) {
           return
         }
       } else {
@@ -77,7 +82,12 @@ const getFields = async (argFields, values, context, selectFields, originalResou
     }
     if (schemaHideByDefault) {
       if (isFunction(schemaHideByDefault)) {
-        if (await schemaHideByDefault(context)) {
+        if (
+          await schemaHideByDefault({
+            ...context,
+            resource: originalResource
+          })
+        ) {
           include = false
         }
       } else {

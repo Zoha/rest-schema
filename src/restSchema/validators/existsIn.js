@@ -1,8 +1,12 @@
+const { isObject } = require("lodash")
 const { getSchemaModel } = require("../getSchemaModel")
 
 module.exports = async (value, modelName) => {
   const schemaModel = getSchemaModel(modelName)
-  if (!schemaModel) {
+  if (
+    !schemaModel ||
+    (isObject(schemaModel) && Object.getOwnPropertyNames(schemaModel).length === 0)
+  ) {
     return false
   }
 
