@@ -31,6 +31,7 @@ module.exports = {
   use,
   schema,
   defaults,
+  defaultRoutes: defaults.defaultSchema.routes,
   set,
   enums,
   types,
