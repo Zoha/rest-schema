@@ -56,7 +56,7 @@
  *
  * @typedef {routeProps & Object<string , any>} route
  *
- * @typedef {Array.<route | 'create' | 'update' | 'delete' | 'count' | 'single' | 'validate' | 'single'>| Object<string , route>} routes
+ * @typedef {Array.<'create' | 'update' | 'delete' | 'count' | 'single' | 'validate' | 'index'| route>| Object<string , route>} routes
  */
 
 module.exports = {}
