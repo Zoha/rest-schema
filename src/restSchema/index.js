@@ -15,6 +15,18 @@ require("../../typeDefs/field")
 require("../../typeDefs/route")
 require("../../typeDefs/schema")
 
+// require files for typeDefs
+require("./addSchemaModel")
+require("./createContext")
+require("./CustomObjectId")
+require("./getSchemaModel")
+require("./registerRoute")
+require("./schemaBuilder")
+require("./errors/invalidArgumentError")
+require("./errors/notFoundError")
+require("./errors/restSchemaError")
+require("./errors/validationError")
+
 module.exports = {
   use,
   schema,
