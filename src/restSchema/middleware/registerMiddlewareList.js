@@ -1,5 +1,6 @@
 const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
+const isObject = require("../helpers/isObject")
 
 const getPluginMiddlewareList = (schema, routeObject) => {
   let middlewareList = []
