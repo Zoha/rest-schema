@@ -8,7 +8,7 @@ class RouteManager {
    * @param {route[]} routes
    */
   constructor(routes) {
-    this.routes = routes
+    this.routes = Object.values(routes)
   }
 
   /**
