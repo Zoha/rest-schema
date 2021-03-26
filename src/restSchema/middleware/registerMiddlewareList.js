@@ -50,9 +50,14 @@ const getUserMiddlewareList = (schema, routeObject) => {
   return finalUserMiddlewareList
 }
 
+const getRouteMiddlewares = (schema, routeObject) => {
+  return routeObject.middleware || []
+}
+
 module.exports = (schema, routeObject) => {
   return [
     ...getPluginMiddlewareList(schema, routeObject),
-    ...getUserMiddlewareList(schema, routeObject)
+    ...getUserMiddlewareList(schema, routeObject),
+    ...getRouteMiddlewares(schema, routeObject)
   ]
 }

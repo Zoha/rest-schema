@@ -9,6 +9,9 @@ module.exports = {
   selectable: true,
   filterable: true,
 
+  // middleware
+  middleware: [],
+
   // meta that contains key props for this route
   meta: {
     select: "select",
