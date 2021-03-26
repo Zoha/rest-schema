@@ -51,17 +51,21 @@ const getUserMiddlewareList = (schema, routeObject) => {
   return finalUserMiddlewareList
 }
 
-const getRouteMiddlewares = (schema, routeObject) => {
+const getRouteMiddleware = (schema, routeObject) => {
   if (isArray(routeObject.middleware)) {
-    return routeObject
+    return routeObject.middleware
+  } else if (isFunction(routeObject.middleware)) {
+    return [routeObject.middleware]
+  } else if (isObject(routeObject.middleware)) {
+    return Object.values(routeObject.middleware)
   }
-  return routeObject.middleware || []
+  return [routeObject.middleware] || []
 }
 
 module.exports = (schema, routeObject) => {
   return [
     ...getPluginMiddlewareList(schema, routeObject),
     ...getUserMiddlewareList(schema, routeObject),
-    ...getRouteMiddlewares(schema, routeObject)
+    ...getRouteMiddleware(schema, routeObject)
   ]
 }
