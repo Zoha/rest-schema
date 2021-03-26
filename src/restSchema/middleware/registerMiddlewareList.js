@@ -1,3 +1,4 @@
+const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
 
 const getPluginMiddlewareList = (schema, routeObject) => {
@@ -51,6 +52,9 @@ const getUserMiddlewareList = (schema, routeObject) => {
 }
 
 const getRouteMiddlewares = (schema, routeObject) => {
+  if (isArray(routeObject.middleware)) {
+    return routeObject
+  }
   return routeObject.middleware || []
 }
 

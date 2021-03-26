@@ -46,7 +46,7 @@
  *
  * @typedef {object } routeProps
  * @property {(routeHandlerCallback|Promise<routeHandlerCallback>)} handler
- * @property {[requestHandler[]]} [middleware]
+ * @property {requestHandler[] | requestHandler} [middleware]
  * @property {('create' | 'update' |'delete' | 'index' |'single' | 'validate' |'count' | string)} [name]
  * @property {('get' | 'post' | 'delete' | 'put' | 'patch' | string)} [method]
  * @property {string} [path]
