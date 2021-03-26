@@ -8,6 +8,7 @@ const enums = require("./enums")
 const types = require("./types")
 const CustomType = require("./customType")
 const errors = require("./errors")
+const RouteManager = require("./routeManager")
 
 // type defs
 require("../../typeDefs/context")
@@ -31,7 +32,9 @@ module.exports = {
   use,
   schema,
   defaults,
-  defaultRoutes: defaults.defaultSchema.routes,
+  RouteManager,
+  // @ts-ignore
+  defaultRoutes: new RouteManager(defaults.defaultSchema.routes),
   set,
   enums,
   types,
