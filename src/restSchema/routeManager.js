@@ -23,7 +23,7 @@ class RouteManager {
         this.add(route)
       }
     } else {
-      this.routes = [...this.routes, newRoute]
+      this.routes = [newRoute, ...this.routes]
     }
     return this
   }
