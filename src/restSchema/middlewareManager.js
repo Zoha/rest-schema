@@ -69,7 +69,7 @@ class MiddlewareManager {
       exceptRoutes = [exceptRoutes]
     }
     const targetRoutes = Object.keys(this.middlewareList).filter(
-      i => !exceptRoutes.includes(i) || i === "global"
+      i => !exceptRoutes.includes(i) && i !== "global"
     )
     this.addToRoute(targetRoutes, middleware)
     return this
