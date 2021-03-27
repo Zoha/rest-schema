@@ -35,7 +35,15 @@
  * @property {errorCallback} error
  *
  * @typedef {import('express').RequestHandler} expressRequestHandler
- * @typedef {expressRequestHandler & Object.<string , any>} requestHandler
+ *
+ * @callback next
+ * @param {Error} [error]
+ *
+ * @callback requestHandler
+ * @async
+ * @param {(import("./context").request & Object.<string , any>)} [req]
+ * @param {(import("./context").response & Object.<string , any>)} [res]
+ * @param {next} [request]
  *
  * @typedef {object} routesSpecificMiddleware
  * @property {(requestHandler | Array.<requestHandler>)} [create]
