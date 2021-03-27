@@ -34,7 +34,8 @@
  * @property {responseCallback} response
  * @property {errorCallback} error
  *
- * @typedef {import('express').RequestHandler} requestHandler
+ * @typedef {import('express').RequestHandler} expressRequestHandler
+ * @typedef {expressRequestHandler & Object.<string , any>} requestHandler
  *
  * @typedef {object} routesSpecificMiddleware
  * @property {(requestHandler | Array.<requestHandler>)} [create]
