@@ -1,3 +1,5 @@
+const defaultSchemaRoutes = require("./defaults/schema/defaultSchemaRoutes")
+
 /**
  * @typedef {import("../../typeDefs/route").routes} routes
  * @typedef {import("../../typeDefs/route").route} route
@@ -5,10 +7,10 @@
 
 class RouteManager {
   /**
-   * @param {routes} routes
+   * @param {route[]} routes
    */
   constructor(routes) {
-    this.routes = Object.values(routes)
+    this.routes = routes || Object.values(defaultSchemaRoutes)
   }
 
   /**
@@ -70,7 +72,7 @@ class RouteManager {
   }
 
   /**
-   * @returns {routes}
+   * @returns {route[]}
    */
   get() {
     return this.routes
