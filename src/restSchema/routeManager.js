@@ -7,9 +7,9 @@ const defaultSchemaRoutes = require("./defaults/schema/defaultSchemaRoutes")
 
 class RouteManager {
   /**
-   * @param {route[]} routes
+   * @param {route[]} [routes]
    */
-  constructor(routes) {
+  constructor(routes = null) {
     this.routes = routes || Object.values(defaultSchemaRoutes)
   }
 
