@@ -17,7 +17,7 @@ class ValidationError extends RestSchemaError {
    * @param {import("../../../typeDefs/context").response} res
    */
   handler(context, req, res) {
-    return res.status(400).json(this.validationData)
+    return res.status(422).json(this.validationData)
   }
 }
 
