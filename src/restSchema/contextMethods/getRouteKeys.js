@@ -2,6 +2,8 @@
  * @typedef {import("../../../typeDefs/context").resource} resource
  */
 
+const setOnContext = require("../helpers/setOnContext")
+
 /**
  * @typedef {import("../../../typeDefs/context").context} context
  */
@@ -24,6 +26,6 @@ module.exports = function() {
   if (typeof schemaRouteKeys === "string") {
     return [schemaRouteKeys]
   }
-  context.routeKeys = schemaRouteKeys
+  setOnContext(context, "routeKeys", schemaRouteKeys)
   return schemaRouteKeys
 }

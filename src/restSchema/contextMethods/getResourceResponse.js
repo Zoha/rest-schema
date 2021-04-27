@@ -1,4 +1,5 @@
 const cast = require("../helpers/cast")
+const setOnContext = require("../helpers/setOnContext")
 
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource
@@ -30,7 +31,7 @@ module.exports = async function({ resource = null } = {}) {
     fields: context.fields,
     resource
   })
-  context.response = response
+  setOnContext(context, "response", response)
   await context.hook("afterGetResourceResponse")
   return response
 }

@@ -1,0 +1,26 @@
+on:
+  push:
+    branches: [master, development]
+    tags:
+      - "v*"
+
+name: Create Github Release
+
+jobs:
+  PreRelease:
+    name: Create Github PreRelease
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Github PreRelease
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true

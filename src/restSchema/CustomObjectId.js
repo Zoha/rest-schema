@@ -7,12 +7,12 @@ const RestSchemaObjectId = function(val) {
     return ObjectId(val)
   }
 }
+RestSchemaObjectId.isValid = ObjectId.isValid
+RestSchemaObjectId.createFromHexString = ObjectId.createFromHexString
+RestSchemaObjectId.createFromTime = ObjectId.createFromTime
+RestSchemaObjectId.generate = ObjectId.generate
+RestSchemaObjectId.cacheHexString = ObjectId.cacheHexString
 
 RestSchemaObjectId.prototype = Object.create(MongooseSchemaObjectId.prototype)
-RestSchemaObjectId.prototype.isValid = ObjectId.isValid
-RestSchemaObjectId.prototype.createFromHexString = ObjectId.createFromHexString
-RestSchemaObjectId.prototype.createFromTime = ObjectId.createFromTime
-RestSchemaObjectId.prototype.generate = ObjectId.generate
-RestSchemaObjectId.prototype.cacheHexString = ObjectId.cacheHexString
 
 module.exports = RestSchemaObjectId
