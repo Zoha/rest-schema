@@ -10,7 +10,7 @@ jobs:
   PreRelease:
     name: Create Github PreRelease
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/development'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
