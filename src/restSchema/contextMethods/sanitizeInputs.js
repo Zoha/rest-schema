@@ -5,6 +5,13 @@ const addToFieldsArrayAsLengthOfInputs = require("../helpers/addToFieldsArrayAsL
 const cast = require("../helpers/cast")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
+/**
+ *
+ * @param {fields} argFields
+ * @param {object} argInputs
+ * @param {context} context
+ * @returns
+ */
 const sanitizeInputs = async (argFields, argInputs, context) => {
   const inputs = argInputs
   if (!argFields) {
@@ -27,7 +34,7 @@ const sanitizeInputs = async (argFields, argInputs, context) => {
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
-      field.children = createMapFieldsFromInput(field.of, value, context)
+      field.children = createMapFieldsFromInput(field.of, value)
     }
 
     // sanitize children
@@ -49,7 +56,33 @@ const sanitizeInputs = async (argFields, argInputs, context) => {
   return filter(inputs, i => i !== undefined)
 }
 
-module.exports = async function({ setInputs = true, fields = null, inputs = null } = {}) {
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.setInputs]
+ * @param {fields} [args.fields]
+ * @param {object} [args.inputs]
+ * @param {boolean} [args.setDirtyInputs]
+ * @returns {Promise.<object>}
+ */
+module.exports = async function({
+  setInputs = true,
+  fields = null,
+  inputs = null,
+  setDirtyInputs = false
+} = {}) {
   const context = this
   fields =
     (fields && (await context.getFields({ fields, setFields: false }))) ||
@@ -59,6 +92,12 @@ module.exports = async function({ setInputs = true, fields = null, inputs = null
   const sanitizedInputs = await sanitizeInputs(fields, inputs, context)
   if (setInputs) {
     context.inputs = sanitizedInputs
+  }
+  if (setDirtyInputs) {
+    await context.getDirtyInputs({
+      setDirtyInputs: true,
+      inputs: sanitizedInputs
+    })
   }
   return sanitizedInputs
 }

@@ -1,5 +1,37 @@
 const cast = require("../helpers/cast")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {import("../../../typeDefs/context").response} [args.res]
+ * @param {number} [args.total]
+ * @param {Array.<resource>} [args.collection]
+ * @param {number} [args.count]
+ * @param {number} [args.skip]
+ * @param {number} [args.limit]
+ * @param {number} [args.page]
+ * @param {number} [args.start]
+ * @param {number} [args.end]
+ * @param {number} [args.range]
+ * @param {boolean} [args.hasPrevPage]
+ * @param {boolean} [args.hasNextPage]
+ * @param {number | string} [args.prevPage]
+ * @param {number | string} [args.nextPage]
+ * @param {number} [args.lastPage]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({
   res = null,
   total = null,

@@ -1,3 +1,19 @@
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.setResource]
+ * @param {boolean} [args.setCreatedResource]
+ * @param {object} [args.inputs]
+ * @returns {Promise.<resource>}
+ */
 module.exports = async function({
   setResource = true,
   setCreatedResource = true,

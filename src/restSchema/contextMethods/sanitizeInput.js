@@ -1,10 +1,34 @@
 const isObject = require("../helpers/isObject")
 const isFunction = require("../helpers/isFunction")
 const availableSanitizers = require("../sanitizers")
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
 
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").field} field
+ */
+
+/**
+ *
+ * @param {*} type
+ * @param {*} value
+ * @param {*} shouldBeSanitized
+ * @param {field} field
+ * @param {context} context
+ * @returns
+ */
 const sanitizeBy = (type, value, shouldBeSanitized, field, context) => {
   if (isObject(shouldBeSanitized)) {
-    return sanitizeBy(type, value, shouldBeSanitized[context.route], context)
+    return sanitizeBy(type, value, shouldBeSanitized[context.route], field, context)
   }
 
   if (!shouldBeSanitized || !availableSanitizers[type]) {
@@ -14,6 +38,13 @@ const sanitizeBy = (type, value, shouldBeSanitized, field, context) => {
   return availableSanitizers[type](value, shouldBeSanitized, field, context)
 }
 
+/**
+ *
+ * @param {*} argValue
+ * @param {*} customSanitize
+ * @param {context} context
+ * @returns
+ */
 const customSanitizeHandler = async (argValue, customSanitize, context) => {
   if (isObject(customSanitize)) {
     return customSanitizeHandler(argValue, customSanitize[context.route], context)
@@ -29,6 +60,13 @@ const customSanitizeHandler = async (argValue, customSanitize, context) => {
   return value
 }
 
+/**
+ * @this context
+ * @param {object} args
+ * @param {*} args.value
+ * @param {field} args.field
+ * @returns {Promise.<*>}
+ */
 module.exports = async function({ value, field }) {
   const context = this
 

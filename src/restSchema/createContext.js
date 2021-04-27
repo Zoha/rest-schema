@@ -39,9 +39,16 @@ const methods = {
   updateResource: require("./contextMethods/updateResource"),
   validateInput: require("./contextMethods/validateInput"),
   validateInputs: require("./contextMethods/validateInputs"),
-  getCollectionResponse: require("./contextMethods/getCollectionResponse")
+  getCollectionResponse: require("./contextMethods/getCollectionResponse"),
+  getDirtyInputs: require("./contextMethods/getDirtyInputs")
 }
 
+/**
+ *
+ * @param {import("../../typeDefs/schema").schema} schema
+ * @param {import("../../typeDefs/route").route} route
+ * @returns {import("../../typeDefs/context").context}
+ */
 module.exports = (schema, route) => {
   return {
     schema,
@@ -53,3 +60,5 @@ module.exports = (schema, route) => {
     ...methods
   }
 }
+
+module.exports.contextMethods = methods

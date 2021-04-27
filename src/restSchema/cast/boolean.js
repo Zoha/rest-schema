@@ -1,17 +1,16 @@
+const trueSet = new Set([true, "true", 1, "1", "yes"])
+const falseSet = new Set([false, "false", 0, "0", "no", null])
+
 /**
- *
- * @param {*} val - value to cast
- * @returns {Boolean}
+ * @param {*} value - value to cast
+ * @returns {boolean}
  */
 module.exports = function castBoolean(value) {
-  if (module.exports.convertToTrue.has(value)) {
+  if (trueSet.has(value)) {
     return true
   }
-  if (module.exports.convertToFalse.has(value)) {
+  if (falseSet.has(value)) {
     return false
   }
   return !!value
 }
-
-module.exports.convertToTrue = new Set([true, "true", 1, "1", "yes"])
-module.exports.convertToFalse = new Set([false, "false", 0, "0", "no", null])

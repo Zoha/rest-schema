@@ -12,6 +12,7 @@ module.exports = (router, routeObject, schema) => {
   const middlewareList = [injectContext(schema, routeObject), beforeHook]
 
   // inject middleware list
+  // @ts-ignore
   middlewareList.push(registerMiddlewareList(schema, routeObject))
 
   // for calling afterMiddleware hook

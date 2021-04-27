@@ -14,7 +14,7 @@ const getRoute = (route, customDefaults) => {
     }
     return { ...defaultRoute, ...defaultValues, ...route }
   } else if (typeof route === "string" && defaultRoutes[route]) {
-    return defaultRoutes[route]
+    return { ...defaultRoute, ...defaultRoutes[route] }
   }
 
   throw new InvalidArgumentError("route name not exists")

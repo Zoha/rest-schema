@@ -9,6 +9,9 @@ module.exports = {
   selectable: true,
   filterable: true,
 
+  // middleware
+  middleware: [],
+
   // meta that contains key props for this route
   meta: {
     select: "select",
@@ -27,36 +30,36 @@ module.exports = {
   // custom operators fro filtering data
   // this operators will be applied in getFilters method
   filteringOperators: {
-    "$eq:": (v, k, type) => {
+    $eq: (v, k, type) => {
       const value = cast(v).to(type)
       return { $eq: value }
     },
-    "$gt:": (v, k, type) => {
+    $gt: (v, k, type) => {
       const value = cast(v).to(type)
       return { $gt: value }
     },
-    "$gte:": (v, k, type) => {
+    $gte: (v, k, type) => {
       const value = cast(v).to(type)
       return { $gte: value }
     },
-    "$in:": (v, k, type) => {
+    $in: (v, k, type) => {
       let value = v.split(",")
       value = value.map(i => cast(i).to(type))
       return { $in: value }
     },
-    "$lt:": (v, k, type) => {
+    $lt: (v, k, type) => {
       const value = cast(v).to(type)
       return { $lt: value }
     },
-    "$lte:": (v, k, type) => {
+    $lte: (v, k, type) => {
       const value = cast(v).to(type)
       return { $lte: value }
     },
-    "$ne:": (v, k, type) => {
+    $ne: (v, k, type) => {
       const value = cast(v).to(type)
       return { $ne: value }
     },
-    "$nin:": (v, k, type) => {
+    $nin: (v, k, type) => {
       let value = v.split(",")
       value = value.map(i => cast(i).to(type))
       return { $nin: value }
@@ -70,10 +73,13 @@ module.exports = {
     $null: () => {
       return null
     },
-    "$regex:": v => {
+    $notNull: () => {
+      return { $ne: null }
+    },
+    $regex: v => {
       return { $regex: new RegExp(v) }
     },
-    "$regexi:": v => {
+    $regexi: v => {
       return { $regex: new RegExp(v, "i") }
     }
   }

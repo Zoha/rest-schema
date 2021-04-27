@@ -1,5 +1,24 @@
 const cast = require("../helpers/cast")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @param {object} args
+ * @param {object} args.inputs
+ * @param {string} args.pageInputKey
+ * @param {number} args.defaultPage
+ * @returns {number}
+ */
 const getPage = function({ inputs, pageInputKey, defaultPage }) {
   let page = defaultPage
   if (Number.isNaN(page)) {
@@ -15,6 +34,18 @@ const getPage = function({ inputs, pageInputKey, defaultPage }) {
   return page
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {number} [args.skip]
+ * @param {object} [args.inputs]
+ * @param {string} [args.skipInputKey]
+ * @param {number} [args.page]
+ * @param {string} [args.pageInputKey]
+ * @param {number} [args.defaultPage]
+ * @param {number} [args.limit]
+ * @returns {Promise.<number>}
+ */
 module.exports = async function({
   skip = null,
   inputs = null,

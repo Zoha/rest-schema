@@ -40,7 +40,7 @@ describe("set default route", () => {
     setDefaultRoute(
       {
         filteringOperators: {
-          "$eq:": "somethingElse"
+          $eq: "somethingElse"
         }
       },
       {
@@ -48,9 +48,9 @@ describe("set default route", () => {
       }
     )
 
-    expect(target.filteringOperators["$eq:"]).to.be.equal("somethingElse")
+    expect(target.filteringOperators["$eq"]).to.be.equal("somethingElse")
 
-    expect(target.filteringOperators["$gt:"]).to.be.a("function")
+    expect(target.filteringOperators["$gt"]).to.be.a("function")
   })
 
   it("change default operators of route without merge", () => {
@@ -59,7 +59,7 @@ describe("set default route", () => {
     setDefaultRoute(
       {
         filteringOperators: {
-          "$eq:": "somethingElse"
+          $eq: "somethingElse"
         }
       },
       {
@@ -68,9 +68,9 @@ describe("set default route", () => {
       }
     )
 
-    expect(target.filteringOperators["$eq:"]).to.be.equal("somethingElse")
+    expect(target.filteringOperators["$eq"]).to.be.equal("somethingElse")
 
-    expect(target.filteringOperators["$gt:"]).to.be.equal(undefined)
+    expect(target.filteringOperators["$gt"]).to.be.equal(undefined)
   })
 
   it("change default operators with its own method", () => {
@@ -78,14 +78,14 @@ describe("set default route", () => {
 
     setDefaultRouteFilteringOperators(
       {
-        "$eq:": "somethingElse"
+        $eq: "somethingElse"
       },
       {
         target
       }
     )
 
-    expect(target["$eq:"]).to.be.equal("somethingElse")
+    expect(target["$eq"]).to.be.equal("somethingElse")
   })
 
   it("change default meta with its own method", () => {

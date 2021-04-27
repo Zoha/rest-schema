@@ -60,6 +60,7 @@ describe("getSelectFields method", () => {
     const result = await context.getSelectFields()
 
     expect(result).to.haveOwnProperty("prop1")
+
     expect(result).to.haveOwnProperty("prop2")
     expect(result).to.haveOwnProperty("prop3")
 
@@ -146,6 +147,38 @@ describe("getSelectFields method", () => {
       .to.haveOwnProperty("prop1")
       .that.haveOwnProperty("children")
       .that.not.haveOwnProperty("nested3")
+
+    expect(result.prop1.children.nested1).to.be.an("object")
+    expect(result.prop1.children.nested2).to.be.an("object")
+  })
+
+  it("returns some fields without any select", async () => {
+    const context = createContext(
+      {
+        ...defaultSchema,
+        fields: {
+          prop1: {
+            type: Map,
+            of: String
+          }
+        }
+      },
+      route
+    )
+    context.resource = {
+      prop1: {
+        nested1: 10,
+        nested2: 12,
+        nested3: 14
+      }
+    }
+    context.inputs = {
+      select: undefined
+    }
+
+    const result = await context.getSelectFields()
+
+    expect(result).to.haveOwnProperty("prop1")
 
     expect(result.prop1.children.nested1).to.be.an("object")
     expect(result.prop1.children.nested2).to.be.an("object")

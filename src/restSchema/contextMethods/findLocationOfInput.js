@@ -1,7 +1,23 @@
 const get = require("../helpers/get")
 const cast = require("../helpers/cast")
 
-module.exports = function({ key, req = null, inputsTargets = null } = {}) {
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @this context
+ * @param {object} obj
+ * @param {string} obj.key
+ * @param {string} [obj.req = null]
+ * @param {string} [obj.inputsTargets = null]
+ * @returns {Promise.<resource>}
+ */
+module.exports = function({ key, req = null, inputsTargets = null }) {
   const context = this
 
   let foundTarget = null

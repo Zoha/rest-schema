@@ -3,6 +3,28 @@ const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 const cast = require("../helpers/cast")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {object} [args.inputs]
+ * @param {import("../../../typeDefs/route").filteringOperators} [args.operators]
+ * @param {object} [args.defaultRouteFilters]
+ * @param {object} [args.customFilters]
+ * @param {object} [args.filteringMeta]
+ * @returns {Promise.<object>}
+ */
 module.exports = async function({
   inputs = null,
   operators = null,
@@ -78,7 +100,7 @@ module.exports = async function({
       // get value and the operator in each operator section
       // and call its handler to get the value
       Object.values(operatorSections).forEach(section => {
-        const result = /(\$[^:]+:?)(.*)/.exec(section)
+        const result = /(\$[^:]+):?(.*)/.exec(section)
         const [, sectionOperator, sectionValue] = result
         if (operators[sectionOperator]) {
           if (logic) {

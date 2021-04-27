@@ -9,6 +9,7 @@ const model = require("../../src/testHelpers/model")
 const hook = require("../../src/restSchema/contextMethods/hook")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
 const defaults = require("../../src/restSchema/defaults")
+const getInputs = require("../../src/restSchema/contextMethods/getInputs")
 
 const schema = {
   model,
@@ -26,6 +27,7 @@ describe("createResource method", function() {
   })
   it("will create resource normally", async () => {
     const context = {
+      getInputs,
       schema,
       model,
       cast,
@@ -57,6 +59,7 @@ describe("createResource method", function() {
 
   it("will not change context if set resource passed as false", async () => {
     const context = {
+      getInputs,
       schema,
       model,
       cast,
@@ -83,6 +86,7 @@ describe("createResource method", function() {
 
   it("will not change context if set createdResource passed as false", async () => {
     const context = {
+      getInputs,
       schema,
       model,
       cast,

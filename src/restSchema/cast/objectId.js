@@ -2,8 +2,8 @@ const { ObjectId } = require("mongodb")
 
 /**
  *
- * @param {*} val - value to cast
- * @returns {ObjectId|null}
+ * @param {*} value - value to cast
+ * @returns {ObjectId}
  */
 module.exports = function castObjectId(value) {
   if (value == null) {

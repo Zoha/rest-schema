@@ -133,7 +133,28 @@ const checkCustomValidation = async ({ value, validationArgs, key, field, contex
   return true
 }
 
-module.exports = async function({ value, field, key } = {}) {
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ * @typedef {import("../../../typeDefs/field").field} field
+ */
+
+/**
+ * @this context
+ * @param {object} args
+ * @param {*} [args.value]
+ * @param {field} args.field
+ * @param {string} [args.key]
+ * @returns {Promise.<object>}
+ */
+module.exports = async function({ value, field, key = null }) {
   const context = this
   key = key || field.nestedKey || "field"
   const messages = await context.getMessages()
@@ -174,6 +195,7 @@ module.exports = async function({ value, field, key } = {}) {
       throw errors[0]
     }
     const error = new Error(messages.listOfErrors)
+    // @ts-ignore
     error.list = errors
     throw error
   }

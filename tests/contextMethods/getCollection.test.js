@@ -12,7 +12,8 @@ const context = {
   route: "default",
   getFilters: async () => ({}),
   getLimit: async () => 5,
-  getSkip: async () => 0
+  getSkip: async () => 0,
+  getSort: async () => {}
 }
 
 describe("getCollection method", async () => {

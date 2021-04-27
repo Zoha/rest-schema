@@ -1,4 +1,6 @@
+const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
+const isObject = require("../helpers/isObject")
 
 const getPluginMiddlewareList = (schema, routeObject) => {
   let middlewareList = []
@@ -50,9 +52,21 @@ const getUserMiddlewareList = (schema, routeObject) => {
   return finalUserMiddlewareList
 }
 
+const getRouteMiddleware = (schema, routeObject) => {
+  if (isArray(routeObject.middleware)) {
+    return routeObject.middleware
+  } else if (isFunction(routeObject.middleware)) {
+    return [routeObject.middleware]
+  } else if (isObject(routeObject.middleware)) {
+    return Object.values(routeObject.middleware)
+  }
+  return [routeObject.middleware] || []
+}
+
 module.exports = (schema, routeObject) => {
   return [
     ...getPluginMiddlewareList(schema, routeObject),
-    ...getUserMiddlewareList(schema, routeObject)
+    ...getUserMiddlewareList(schema, routeObject),
+    ...getRouteMiddleware(schema, routeObject)
   ]
 }

@@ -1,5 +1,21 @@
 const deepMergeFilters = require("../helpers/deepMergeFilters")
 
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {boolean} [args.setDeletedResource]
+ * @param {resource} [args.resource]
+ * @param {boolean} [args.filters]
+ * @returns {Promise.<resource>}
+ */
 module.exports = async function({
   setDeletedResource = true,
   resource = null,
@@ -13,7 +29,8 @@ module.exports = async function({
   resource =
     context.cast(resource).to(Object) || (await context.getResource({ errorOnNotFound: true }))
 
-  let getRouteKeysFilters = {
+  let getRouteKeysFilters = {}
+  getRouteKeysFilters = {
     $or: await context.getRouteKeysFilters()
   }
   if (!getRouteKeysFilters.$or.length) {

@@ -363,7 +363,7 @@ describe("resource method", () => {
         prop5: "invalid"
       })
       .expect("Content-Type", /json/)
-      .expect(400)
+      .expect(422)
       .expect(res => {
         const response = JSON.parse(res.text)
         expect(response)

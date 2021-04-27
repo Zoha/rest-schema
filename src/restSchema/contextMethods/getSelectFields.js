@@ -7,14 +7,32 @@ const addToFieldsArrayAsLengthOfValues = require("../helpers/addToFieldsArrayAsL
 const cast = require("../helpers/cast")
 const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
 
-const getFields = async (
-  argFields,
-  values,
-  context,
-  selectFields,
-  originalResource,
-  hideByDefault = false
-) => {
+/**
+ * @typedef {import("../../../typeDefs/context").resource} resource
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/context").context} context
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").fields} fields
+ */
+
+/**
+ * @typedef {import("../../../typeDefs/field").field} field
+ */
+
+/**
+ *
+ * @param {fields} argFields
+ * @param {object|array} values
+ * @param {context} context
+ * @param {selectFieldBase} selectFields
+ * @param {resource} originalResource
+ * @returns
+ */
+const getFields = async (argFields, values, context, selectFields, originalResource) => {
   if (!argFields) {
     return isArray(values) ? [] : {}
   }
@@ -34,7 +52,7 @@ const getFields = async (
     // define field and value
     const field = fields[fieldKey]
     let value = context.cast(values[fieldKey]).to(field.type || String)
-    let include = !hideByDefault
+    let include = selectFields.showChildrenByDefault
 
     // if fields should be hided
     // so this fields should not be selected
@@ -44,7 +62,12 @@ const getFields = async (
     }
     if (hide) {
       if (isFunction(hide)) {
-        if (await hide(context)) {
+        if (
+          await hide({
+            ...context,
+            resource: originalResource
+          })
+        ) {
           return
         }
       } else {
@@ -59,7 +82,12 @@ const getFields = async (
     }
     if (schemaHideByDefault) {
       if (isFunction(schemaHideByDefault)) {
-        if (await schemaHideByDefault(context)) {
+        if (
+          await schemaHideByDefault({
+            ...context,
+            resource: originalResource
+          })
+        ) {
           include = false
         }
       } else {
@@ -69,12 +97,10 @@ const getFields = async (
 
     // check that exists in selected
     // if yes so check that selected should be hide or not
-    const thisFieldInSelectFields = selectFields.find(
-      i => i.field && i.field.nestedKey === field.nestedKey
-    )
+    const thisFieldInSelectFields = selectFields.children.find(i => i.key === field.nestedKey)
 
     if (thisFieldInSelectFields) {
-      if (thisFieldInSelectFields.shouldBeHided === true) {
+      if (!thisFieldInSelectFields.show) {
         return
       }
       include = true
@@ -84,20 +110,18 @@ const getFields = async (
     // and field has a default property
     // get the default value for
     if (value == null && field.default != null) {
-      if (field.default) {
-        let defaultValue = field.default
-        if (isObject(defaultValue)) {
-          defaultValue = field.default[context.route]
-        }
-        if (defaultValue) {
-          if (isFunction(defaultValue)) {
-            value = await defaultValue({
-              ...context,
-              resource: originalResource
-            })
-          } else {
-            value = defaultValue
-          }
+      let defaultValue = field.default
+      if (isObject(defaultValue)) {
+        defaultValue = field.default[context.route]
+      }
+      if (defaultValue != null) {
+        if (isFunction(defaultValue)) {
+          value = await defaultValue({
+            ...context,
+            resource: originalResource
+          })
+        } else {
+          value = defaultValue
         }
       }
     }
@@ -127,19 +151,23 @@ const getFields = async (
       field.type = Object
       field.isNested = true
       field.isObjectNested = true
-      field.children = createMapFieldsFromInput(field.of, value, context)
+      field.children = createMapFieldsFromInput(field.of, value)
     }
 
     // if value was get and not equals to null or undefined
     // process the nested values for the field
-    if (value != null && field.isNested && (isObject(value) || isArray(value))) {
+    if (
+      value != null &&
+      field.isNested &&
+      (isObject(value) || isArray(value)) &&
+      thisFieldInSelectFields
+    ) {
       field.children = await getFields(
         field.children,
         value,
         context,
-        selectFields,
-        originalResource,
-        hideByDefault
+        thisFieldInSelectFields,
+        originalResource
       )
 
       if (Object.values(field.children).length) {
@@ -166,13 +194,82 @@ const getFields = async (
   return filter(result, i => i != null)
 }
 
-const getSelectFields = async ({ inputs, selectInputKey, context }) => {
+/**
+ * @typedef {object} selectFieldBase
+ * @property {boolean} showChildrenByDefault
+ * @property {boolean} show
+ * @property {selectFieldBase[]} children
+ * @property {string} key
+ */
+/**
+ * @param {string} key
+ * @param {string[]} keys
+ * @param {selectFieldBase} base
+ * @returns {selectFieldBase}
+ */
+const packInputs = (
+  key,
+  keys,
+  base = { show: true, showChildrenByDefault: true, children: [], key: null }
+) => {
+  let show = !key.startsWith("-")
+  const originalKey = key
+  key = key.replace(/^[-+]/, "")
+  const exactKey = keys.find(i => i.replace(/^[-+]/, "") === key)
+  if (exactKey) {
+    if (exactKey.startsWith("-")) {
+      show = false
+    } else if (!exactKey.startsWith("+")) {
+      base.showChildrenByDefault = false
+    }
+    return {
+      showChildrenByDefault: show,
+      show,
+      children: [],
+      key
+    }
+  } else if (!key || keys.filter(i => i.includes(key)).length) {
+    const childrenKeys = key
+      ? keys.filter(i => i.replace(/^[-+]/, "").startsWith(base.key ? `${base.key}.${key}` : key))
+      : keys
+
+    const final = {
+      showChildrenByDefault: true,
+      show: true,
+      children: [],
+      key
+    }
+    final.children = childrenKeys
+      .map(i => i.substr(originalKey.length))
+      .map(i => /^\.?([^.]+)/.exec(i))
+      .filter(i => !!i && isArray(i) && i.length)
+      .map(i => i[1])
+      .map(childKey =>
+        packInputs(originalKey ? `${originalKey}.` + childKey : childKey, childrenKeys, final)
+      )
+    return final
+  }
+}
+
+/**
+ *
+ * @param {object} args
+ * @param {object} args.inputs
+ * @param {string} args.selectInputKey
+ * @returns {selectFieldBase}
+ */
+const getSelectPacks = ({ inputs, selectInputKey }) => {
   // get all fields that are specified in the inputs.selectKey
   // return array of select fields in format of like
   // { fields : object , shouldBeHided : boolean}
   const selectInput = inputs[selectInputKey]
   if (!selectInput) {
-    return false
+    return {
+      key: "",
+      showChildrenByDefault: true,
+      show: true,
+      children: []
+    }
   }
 
   let arrayOfSelectInput = []
@@ -182,30 +279,20 @@ const getSelectFields = async ({ inputs, selectInputKey, context }) => {
     arrayOfSelectInput = selectInput.split(" ")
   }
 
-  const selectFields = []
-
-  Object.keys(arrayOfSelectInput).forEach(fieldKeyIndex => {
-    let fieldKey = arrayOfSelectInput[fieldKeyIndex]
-    let shouldBeHided = false
-    if (typeof fieldKey === "string") {
-      shouldBeHided = fieldKey.startsWith("-")
-      fieldKey = fieldKey.replace(/^[-+]?/, "")
-    } else {
-      shouldBeHided = fieldKey === 1
-      fieldKey = fieldKeyIndex
-    }
-    selectFields.push(
-      context.getNestedField({ key: fieldKey }).then(field => {
-        return {
-          field,
-          shouldBeHided
-        }
-      })
-    )
-  })
-  return Promise.all(selectFields)
+  return packInputs("", arrayOfSelectInput)
 }
 
+/**
+ * @this context
+ * @param {object} [args]
+ * @param {resource} [args.resource]
+ * @param {fields} [args.fields]
+ * @param {string} [args.selectInputKey]
+ * @param {object} [args.inputs]
+ * @param {import("../../../typeDefs/route").route} [args.routeObject]
+ * @param {boolean} [args.selectable]
+ * @returns {Promise.<fields>}
+ */
 module.exports = async function({
   resource = null,
   fields = null,
@@ -229,22 +316,20 @@ module.exports = async function({
   // get fields that are specified in select input
   // this values can be for hiding the field
   // or display it
-  let selectFields = await getSelectFields({
+  let selectFields = await getSelectPacks({
     inputs: inputs,
-    selectInputKey: selectInputKey,
-    context
+    selectInputKey: selectInputKey
   })
 
   // if select fields is false
   // or route object is not selectable
   // so selectFields should be empty
-  if (selectFields === false || !selectable) {
-    selectFields = []
+  if (!selectFields || !selectable) {
+    selectFields = { show: false, showChildrenByDefault: false, children: [], key: null }
   }
 
   // if selectable fields has any item without -
   // so hide by default should be true
-  const hideByDefault = !!selectFields.filter(i => i.shouldBeHided === false).length
 
-  return getFields(fields, resource, context, selectFields, resource, hideByDefault)
+  return getFields(fields, resource, context, selectFields, resource)
 }

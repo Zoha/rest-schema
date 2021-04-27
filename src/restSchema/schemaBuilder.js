@@ -6,11 +6,11 @@ const registerRoute = require("./registerRoute")
 const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const createContext = require("./createContext")
 
-/**
- * @class
- * @type {import("../../jsDocs").RSSchemaBuilder}
- */
 class SchemaBuilder {
+  /**
+   *
+   * @param {import("../../typeDefs/schema").schema} schema
+   */
   constructor(schema) {
     this.defaults = cloneDeep(defaults)
     this.schema = schema
@@ -23,9 +23,12 @@ class SchemaBuilder {
     // create base context
     const context = createContext(
       this.schema,
+      // @ts-ignore // will be fixed with schema formatter
       this.schema.routes.filter(i => i.name == "single")
     )
+    // @ts-ignore
     context.req = {}
+    // @ts-ignore
     context.res = {}
     return context
   }
@@ -110,7 +113,7 @@ class SchemaBuilder {
   setDefaultSchemaWrappers(...args) {
     args[1] = args[1] || {}
     args[1].target = this.defaults.defaultSchema.wrappers
-    return setters.something(...args)
+    return setters.setDefaultSchemaWrappers(...args)
   }
 
   addMiddleware(...args) {
