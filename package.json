@@ -10,7 +10,7 @@
     "build-type-defs": "npx typescript ./src/restSchema/index.js --declaration --allowJs --emitDeclarationOnly --outDir tsTypeDefs --outFile index.d.ts"
   },
   "engines": {
-    "node": ">=8.10.0"
+    "node": ">=11.14.0"
   },
   "author": "Zoha Banam <zoha.banam@gmail.com>",
   "license": "MIT",
