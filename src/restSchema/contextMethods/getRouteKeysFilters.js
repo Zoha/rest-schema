@@ -26,7 +26,7 @@ const { RestSchemaError } = require("../errors")
  * @param {string} [args.idKey]
  * @param {string} [args.idTarget]
  * @param {object} [args.fallbackFilters]
- * @returns {Promise.<object>}
+ * @returns {Promise.<Array<Object>>}
  */
 module.exports = async function({
   routeKeys = null,

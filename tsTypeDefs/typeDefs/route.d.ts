@@ -60,7 +60,7 @@ export type filteringOperatorsDefaults = {
 export type filteringOperators = (filteringOperatorsDefaults | {
     [x: string]: filteringOperatorCallback;
 });
-export type requestHandler = any;
+export type requestHandler = import('express').RequestHandler;
 export type routeProps = {
     handler: (routeHandlerCallback | Promise<routeHandlerCallback>);
     middleware?: requestHandler[] | requestHandler;

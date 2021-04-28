@@ -7,6 +7,7 @@ export declare const isNested: boolean;
 export declare const isArrayNested: boolean;
 export declare const isObjectNested: boolean;
 export declare const children: {};
+export declare const db: boolean;
 export declare const creatable: boolean;
 export declare const updatable: boolean;
 export declare const filterable: boolean;

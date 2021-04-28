@@ -1,11 +1,12 @@
+/// <reference types="mongoose" />
 export type schema = import("./schema").schema;
 export type fields = import("./field").fields;
-export type resourceDocument = any;
+export type resourceDocument = import("mongoose").Document;
 export type resource = resourceDocument & {
     [x: string]: any;
 };
-export type modelDocument = any;
-export type model = modelDocument & {
+export type modelDocument = import("mongoose").Model<any, any>;
+export type model = import("mongoose").Model<any, any> & {
     [x: string]: any;
 };
 export type route = import("./route").route;
@@ -119,17 +120,17 @@ export type contextMethods = {
          */
         setCreatedResource?: boolean;
         inputs?: any;
-    }) => Promise<any>;
+    }) => Promise<resource>;
     deleteResource: ({ setDeletedResource, resource, filters }?: {
         setDeletedResource?: boolean;
-        resource?: any;
+        resource?: resource;
         filters?: boolean;
-    }) => Promise<any>;
+    }) => Promise<resource>;
     findLocationOfInput: ({ key, req, inputsTargets }: {
         key: string;
         req?: string;
         inputsTargets?: string;
-    }) => Promise<any>;
+    }) => Promise<resource>;
     getCollection: ({ setCollection, force, filters, skip, limit, sort, filtersMeta }?: {
         setCollection?: boolean;
         force?: boolean;
@@ -231,108 +232,12 @@ export type contextMethods = {
          */
         sort?: any;
         filtersMeta?: any;
-    }) => Promise<any[]>;
+    }) => Promise<resource[]>;
     getCreateFields: ({ fields }?: {
         fields?: import("./field").fields;
     }) => Promise<import("./field").fields>;
     getCreateInputs: ({ setCreateInputs, fields, inputs }?: {
         setCreateInputs?: boolean;
-        /**
-         * @typedef {import("./route").route} route
-         */
-        /**
-         * @typedef {import("../src/restSchema/defaults").defaults} defaultDefaults
-         * @typedef {defaultDefaults & Object<string , *>} defaults
-         */
-        /**
-         * @typedef {object} contextMethods
-         * @property {import('../src/restSchema/contextMethods/cast')} cast
-         * @property {import('../src/restSchema/contextMethods/createResource')} createResource
-         * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
-         * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
-         * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
-         * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
-         * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
-         * @property {import('../src/restSchema/contextMethods/getCustomFilters')} getCustomFilters
-         * @property {import('../src/restSchema/contextMethods/getFields')} getFields
-         * @property {import('../src/restSchema/contextMethods/getFilters')} getFilters
-         * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
-         * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
-         * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
-         * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
-         * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
-         * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
-         * @property {import('../src/restSchema/contextMethods/getPage')} getPage
-         * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
-         * @property {import('../src/restSchema/contextMethods/getResource')} getResource
-         * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
-         * @property {import('../src/restSchema/contextMethods/getResponseValuesFromResource')} getResponseValuesFromResource
-         * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
-         * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
-         * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
-         * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
-         * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
-         * @property {import('../src/restSchema/contextMethods/getSort')} getSort
-         * @property {import('../src/restSchema/contextMethods/getTotal')} getTotal
-         * @property {import('../src/restSchema/contextMethods/getUpdateFields')} getUpdateFields
-         * @property {import('../src/restSchema/contextMethods/getUpdateInputs')} getUpdateInputs
-         * @property {import('../src/restSchema/contextMethods/hook')} hook
-         * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
-         * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
-         * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
-         * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
-         * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
-         * @property {import('../src/restSchema/contextMethods/validateInputs')} validateInputs
-         * @property {import('../src/restSchema/contextMethods/getCollectionResponse')} getCollectionResponse
-         * @property {import('../src/restSchema/contextMethods/getDirtyInputs')} getDirtyInputs
-         *
-         */
-        /**
-         * @typedef {object} validationError
-         * @property {string} field
-         * @property {*} value
-         * @property {string} message
-         * @property {string} location
-         *
-         * @typedef {Array.<validationError>} validationErrors
-         */
-        /**
-         * @typedef {import("express").Request} request
-         * @typedef {import("express").Response} response
-         */
-        /**
-         * @typedef {object} contextProps
-         * @property {schema} schema
-         * @property {model} model
-         * @property {('index' | 'single' | 'get' | 'update' | 'validate' | 'count' | 'delete' | string)} route
-         * @property {route} routeObject
-         * @property {defaults} defaults
-         * @property {object} relationFilters
-         * @property {resource} [resource]
-         * @property {resource} [updatedResource]
-         * @property {resource} [createdResource]
-         * @property {resource} [deletedResource]
-         * @property {resource} [deletedResource]
-         * @property {Array.<resource>} [collection]
-         * @property {request & Object.<string , any>} [req]
-         * @property {response & Object.<string , any>} [res]
-         * @property {function} [next]
-         * @property {fields} [fields]
-         * @property {object} [response]
-         * @property {object} [collectionResponse]
-         * @property {object} [inputs]
-         * @property {object} [createInputs]
-         * @property {object} [updateInputs]
-         * @property {string[]} [routeKeys]
-         * @property {number} [total]
-         * @property {validationErrors} [validationErrors]
-         * @property {boolean} [isRelation]
-         * @property {context} [parent]
-         * @property {object} [dirtyInputs]
-         *
-         *
-         * @typedef {contextProps & contextMethods} context
-         */
         fields?: import("./field").fields;
         inputs?: any;
     }) => Promise<any>;
@@ -355,7 +260,7 @@ export type contextMethods = {
     }) => Promise<any>;
     getInputs: ({ setInputs, req, inputsTarget, force }?: {
         setInputs?: boolean;
-        req?: any;
+        req?: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>;
         inputsTarget?: string[];
         force?: boolean;
     }) => Promise<any>;
@@ -518,29 +423,29 @@ export type contextMethods = {
         setResource?: boolean;
         force?: boolean;
         resourceId?: any;
-        model?: any;
+        model?: model;
         filters?: any;
-    }) => Promise<any>;
+    }) => Promise<resource>;
     getResourceResponse: ({ resource }?: {
-        resource?: any;
+        resource?: resource;
     }) => Promise<any>;
     getResponseValuesFromResource: ({ fields, resource, selectFields }?: {
         fields?: import("./field").fields;
-        resource?: any;
+        resource?: resource;
         selectFields?: import("./field").fields;
     }) => Promise<any>;
     getRouteKeys: () => string[];
     getRouteKeysFilters: ({ routeKeys, req, id, idKey, idTarget, fallbackFilters }?: {
         routeKeys?: string[];
-        req?: any;
+        req?: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>;
         id?: any;
         idKey?: string;
         idTarget?: string;
         fallbackFilters?: any;
-    }) => Promise<any>;
+    }) => Promise<any[]>;
     getRoutes: () => import("./route").routes;
     getSelectFields: ({ resource, fields, selectInputKey, inputs, routeObject, selectable }?: {
-        resource?: any;
+        resource?: resource;
         fields?: import("./field").fields;
         selectInputKey?: string;
         inputs?: any;
@@ -585,7 +490,7 @@ export type contextMethods = {
         setDirtyInputs?: boolean;
     }) => Promise<any>;
     setPaginationHeaders: ({ res, total, collection, count, skip, limit, page, start, end, range, hasPrevPage, hasNextPage, prevPage, nextPage, lastPage }?: {
-        res?: any;
+        res?: import("express").Response<any, Record<string, any>>;
         total?: number;
         /**
          * @typedef {import("../src/restSchema/defaults").defaults} defaultDefaults
@@ -680,7 +585,7 @@ export type contextMethods = {
          *
          * @typedef {contextProps & contextMethods} context
          */
-        collection?: any[];
+        collection?: resource[];
         count?: number;
         skip?: number;
         limit?: number;
@@ -694,7 +599,7 @@ export type contextMethods = {
         nextPage?: string | number;
         lastPage?: number;
     }) => Promise<any>;
-    updateResource: ({ setResource, setUpdatedResource, resource, filters }?: {
+    updateResource: ({ setResource, setUpdatedResource, resource, filters, inputs }?: {
         setResource?: boolean; /**
          * @typedef {import("../src/restSchema/defaults").defaults} defaultDefaults
          * @typedef {defaultDefaults & Object<string , *>} defaults
@@ -789,9 +694,10 @@ export type contextMethods = {
          * @typedef {contextProps & contextMethods} context
          */
         setUpdatedResource?: boolean;
-        resource?: any;
+        resource?: resource;
         filters?: any;
-    }) => Promise<any>;
+        inputs?: any;
+    }) => Promise<resource>;
     validateInput: ({ value, field, key }: {
         value?: any;
         field: import("./field").field;
@@ -804,13 +710,13 @@ export type contextMethods = {
         checkRequired?: boolean;
     }) => Promise<any>;
     getCollectionResponse: ({ collection, fields }?: {
-        collection?: any[];
+        collection?: resource[];
         fields?: import("./field").fields;
     }) => Promise<any>;
     getDirtyInputs: ({ setDirtyInputs, force, inputs, resource }?: {
         setDirtyInputs?: boolean;
         inputs?: any;
-        resource?: any;
+        resource?: resource;
         force?: boolean;
     }) => Promise<any>;
 };
@@ -821,8 +727,8 @@ export type validationError = {
     location: string;
 };
 export type validationErrors = Array<validationError>;
-export type request = any;
-export type response = any;
+export type request = import("express").Request;
+export type response = import("express").Response;
 export type contextProps = {
     schema: schema;
     model: model;

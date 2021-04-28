@@ -1,3 +1,4 @@
+/// <reference types="mongoose" />
 export type context = import('./context').context;
 export type hookNamesList = ("before" | "after" | "error" | "beforeCreateResource" | "afterCreateResource" | "afterDeleteResource" | "beforeGetCollection" | "afterGetCollection" | "beforeGetCollectionResponse" | "afterGetCollectionResponse" | "beforeGetResource" | "afterGetResource" | "beforeGetResourceResponse" | "afterGetResourceResponse" | "beforeUpdateResource" | "afterUpdateResource" | "afterMiddleware");
 export type fields = import("./field").fields;
@@ -12,13 +13,13 @@ export type pagination = {
     defaultFilters?: object;
     skip?: number;
 };
-export type errorCallback = (err: import("../src/restSchema/errors/restSchemaError"), req: any, res: any, next: Function) => any;
+export type errorCallback = (err: import("../src/restSchema/errors/restSchemaError"), req: import("express").Request, res: import("express").Response, next: Function) => any;
 export type responseCallback = (res: Response, ctx: context) => any;
 export type wrappers = {
     response: responseCallback;
     error: errorCallback;
 };
-export type expressRequestHandler = any;
+export type expressRequestHandler = import('express').RequestHandler;
 export type next = (error?: Error) => any;
 export type requestHandler = () => any;
 export type routesSpecificMiddleware = {
@@ -67,9 +68,9 @@ export type hooksListWithRoute = {
     validate?: hooksList;
 };
 export type hooks = (hooksList & hooksListWithRoute);
-export type model = any;
+export type model = import("mongoose").Model<any, any>;
 export type schema = {
-    model?: any;
+    model?: import("mongoose").Model<any, any>;
     fields?: fields;
     routes?: routes;
     pagination?: pagination;

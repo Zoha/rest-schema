@@ -9,17 +9,17 @@ declare namespace methods {
         setResource?: boolean;
         setCreatedResource?: boolean;
         inputs?: any;
-    }): Promise<any>;
+    }): Promise<import("../../typeDefs/context").resource>;
     function deleteResource({ setDeletedResource, resource, filters }?: {
         setDeletedResource?: boolean;
-        resource?: any;
+        resource?: import("../../typeDefs/context").resource;
         filters?: boolean;
-    }): Promise<any>;
+    }): Promise<import("../../typeDefs/context").resource>;
     function findLocationOfInput({ key, req, inputsTargets }: {
         key: string;
         req?: string;
         inputsTargets?: string;
-    }): Promise<any>;
+    }): Promise<import("../../typeDefs/context").resource>;
     function getCollection({ setCollection, force, filters, skip, limit, sort, filtersMeta }?: {
         setCollection?: boolean;
         force?: boolean;
@@ -28,7 +28,7 @@ declare namespace methods {
         limit?: number;
         sort?: any;
         filtersMeta?: any;
-    }): Promise<any[]>;
+    }): Promise<import("../../typeDefs/context").resource[]>;
     function getCreateFields({ fields }?: {
         fields?: import("../../typeDefs/field").fields;
     }): Promise<import("../../typeDefs/field").fields>;
@@ -56,7 +56,7 @@ declare namespace methods {
     }): Promise<any>;
     function getInputs({ setInputs, req, inputsTarget, force }?: {
         setInputs?: boolean;
-        req?: any;
+        req?: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>;
         inputsTarget?: string[];
         force?: boolean;
     }): Promise<any>;
@@ -115,29 +115,29 @@ declare namespace methods {
         setResource?: boolean;
         force?: boolean;
         resourceId?: any;
-        model?: any;
+        model?: import("../../typeDefs/context").model;
         filters?: any;
-    }): Promise<any>;
+    }): Promise<import("../../typeDefs/context").resource>;
     function getResourceResponse({ resource }?: {
-        resource?: any;
+        resource?: import("../../typeDefs/context").resource;
     }): Promise<any>;
     function getResponseValuesFromResource({ fields, resource, selectFields }?: {
         fields?: import("../../typeDefs/field").fields;
-        resource?: any;
+        resource?: import("../../typeDefs/context").resource;
         selectFields?: import("../../typeDefs/field").fields;
     }): Promise<any>;
     function getRouteKeys(): string[];
     function getRouteKeysFilters({ routeKeys, req, id, idKey, idTarget, fallbackFilters }?: {
         routeKeys?: string[];
-        req?: any;
+        req?: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>;
         id?: any;
         idKey?: string;
         idTarget?: string;
         fallbackFilters?: any;
-    }): Promise<any>;
+    }): Promise<any[]>;
     function getRoutes(): import("../../typeDefs/route").routes;
     function getSelectFields({ resource, fields, selectInputKey, inputs, routeObject, selectable }?: {
-        resource?: any;
+        resource?: import("../../typeDefs/context").resource;
         fields?: import("../../typeDefs/field").fields;
         selectInputKey?: string;
         inputs?: any;
@@ -182,9 +182,9 @@ declare namespace methods {
         setDirtyInputs?: boolean;
     }): Promise<any>;
     function setPaginationHeaders({ res, total, collection, count, skip, limit, page, start, end, range, hasPrevPage, hasNextPage, prevPage, nextPage, lastPage }?: {
-        res?: any;
+        res?: import("express").Response<any, Record<string, any>>;
         total?: number;
-        collection?: any[];
+        collection?: import("../../typeDefs/context").resource[];
         count?: number;
         skip?: number;
         limit?: number;
@@ -198,12 +198,13 @@ declare namespace methods {
         nextPage?: string | number;
         lastPage?: number;
     }): Promise<any>;
-    function updateResource({ setResource, setUpdatedResource, resource, filters }?: {
+    function updateResource({ setResource, setUpdatedResource, resource, filters, inputs }?: {
         setResource?: boolean;
         setUpdatedResource?: boolean;
-        resource?: any;
+        resource?: import("../../typeDefs/context").resource;
         filters?: any;
-    }): Promise<any>;
+        inputs?: any;
+    }): Promise<import("../../typeDefs/context").resource>;
     function validateInput({ value, field, key }: {
         value?: any;
         field: import("../../typeDefs/field").field;
@@ -216,13 +217,13 @@ declare namespace methods {
         checkRequired?: boolean;
     }): Promise<any>;
     function getCollectionResponse({ collection, fields }?: {
-        collection?: any[];
+        collection?: import("../../typeDefs/context").resource[];
         fields?: import("../../typeDefs/field").fields;
     }): Promise<any>;
     function getDirtyInputs({ setDirtyInputs, force, inputs, resource }?: {
         setDirtyInputs?: boolean;
         inputs?: any;
-        resource?: any;
+        resource?: import("../../typeDefs/context").resource;
         force?: boolean;
     }): Promise<any>;
 }

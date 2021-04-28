@@ -6,5 +6,5 @@ declare class RestSchemaError extends Error {
      * @param {import("../../../typeDefs/context").request} req
      * @param {import("../../../typeDefs/context").response} res
      */
-    handler(context: import("../../../typeDefs/context").context, req: any, res: any): any;
+    handler(context: import("../../../typeDefs/context").context, req: import("../../../typeDefs/context").request, res: import("../../../typeDefs/context").response): import("express").Response<any, Record<string, any>>;
 }

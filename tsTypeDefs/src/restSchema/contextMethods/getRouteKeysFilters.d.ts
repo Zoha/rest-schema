@@ -5,7 +5,7 @@ declare function _exports({ routeKeys, req, id, idKey, idTarget, fallbackFilters
     idKey?: string;
     idTarget?: string;
     fallbackFilters?: object;
-}): Promise<object>;
+}): Promise<Array<any>>;
 export = _exports;
 export type resource = import("../../../typeDefs/context").resource;
 export type context = import("../../../typeDefs/context").context;

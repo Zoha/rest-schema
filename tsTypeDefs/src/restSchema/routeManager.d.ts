@@ -8,7 +8,7 @@ declare class RouteManager {
      * @param {route[]} [routes]
      */
     constructor(routes?: route[]);
-    routes: any;
+    routes: import("../../typeDefs/route").route[];
     /**
      * @param {route | route[]} newRoute
      * @return {RouteManager}

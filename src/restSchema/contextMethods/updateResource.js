@@ -20,13 +20,15 @@ const deepMergeFilters = require("../helpers/deepMergeFilters")
  * @param {boolean} [args.setUpdatedResource]
  * @param {resource} [args.resource]
  * @param {object} [args.filters]
+ * @param {object} [args.inputs]
  * @returns {Promise.<resource>}
  */
 module.exports = async function({
   setResource = true,
   setUpdatedResource = true,
   resource = null,
-  filters = null
+  filters = null,
+  inputs = null
 } = {}) {
   const context = this
   await context.hook("beforeUpdateResource")
@@ -34,22 +36,31 @@ module.exports = async function({
 
   resource = cast(resource).to(Object) || (await context.getResource())
 
-  let getRouteKeysFilters = {}
-  getRouteKeysFilters = {
-    $or: await context.getRouteKeysFilters()
+  let finalFilters = {}
+  if (resource) {
+    finalFilters = {
+      _id: resource._id
+    }
+  } else {
+    let getRouteKeysFilters = {}
+    getRouteKeysFilters = {
+      $or: await context.getRouteKeysFilters()
+    }
+    if (!getRouteKeysFilters.$or.length) {
+      getRouteKeysFilters = {}
+    }
+    finalFilters = deepMergeFilters([
+      getRouteKeysFilters,
+      await context.getCustomFilters(),
+      filters
+    ])
   }
-  if (!getRouteKeysFilters.$or.length) {
-    getRouteKeysFilters = {}
-  }
-  let finalFilters = deepMergeFilters([
-    getRouteKeysFilters,
-    await context.getCustomFilters(),
-    filters
-  ])
+  inputs = context.cast(inputs).to(Object) || (await context.getUpdateInputs())
   if (Object.keys(finalFilters).length) {
-    await context.model.findOneAndUpdate(finalFilters, await context.getUpdateInputs())
+    await context.model.findOneAndUpdate(finalFilters, inputs)
   }
 
+  // we call getResource to get resource and call its hooks
   // eslint-disable-next-line no-underscore-dangle
   const resourceId = resource._id
   resource = await context.getResource({

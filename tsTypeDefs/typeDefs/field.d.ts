@@ -1,13 +1,14 @@
+/// <reference types="mongoose" />
 export type resource = import("./context").resource;
 export type fieldType = (ArrayConstructor | BooleanConstructor | StringConstructor | {
-    (val: any): any;
-    isValid: any;
-    createFromHexString: any;
-    createFromTime: any;
-    generate: any;
-    cacheHexString: any;
+    (val: any): import("mongoose").Types.ObjectId;
+    isValid: typeof import("bson").ObjectId.isValid;
+    createFromHexString: typeof import("bson").ObjectId.createFromHexString;
+    createFromTime: typeof import("bson").ObjectId.createFromTime;
+    generate: typeof import("bson").ObjectId.generate;
+    cacheHexString: boolean;
     prototype: any;
-} | any | ArrayBufferConstructor | NumberConstructor | DateConstructor | ObjectConstructor);
+} | MapConstructor | ArrayBufferConstructor | NumberConstructor | DateConstructor | ObjectConstructor);
 export type context = import('./context').context;
 export type handlerCallback = (ctx: context) => any;
 export type objectForHandlerCallbackRoute = {
@@ -112,6 +113,7 @@ export type fieldProps = {
     of?: (field[] | {
         [x: string]: field;
     } | fieldType);
+    db?: boolean;
     creatable?: (objectForBoolean | boolean | fieldPropHandler);
     updatable?: (objectForBoolean | boolean | fieldPropHandler);
     filterable?: (objectForBoolean | boolean | fieldPropHandler);

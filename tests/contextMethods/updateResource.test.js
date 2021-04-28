@@ -76,4 +76,41 @@ describe("updateResource method", function() {
     expect(context).to.not.haveOwnProperty("updatedResource")
     expect(context).to.haveOwnProperty("resource")
   })
+
+  it("will update resource with custom inputs", async () => {
+    const resource = await model.create({
+      prop1: "test"
+    })
+    const defaultContext = await createContext(schema, defaultRoute)
+    const context = {
+      ...defaultContext,
+      req: {
+        params: { id: "test" }
+      },
+      resource,
+      getRouteKeys: () => ["prop1", "_id"],
+      fields: {
+        prop1: {
+          ...defaultField
+        }
+      },
+      inputs: {
+        prop1: "somethingElse"
+      }
+    }
+    const updatedResource = await updateResource.call(context, {
+      inputs: {
+        prop1: "custom"
+      }
+    })
+
+    expect(context).to.haveOwnProperty("updatedResource")
+    expect(context).to.haveOwnProperty("resource")
+
+    const dbResources = await model.find()
+    expect(dbResources).to.have.lengthOf(1)
+    const dbResource = dbResources[0].toObject()
+    expect(dbResource.prop1).to.be.equal(updatedResource.prop1)
+    expect(dbResource).to.not.haveOwnProperty("custom")
+  })
 })

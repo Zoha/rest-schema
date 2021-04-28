@@ -10,7 +10,7 @@ declare class SchemaBuilder {
     name: string;
     tempContext: import("../../typeDefs/context").context;
     createTempContext(): import("../../typeDefs/context").context;
-    resource(): any;
+    resource(): import("express-serve-static-core").Router;
     use(callback: any): any;
     setDefaultField(...args: any[]): void;
     setDefaultMessages(...args: any[]): void;
