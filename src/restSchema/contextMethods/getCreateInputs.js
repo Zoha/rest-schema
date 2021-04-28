@@ -1,5 +1,3 @@
-const cast = require("../helpers/cast")
-
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource
  */
@@ -25,7 +23,7 @@ module.exports = async function({ setCreateInputs = true, fields = null, inputs 
   fields =
     (fields && (await context.getFields({ fields, setFields: false }))) ||
     (await context.getCreateFields())
-  const createInputs = cast(inputs).to(Object) || (await context.getInputsFromFields({ fields }))
+  const createInputs = await context.getInputsFromFields({ fields, inputs })
   if (setCreateInputs) {
     context.createInputs = createInputs
   }

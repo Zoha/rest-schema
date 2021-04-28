@@ -19,6 +19,7 @@ const defaultField = {
   of: Mixed,
 
   // accessors
+  db: true,
   creatable: true,
   updatable: true,
   filterable: true,

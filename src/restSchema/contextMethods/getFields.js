@@ -141,6 +141,11 @@ const formatFields = async (argFields, context, prepend = "") => {
       }
     }
 
+    if (field.db === false) {
+      field.creatable = false
+      field.updatable = false
+    }
+
     // if parent is an array push to parent array
     // else set parent property
     if (isObject(fields)) {

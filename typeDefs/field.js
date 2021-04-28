@@ -155,6 +155,7 @@ const {
  * @property {fields} [children]
  * @property {(field[]| Object.<string , field> | fieldType)} [of]
  *
+ * @property { boolean } [db]
  * @property {(objectForBoolean | boolean | fieldPropHandler)} [creatable]
  * @property {(objectForBoolean | boolean | fieldPropHandler)} [updatable]
  * @property {(objectForBoolean | boolean | fieldPropHandler)} [filterable]
