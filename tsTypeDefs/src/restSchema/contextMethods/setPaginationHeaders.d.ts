@@ -1,0 +1,21 @@
+declare function _exports({ res, total, collection, count, skip, limit, page, start, end, range, hasPrevPage, hasNextPage, prevPage, nextPage, lastPage }?: {
+    res?: import("../../../typeDefs/context").response;
+    total?: number;
+    collection?: Array<resource>;
+    count?: number;
+    skip?: number;
+    limit?: number;
+    page?: number;
+    start?: number;
+    end?: number;
+    range?: number;
+    hasPrevPage?: boolean;
+    hasNextPage?: boolean;
+    prevPage?: number | string;
+    nextPage?: number | string;
+    lastPage?: number;
+}): Promise<object>;
+export = _exports;
+export type resource = import("../../../typeDefs/context").resource;
+export type context = import("../../../typeDefs/context").context;
+export type fields = import("../../../typeDefs/field").fields;

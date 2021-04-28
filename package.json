@@ -3,11 +3,11 @@
   "version": "1.2.5",
   "description": "create easy and powerful rest api with express and mongoose",
   "main": "src/restSchema/index.js",
-  "types": "./index.d.ts",
+  "types": "./tsTypeDefs/src/restSchema/index.d.ts",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha ./tests/**/*.test.js --exit",
     "lint": "cross-env NODE_ENV=test mocha ./tests/lint.js --exit",
-    "build-type-defs": "npx typescript ./src/restSchema/index.js --declaration --allowJs --emitDeclarationOnly --outDir tsTypeDefs --outFile index.d.ts"
+    "build-type-defs": "npx typescript ./src/restSchema/index.js --declaration --allowJs --emitDeclarationOnly --outDir tsTypeDefs "
   },
   "engines": {
     "node": ">=11.14.0"
