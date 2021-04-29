@@ -6,14 +6,18 @@ const defaultField = require("../../src/restSchema/defaults/defaultField")
 const cast = require("../../src/restSchema/helpers/cast")
 const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomFilters")
 const getRoutes = require("../../src/restSchema/contextMethods/getRoutes")
+const createContext = require("../../src/restSchema/createContext")
 
 const context = {
+  ...createContext(
+    {},
+    {
+      ...defaultRouteObject
+    }
+  ),
   inputs: {},
   getRoutes,
   getCustomFilters,
-  routeObject: {
-    ...defaultRouteObject
-  },
   schema: {
     routes: [],
     filters: {},

@@ -7,6 +7,8 @@ const getInputsFromFields = require("../../src/restSchema/contextMethods/getInpu
 const getFields = require("../../src/restSchema/contextMethods/getFields")
 const defaults = require("../../src/restSchema/defaults")
 const getInputs = require("../../src/restSchema/contextMethods/getInputs")
+const createContext = require("../../src/restSchema/createContext")
+const defaultSchemaRoutes = require("../../src/restSchema/defaults/schema/defaultSchemaRoutes")
 
 describe("getUpdateInputs method", function() {
   it("will get inputs normally", async () => {
@@ -20,14 +22,10 @@ describe("getUpdateInputs method", function() {
       prop1: "something"
     }
     const context = {
-      getInputs,
-      fields,
+      ...createContext({}, defaultSchemaRoutes.create),
+      route: "create",
       inputs,
-      getUpdateFields,
-      getInputsFromFields,
-      cast,
-      getFields,
-      defaults
+      fields
     }
     const fieldsInputs = await getUpdateInputs.call(context)
 
@@ -51,14 +49,10 @@ describe("getUpdateInputs method", function() {
       prop1: "something"
     }
     const context = {
-      getInputs,
-      fields,
+      ...createContext({}, defaultSchemaRoutes.create),
+      route: "create",
       inputs,
-      getUpdateFields,
-      getInputsFromFields,
-      cast,
-      getFields,
-      defaults
+      fields
     }
     const fieldsInputs = await getUpdateInputs.call(context, {
       setUpdateInputs: false

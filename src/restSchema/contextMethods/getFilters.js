@@ -2,6 +2,7 @@ const filter = require("../helpers/filter")
 const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 const cast = require("../helpers/cast")
+const isFunction = require("../helpers/isFunction")
 
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource
@@ -16,6 +17,10 @@ const cast = require("../helpers/cast")
  */
 
 /**
+ * @typedef {import("../../../typeDefs/schema").paginationProps} paginationProps
+ */
+
+/**
  * @this context
  * @param {object} [args]
  * @param {object} [args.inputs]
@@ -23,6 +28,7 @@ const cast = require("../helpers/cast")
  * @param {object} [args.defaultRouteFilters]
  * @param {object} [args.customFilters]
  * @param {object} [args.filteringMeta]
+ * @param {paginationProps} [args.pagination]
  * @returns {Promise.<object>}
  */
 module.exports = async function({
@@ -30,13 +36,17 @@ module.exports = async function({
   operators = null,
   defaultRouteFilters = null,
   customFilters = null,
-  filteringMeta = null
+  filteringMeta = null,
+  pagination = null
 } = {}) {
   const context = this
   const allInputs = inputs || context.inputs || (await context.getInputs())
+  pagination = context.cast(pagination).to(Object) || (await context.getPaginationData())
   operators = cast(operators).to(Object) || context.routeObject.filteringOperators
-  const defaultFilters =
-    cast(defaultRouteFilters).to(Object) || context.schema.pagination.defaultFilters
+  let defaultFilters = cast(defaultRouteFilters).to(Object) || pagination.defaultFilters
+  if (isFunction(defaultFilters)) {
+    defaultFilters = await defaultFilters(context)
+  }
   customFilters = customFilters || (await context.getCustomFilters())
   filteringMeta = filteringMeta || context.routeObject.meta
 

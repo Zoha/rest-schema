@@ -11,14 +11,66 @@
  * @typedef {import("./route").routes} routes
  * @typedef {import("../src/restSchema/defaults").defaults} defaults
  *
- * @typedef {object} pagination
+ * @callback filtersCallback
+ * @param {context} context
+ * @returns {object}
+ *
+ * @typedef {object|filtersCallback} {filters}
+ *
+ *
+ *
+ * @callback paginationPage
+ * @param {context} context
+ * @returns {number}
+ *
+ * @callback paginationLimit
+ * @param {context} context
+ * @returns {number}
+ *
+ * @callback paginationMinLimit
+ * @param {context} context
+ * @returns {number}
+ *
+ * @callback paginationMaxLimit
+ * @param {context} context
+ * @returns {number}
+ *
+ * @callback paginationSort
+ * @param {context} context
+ * @returns {string}
+ *
+ * @callback paginationDefaultFilters
+ * @param {context} context
+ * @returns {filters}
+ *
+ * @callback paginationSkip
+ * @param {context} context
+ * @returns {number}
+ *
+ *
+ * @typedef {object} paginationProps
  * @property {number} [page]
  * @property {number} [limit]
  * @property {number} [minLimit]
  * @property {number} [maxLimit]
  * @property {string} [sort]
- * @property {object} [defaultFilters]
+ * @property {filters} [defaultFilters]
  * @property {number} [skip]
+ *
+ * @typedef {object} paginationInput
+ * @property {page | paginationPage} [page]
+ * @property {number | paginationLimit} [limit]
+ * @property {number | paginationMinLimit} [minLimit]
+ * @property {number | paginationMaxLimit} [maxLimit]
+ * @property {string | paginationSort} [sort]
+ * @property {filters | paginationDefaultFilters} [defaultFilters]
+ * @property {number | paginationSkip} [skip]
+ *
+ * @callback paginationCallback
+ * @param {context} context
+ * @returns {paginationInput}
+ *
+ * @typedef {paginationInput | paginationCallback} pagination
  *
  * @callback errorCallback
  * @param {import("../src/restSchema/errors/restSchemaError")} err
@@ -80,6 +132,8 @@
  * @property {(hookHandler|Promise.<hookHandler>)} [afterUpdateResource]
  * @property {(hookHandler|Promise.<hookHandler>)} [afterMiddleware]
  *
+ *
+ *
  * @typedef {object} hooksListWithRoute
  * @property {hooksList} [global]
  * @property {hooksList} [create]
@@ -104,12 +158,14 @@
  * @property {routes} [routes]
  * @property {pagination} [pagination]
  * @property {wrappers} [wrappers]
- * @property {object} [filters]
+ * @property {filters} [filters]
  * @property {middleware} [middleware]
  * @property {Array.<string>} [routeKeys]
  * @property {hooks} [hooks]
  * @property {defaults} [defaults]
  * @property {string} [name]
+ * @property {boolean} [saveNullInputsInDatabase]
+ * @property {boolean} [returnNullValuesInResponse]
  *
  */
 

@@ -5,15 +5,19 @@ const getSort = require("../../src/restSchema/contextMethods/getSort")
 const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
 const defaults = require("../../src/restSchema/defaults")
+const createContext = require("../../src/restSchema/createContext")
 
 const context = {
+  ...createContext(
+    {},
+    {
+      ...defaultRouteObject
+    }
+  ),
   getNestedField,
   getFields,
   route: "create",
   defaults,
-  routeObject: {
-    ...defaultRouteObject
-  },
   schema: {
     pagination: {
       limit: 10,

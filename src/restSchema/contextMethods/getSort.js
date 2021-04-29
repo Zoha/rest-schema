@@ -13,24 +13,31 @@ const cast = require("../helpers/cast")
  */
 
 /**
+ * @typedef {import("../../../typeDefs/schema").paginationProps} paginationProps
+ */
+
+/**
  * @this context
  * @param {object} [args]
  * @param {string} [args.sortKey]
  * @param {object} [args.inputs]
  * @param {object} [args.defaultSort]
  * @param {string} [args.sortString]
+ * @param {paginationProps} [args.pagination]
  * @returns {Promise.<object>}
  */
 module.exports = async function({
   inputs = null,
   sortKey = null,
   defaultSort = null,
-  sortString = null
+  sortString = null,
+  pagination = null
 } = {}) {
   const context = this
+  pagination = context.cast(pagination).to(Object) || (await context.getPaginationData())
   inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
   sortKey = cast(sortKey).to(String) || context.routeObject.meta.sort || "sort"
-  let sort = cast(defaultSort).to(Object) || context.schema.pagination.sort
+  let sort = cast(defaultSort).to(Object) || pagination.sort
   sortString = cast(sortString).to(String) || inputs[sortKey]
   if (sortString && typeof sortString === "string") {
     const sortsObject = {}

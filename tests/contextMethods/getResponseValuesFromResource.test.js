@@ -194,4 +194,36 @@ describe("getResponseValuesFromResource method", () => {
       .that.is.an("String")
       .that.equals("10")
   })
+
+  it("will return null properties if it's option was true in schema", async () => {
+    const resource = await model.create({
+      prop1: null
+    })
+    const values = await getResponseValuesFromResource.call({
+      ...context,
+      schema: {
+        ...context.schema,
+        returnNullValuesInResponse: true
+      },
+      resource
+    })
+
+    expect(values).to.haveOwnProperty("prop1")
+  })
+
+  it("will not return null properties if it's option was false in schema", async () => {
+    const resource = await model.create({
+      prop1: null
+    })
+    const values = await getResponseValuesFromResource.call({
+      ...context,
+      schema: {
+        ...context.schema,
+        returnNullValuesInResponse: false
+      },
+      resource
+    })
+
+    expect(values).to.not.haveOwnProperty("prop1")
+  })
 })

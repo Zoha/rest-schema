@@ -2,11 +2,15 @@ const { expect } = require("chai")
 const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute")
 const getLimit = require("../../src/restSchema/contextMethods/getLimit")
 const getSkip = require("../../src/restSchema/contextMethods/getSkip")
+const createContext = require("../../src/restSchema/createContext")
 
 const context = {
-  routeObject: {
-    ...defaultRouteObject
-  },
+  ...createContext(
+    {},
+    {
+      ...defaultRouteObject
+    }
+  ),
   schema: {
     pagination: {
       limit: 10

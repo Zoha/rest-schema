@@ -1,12 +1,8 @@
 const { expect } = require("chai")
 const getCreateInputs = require("../../src/restSchema/contextMethods/getCreateInputs")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
-const cast = require("../../src/restSchema/helpers/cast")
-const getCreateFields = require("../../src/restSchema/contextMethods/getCreateFields")
-const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields")
-const getFields = require("../../src/restSchema/contextMethods/getFields")
-const defaults = require("../../src/restSchema/defaults")
-const getInputs = require("../../src/restSchema/contextMethods/getInputs")
+const createContext = require("../../src/restSchema/createContext")
+const defaultSchemaRoutes = require("../../src/restSchema/defaults/schema/defaultSchemaRoutes")
 
 describe("getCreateInputs method", function() {
   it("will get inputs normally", async () => {
@@ -20,14 +16,9 @@ describe("getCreateInputs method", function() {
       prop1: "something"
     }
     const context = {
-      getInputs,
-      fields,
+      ...createContext({}, defaultSchemaRoutes.create),
       inputs,
-      getCreateFields,
-      getInputsFromFields,
-      getFields,
-      cast,
-      defaults
+      fields
     }
     const fieldsInputs = await getCreateInputs.call(context)
 
@@ -51,14 +42,9 @@ describe("getCreateInputs method", function() {
       prop1: "something"
     }
     const context = {
-      getInputs,
-      fields,
+      ...createContext({}, defaultSchemaRoutes.create),
       inputs,
-      getCreateFields,
-      getInputsFromFields,
-      getFields,
-      cast,
-      defaults
+      fields
     }
     const fieldsInputs = await getCreateInputs.call(context, {
       setCreateInputs: false

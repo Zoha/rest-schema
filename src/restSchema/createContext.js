@@ -19,6 +19,7 @@ const methods = {
   getNestedField: require("./contextMethods/getNestedField"),
   getNestedInput: require("./contextMethods/getNestedInput"),
   getPage: require("./contextMethods/getPage"),
+  getPaginationData: require("./contextMethods/getPaginationData"),
   getRelations: require("./contextMethods/getRelations"),
   getResource: require("./contextMethods/getResource"),
   getResourceResponse: require("./contextMethods/getResourceResponse"),

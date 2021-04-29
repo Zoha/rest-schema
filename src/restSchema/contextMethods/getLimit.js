@@ -13,6 +13,10 @@ const cast = require("../helpers/cast")
  */
 
 /**
+ * @typedef {import("../../../typeDefs/schema").paginationProps} paginationProps
+ */
+
+/**
  * @this context
  * @param {object} [args]
  * @param {number} [args.defaultLimit]
@@ -20,6 +24,7 @@ const cast = require("../helpers/cast")
  * @param {number} [args.minLimit]
  * @param {string} [args.limitKey]
  * @param {object} [args.inputs]
+ * @param {paginationProps} [args.pagination]
  * @returns {Promise.<number>}
  */
 module.exports = async function({
@@ -27,14 +32,16 @@ module.exports = async function({
   maxLimit = null,
   minLimit = null,
   limitKey = null,
-  inputs = null
+  inputs = null,
+  pagination = null
 } = {}) {
   const context = this
-  let initialLimit = cast(defaultLimit).to(Number) || Number(context.schema.pagination.limit)
+  pagination = context.cast(pagination).to(Object) || (await context.getPaginationData())
+  let initialLimit = cast(defaultLimit).to(Number) || Number(pagination.limit)
   inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
   limitKey = cast(limitKey).to(String) || context.routeObject.meta.limit
-  maxLimit = cast(maxLimit).to(Number) || context.schema.pagination.maxLimit
-  minLimit = cast(minLimit).to(Number) || context.schema.pagination.minLimit
+  maxLimit = cast(maxLimit).to(Number) || pagination.maxLimit
+  minLimit = cast(minLimit).to(Number) || pagination.minLimit
 
   defaultLimit = initialLimit
 

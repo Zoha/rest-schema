@@ -13,6 +13,10 @@ const cast = require("../helpers/cast")
  */
 
 /**
+ * @typedef {import("../../../typeDefs/schema").paginationProps} paginationProps
+ */
+
+/**
  * @param {object} args
  * @param {object} args.inputs
  * @param {string} args.pageInputKey
@@ -44,6 +48,7 @@ const getPage = function({ inputs, pageInputKey, defaultPage }) {
  * @param {string} [args.pageInputKey]
  * @param {number} [args.defaultPage]
  * @param {number} [args.limit]
+ * @param {paginationProps} [args.pagination]
  * @returns {Promise.<number>}
  */
 module.exports = async function({
@@ -53,14 +58,16 @@ module.exports = async function({
   page = null,
   pageInputKey = null,
   defaultPage = null,
-  limit = null
+  limit = null,
+  pagination = null
 } = {}) {
   const context = this
-  let targetSkip = Number(skip) || Number(context.schema.pagination.skip)
+  pagination = context.cast(pagination).to(Object) || (await context.getPaginationData())
+  let targetSkip = Number(skip) || Number(pagination.skip)
   inputs = cast(inputs).to(Object) || context.inputs || (await context.getInputs())
   skipInputKey = cast(skipInputKey).to(String) || context.routeObject.meta.skip || "skip"
   pageInputKey = cast(pageInputKey).to(String) || context.routeObject.meta.page || "page"
-  defaultPage = cast(defaultPage).to(Number) || Number(context.schema.pagination.page)
+  defaultPage = cast(defaultPage).to(Number) || Number(pagination.page)
   page = cast(page).to(Number) || (await getPage({ inputs, pageInputKey, defaultPage }))
   limit = cast(limit).to(Number) || (await context.getLimit())
 

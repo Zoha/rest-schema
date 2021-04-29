@@ -119,7 +119,11 @@ const getInputs = async (argFields, inputs, context, originalResource) => {
   // execute operations
   await Promise.all(operations)
 
-  return filter(result, i => i != null)
+  const inputsValidator = context.schema.saveNullInputsInDatabase
+    ? i => i !== undefined
+    : i => i != null
+
+  return filter(result, inputsValidator)
 }
 
 /**

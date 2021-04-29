@@ -116,7 +116,11 @@ const getValues = async (argFields, values, context, originalResource) => {
   // execute operations
   await Promise.all(operations)
 
-  return filter(result, i => i != null)
+  const resultValuesValidator = context.schema.returnNullValuesInResponse
+    ? i => i !== undefined
+    : i => i != null
+
+  return filter(result, resultValuesValidator)
 }
 
 /**

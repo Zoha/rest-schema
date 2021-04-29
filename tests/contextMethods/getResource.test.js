@@ -1,28 +1,23 @@
 /* eslint-disable no-underscore-dangle */
 const { expect } = require("chai")
 const getResource = require("../../src/restSchema/contextMethods/getResource")
-const cast = require("../../src/restSchema/contextMethods/cast")
-const getFields = require("../../src/restSchema/contextMethods/getFields")
 const model = require("../../src/testHelpers/model")
-const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
-const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomFilters")
 const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
-const getRouteKeysFilters = require("../../src/restSchema/contextMethods/getRouteKeysFilters")
 const { ObjectId } = require("../../src/restSchema/types")
-const hook = require("../../src/restSchema/contextMethods/hook")
-const getMessages = require("../../src/restSchema/contextMethods/getMessages")
-const defaults = require("../../src/restSchema/defaults")
+const createContext = require("../../src/restSchema/createContext")
 
 const context = {
-  cast,
-  getFields,
-  getNestedField,
-  getCustomFilters,
+  ...createContext(
+    {
+      fields: {
+        prop1: String
+      },
+      filters: {},
+      hooks: {}
+    },
+    defaultRoute
+  ),
   model,
-  getRouteKeysFilters,
-  hook,
-  getMessages,
-  defaults,
   getRoutes: () => [defaultRoute],
   getRouteKeys: () => ["prop1", "_id"],
   req: {
@@ -30,14 +25,7 @@ const context = {
       id: "prop1"
     }
   },
-  route: "create",
-  schema: {
-    fields: {
-      prop1: String
-    },
-    filters: {},
-    hooks: {}
-  }
+  route: "create"
 }
 
 describe("getResource method", () => {

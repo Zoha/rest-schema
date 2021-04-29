@@ -11,5 +11,7 @@ module.exports = {
   filters: {},
   middleware: {},
   routeKeys: ["_id"],
-  hooks: {}
+  hooks: {},
+  saveNullInputsInDatabase: true,
+  returnNullValuesInResponse: false
 }

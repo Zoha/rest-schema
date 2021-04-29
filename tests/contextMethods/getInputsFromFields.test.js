@@ -1,10 +1,10 @@
 const { expect } = require("chai")
 const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
-const cast = require("../../src/restSchema/helpers/cast")
 const getFields = require("../../src/restSchema/contextMethods/getFields")
 const defaults = require("../../src/restSchema/defaults")
-const getInputs = require("../../src/restSchema/contextMethods/getInputs")
+const createContext = require("../../src/restSchema/createContext")
+const defaultSchemaRoutes = require("../../src/restSchema/defaults/schema/defaultSchemaRoutes")
 
 describe("getInputsFromFields method", function() {
   it("will get inputs normally", async () => {
@@ -71,11 +71,9 @@ describe("getInputsFromFields method", function() {
       ]
     }
     const context = {
-      getInputs,
-      fields,
+      ...createContext({}, defaultSchemaRoutes.create),
       inputs,
-      defaults,
-      cast
+      fields
     }
     const fieldsInputs = await getInputsFromFields.call(context, fields)
 
@@ -164,12 +162,10 @@ describe("getInputsFromFields method", function() {
     }
 
     const context = {
-      getInputs,
+      ...createContext({}, defaultSchemaRoutes.create),
       route: "create",
-      fields,
       inputs,
-      cast,
-      defaults
+      fields
     }
 
     const fieldsInputs = await getInputsFromFields.call(context, fields)
@@ -212,12 +208,10 @@ describe("getInputsFromFields method", function() {
     }
 
     const context = {
-      getInputs,
+      ...createContext({}, defaultSchemaRoutes.create),
       route: "create",
-      fields,
       inputs,
-      cast,
-      defaults
+      fields
     }
 
     const fieldsInputs = await getInputsFromFields.call(context, fields)

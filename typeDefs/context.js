@@ -26,6 +26,10 @@
  */
 
 /**
+ * @typedef {import("./schema").paginationProps} paginationProps
+ */
+
+/**
  * @typedef {object} contextMethods
  * @property {import('../src/restSchema/contextMethods/cast')} cast
  * @property {import('../src/restSchema/contextMethods/createResource')} createResource
@@ -44,6 +48,7 @@
  * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
  * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
  * @property {import('../src/restSchema/contextMethods/getPage')} getPage
+ * @property {import('../src/restSchema/contextMethods/getPaginationData')} getPaginationData
  * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
  * @property {import('../src/restSchema/contextMethods/getResource')} getResource
  * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
@@ -113,6 +118,7 @@
  * @property {boolean} [isRelation]
  * @property {context} [parent]
  * @property {object} [dirtyInputs]
+ * @property {paginationProps} [pagination]
  *
  *
  * @typedef {contextProps & contextMethods} context
