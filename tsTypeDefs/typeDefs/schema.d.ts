@@ -4,15 +4,38 @@ export type hookNamesList = ("before" | "after" | "error" | "beforeCreateResourc
 export type fields = import("./field").fields;
 export type routes = import("./route").routes;
 export type defaults = import("../src/restSchema/defaults").defaults;
-export type pagination = {
+export type filtersCallback = (context: context) => object;
+/**
+ * {filters}
+ */
+export type exports = object | filtersCallback;
+export type paginationPage = (context: context) => number;
+export type paginationLimit = (context: context) => number;
+export type paginationMinLimit = (context: context) => number;
+export type paginationMaxLimit = (context: context) => number;
+export type paginationSort = (context: context) => string;
+export type paginationDefaultFilters = (context: context) => any;
+export type paginationSkip = (context: context) => number;
+export type paginationProps = {
     page?: number;
     limit?: number;
     minLimit?: number;
     maxLimit?: number;
     sort?: string;
-    defaultFilters?: object;
+    defaultFilters?: any;
     skip?: number;
 };
+export type paginationInput = {
+    page?: any | paginationPage;
+    limit?: number | paginationLimit;
+    minLimit?: number | paginationMinLimit;
+    maxLimit?: number | paginationMaxLimit;
+    sort?: string | paginationSort;
+    defaultFilters?: any | paginationDefaultFilters;
+    skip?: number | paginationSkip;
+};
+export type paginationCallback = (context: context) => paginationInput;
+export type pagination = paginationInput | paginationCallback;
 export type errorCallback = (err: import("../src/restSchema/errors/restSchemaError"), req: import("express").Request, res: import("express").Response, next: Function) => any;
 export type responseCallback = (res: Response, ctx: context) => any;
 export type wrappers = {
@@ -75,10 +98,12 @@ export type schema = {
     routes?: routes;
     pagination?: pagination;
     wrappers?: wrappers;
-    filters?: object;
+    filters?: any;
     middleware?: middleware;
     routeKeys?: Array<string>;
     hooks?: hooks;
     defaults?: defaults;
     name?: string;
+    saveNullInputsInDatabase?: boolean;
+    returnNullValuesInResponse?: boolean;
 };

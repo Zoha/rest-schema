@@ -32,7 +32,7 @@ const check = async ({
   messages
 }) => {
   // if is nested -> should be checked for each route
-  if (isObject(validationArgs)) {
+  if (isObject(validationArgs) && validationArgs[context.route]) {
     return check({
       value,
       validationArgs: validationArgs[context.route],

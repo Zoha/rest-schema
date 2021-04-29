@@ -858,4 +858,32 @@ describe("validateInput method", () => {
 
     expect(error).to.not.be.equal(null)
   })
+
+  it("enum validate with object value", async () => {
+    let error
+
+    const field = {
+      enum: { first: "valid1", second: "valid2" }
+    }
+    let value = "invalid"
+
+    try {
+      await validateInput.call(context, { value, field, key: "field1" })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("field1 is invalid")
+
+    value = "valid2"
+    error = null
+    try {
+      await validateInput.call(context, { value, field })
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.equal(null)
+  })
 })

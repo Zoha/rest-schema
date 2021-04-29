@@ -1,6 +1,4 @@
-const filter = require("../helpers/filter")
 const cast = require("../helpers/cast")
-const { getRoutes } = require("../schemaFormatters/routeFormatter")
 
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource

@@ -141,7 +141,9 @@ export type fieldProps = {
     maxLength?: objectForNumber | number | fieldPropHandler;
     betweenLength?: objectForNumber | number | fieldPropHandler;
     match?: RegExp | objectForNumberRegExp | fieldPropHandler;
-    enum?: Array<string> | objectForStringArray | fieldPropHandler;
+    enum?: Array<string> | objectForStringArray | fieldPropHandler | {
+        [x: string]: string;
+    };
     existsIn?: objectForString | string | fieldPropHandler;
 };
 export type fieldsFunction = (context: context) => (fields | Promise<fields>);

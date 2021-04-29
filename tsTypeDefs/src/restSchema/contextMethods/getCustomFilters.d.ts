@@ -1,4 +1,4 @@
-declare function _exports({ filters, route, routes, relationFilters }?: {
+declare function _exports({ filters, relationFilters }?: {
     filters?: object;
     route?: string;
     routes?: routes;

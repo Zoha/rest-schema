@@ -37,7 +37,7 @@ declare namespace methods {
         fields?: import("../../typeDefs/field").fields;
         inputs?: any;
     }): Promise<any>;
-    function getCustomFilters({ filters, route, routes, relationFilters }?: {
+    function getCustomFilters({ filters, relationFilters }?: {
         filters?: any;
         route?: string;
         routes?: import("./contextMethods/getCustomFilters").routes;
@@ -47,12 +47,13 @@ declare namespace methods {
         setFields?: boolean;
         fields?: import("../../typeDefs/field").fields;
     }): Promise<import("../../typeDefs/field").fields>;
-    function getFilters({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta }?: {
+    function getFilters({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta, pagination }?: {
         inputs?: any;
         operators?: import("../../typeDefs/route").filteringOperators;
         defaultRouteFilters?: any;
         customFilters?: any;
         filteringMeta?: any;
+        pagination?: import("../../typeDefs/schema").paginationProps;
     }): Promise<any>;
     function getInputs({ setInputs, req, inputsTarget, force }?: {
         setInputs?: boolean;
@@ -64,12 +65,13 @@ declare namespace methods {
         fields?: import("../../typeDefs/field").fields;
         inputs?: any;
     }): Promise<any>;
-    function getLimit({ defaultLimit, maxLimit, minLimit, limitKey, inputs }?: {
+    function getLimit({ defaultLimit, maxLimit, minLimit, limitKey, inputs, pagination }?: {
         defaultLimit?: number;
         maxLimit?: number;
         minLimit?: number;
         limitKey?: string;
         inputs?: any;
+        pagination?: import("../../typeDefs/schema").paginationProps;
     }): Promise<number>;
     function getMessages(): {
         validations: {
@@ -107,6 +109,7 @@ declare namespace methods {
         skip?: number;
         limit?: number;
     }): Promise<number>;
+    function getPaginationData({ pagination, setResource, force }?: any): Promise<any>;
     function getRelations({ fields }?: {
         fields?: import("../../typeDefs/field").fields;
     }): Promise<any>;
@@ -144,7 +147,7 @@ declare namespace methods {
         routeObject?: import("../../typeDefs/route").route;
         selectable?: boolean;
     }): Promise<import("../../typeDefs/field").fields>;
-    function getSkip({ skip, inputs, skipInputKey, page, pageInputKey, defaultPage, limit }?: {
+    function getSkip({ skip, inputs, skipInputKey, page, pageInputKey, defaultPage, limit, pagination }?: {
         skip?: number;
         inputs?: any;
         skipInputKey?: string;
@@ -152,12 +155,14 @@ declare namespace methods {
         pageInputKey?: string;
         defaultPage?: number;
         limit?: number;
+        pagination?: import("../../typeDefs/schema").paginationProps;
     }): Promise<number>;
-    function getSort({ inputs, sortKey, defaultSort, sortString }?: {
+    function getSort({ inputs, sortKey, defaultSort, sortString, pagination }?: {
         sortKey?: string;
         inputs?: any;
         defaultSort?: any;
         sortString?: string;
+        pagination?: import("../../typeDefs/schema").paginationProps;
     }): Promise<any>;
     function getTotal({ setTotal, filters }?: {
         setTotal?: boolean;

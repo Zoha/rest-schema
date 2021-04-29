@@ -14,6 +14,7 @@ export type defaultDefaults = import("../src/restSchema/defaults").defaults;
 export type defaults = defaultDefaults & {
     [x: string]: any;
 };
+export type paginationProps = import("./schema").paginationProps;
 export type contextMethods = {
     cast: (value: any, type?: any) => import("../src/restSchema/helpers/cast").RSConvertTo;
     createResource: ({ setResource, setCreatedResource, inputs }?: {
@@ -28,6 +29,9 @@ export type contextMethods = {
         /**
          * @typedef {import("../src/restSchema/defaults").defaults} defaultDefaults
          * @typedef {defaultDefaults & Object<string , *>} defaults
+         */
+        /**
+         * @typedef {import("./schema").paginationProps} paginationProps
          */
         /**
          * @typedef {object} contextMethods
@@ -48,6 +52,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
          * @property {import('../src/restSchema/contextMethods/getPage')} getPage
+         * @property {import('../src/restSchema/contextMethods/getPaginationData')} getPaginationData
          * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
          * @property {import('../src/restSchema/contextMethods/getResource')} getResource
          * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
@@ -114,6 +119,7 @@ export type contextMethods = {
          * @property {boolean} [isRelation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
+         * @property {paginationProps} [pagination]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -142,6 +148,9 @@ export type contextMethods = {
          * @typedef {defaultDefaults & Object<string , *>} defaults
          */
         /**
+         * @typedef {import("./schema").paginationProps} paginationProps
+         */
+        /**
          * @typedef {object} contextMethods
          * @property {import('../src/restSchema/contextMethods/cast')} cast
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
@@ -160,6 +169,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
          * @property {import('../src/restSchema/contextMethods/getPage')} getPage
+         * @property {import('../src/restSchema/contextMethods/getPaginationData')} getPaginationData
          * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
          * @property {import('../src/restSchema/contextMethods/getResource')} getResource
          * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
@@ -226,6 +236,7 @@ export type contextMethods = {
          * @property {boolean} [isRelation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
+         * @property {paginationProps} [pagination]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -241,7 +252,7 @@ export type contextMethods = {
         fields?: import("./field").fields;
         inputs?: any;
     }) => Promise<any>;
-    getCustomFilters: ({ filters, route, routes, relationFilters }?: {
+    getCustomFilters: ({ filters, relationFilters }?: {
         filters?: any;
         route?: string;
         routes?: import("../src/restSchema/contextMethods/getCustomFilters").routes;
@@ -251,12 +262,13 @@ export type contextMethods = {
         setFields?: boolean;
         fields?: import("./field").fields;
     }) => Promise<import("./field").fields>;
-    getFilters: ({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta }?: {
+    getFilters: ({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta, pagination }?: {
         inputs?: any;
         operators?: import("./route").filteringOperators;
         defaultRouteFilters?: any;
         customFilters?: any;
         filteringMeta?: any;
+        pagination?: import("./schema").paginationProps;
     }) => Promise<any>;
     getInputs: ({ setInputs, req, inputsTarget, force }?: {
         setInputs?: boolean;
@@ -268,12 +280,13 @@ export type contextMethods = {
         fields?: import("./field").fields;
         inputs?: any;
     }) => Promise<any>;
-    getLimit: ({ defaultLimit, maxLimit, minLimit, limitKey, inputs }?: {
+    getLimit: ({ defaultLimit, maxLimit, minLimit, limitKey, inputs, pagination }?: {
         defaultLimit?: number;
         maxLimit?: number;
         minLimit?: number;
         limitKey?: string;
         inputs?: any;
+        pagination?: import("./schema").paginationProps;
     }) => Promise<number>;
     getMessages: () => {
         validations: {
@@ -295,6 +308,9 @@ export type contextMethods = {
              * @typedef {defaultDefaults & Object<string , *>} defaults
              */
             /**
+             * @typedef {import("./schema").paginationProps} paginationProps
+             */
+            /**
              * @typedef {object} contextMethods
              * @property {import('../src/restSchema/contextMethods/cast')} cast
              * @property {import('../src/restSchema/contextMethods/createResource')} createResource
@@ -313,6 +329,7 @@ export type contextMethods = {
              * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
              * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
              * @property {import('../src/restSchema/contextMethods/getPage')} getPage
+             * @property {import('../src/restSchema/contextMethods/getPaginationData')} getPaginationData
              * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
              * @property {import('../src/restSchema/contextMethods/getResource')} getResource
              * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
@@ -379,6 +396,7 @@ export type contextMethods = {
              * @property {boolean} [isRelation]
              * @property {context} [parent]
              * @property {object} [dirtyInputs]
+             * @property {paginationProps} [pagination]
              *
              *
              * @typedef {contextProps & contextMethods} context
@@ -415,6 +433,7 @@ export type contextMethods = {
         skip?: number;
         limit?: number;
     }) => Promise<number>;
+    getPaginationData: ({ pagination, setResource, force }?: any) => Promise<any>;
     getRelations: ({ fields }?: {
         fields?: import("./field").fields;
     }) => Promise<any>;
@@ -452,7 +471,7 @@ export type contextMethods = {
         routeObject?: import("./route").route;
         selectable?: boolean;
     }) => Promise<import("./field").fields>;
-    getSkip: ({ skip, inputs, skipInputKey, page, pageInputKey, defaultPage, limit }?: {
+    getSkip: ({ skip, inputs, skipInputKey, page, pageInputKey, defaultPage, limit, pagination }?: {
         skip?: number;
         inputs?: any;
         skipInputKey?: string;
@@ -460,12 +479,14 @@ export type contextMethods = {
         pageInputKey?: string;
         defaultPage?: number;
         limit?: number;
+        pagination?: import("./schema").paginationProps;
     }) => Promise<number>;
-    getSort: ({ inputs, sortKey, defaultSort, sortString }?: {
+    getSort: ({ inputs, sortKey, defaultSort, sortString, pagination }?: {
         sortKey?: string;
         inputs?: any;
         defaultSort?: any;
         sortString?: string;
+        pagination?: import("./schema").paginationProps;
     }) => Promise<any>;
     getTotal: ({ setTotal, filters }?: {
         setTotal?: boolean;
@@ -497,6 +518,9 @@ export type contextMethods = {
          * @typedef {defaultDefaults & Object<string , *>} defaults
          */
         /**
+         * @typedef {import("./schema").paginationProps} paginationProps
+         */
+        /**
          * @typedef {object} contextMethods
          * @property {import('../src/restSchema/contextMethods/cast')} cast
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
@@ -515,6 +539,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
          * @property {import('../src/restSchema/contextMethods/getPage')} getPage
+         * @property {import('../src/restSchema/contextMethods/getPaginationData')} getPaginationData
          * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
          * @property {import('../src/restSchema/contextMethods/getResource')} getResource
          * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
@@ -581,6 +606,7 @@ export type contextMethods = {
          * @property {boolean} [isRelation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
+         * @property {paginationProps} [pagination]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -605,6 +631,9 @@ export type contextMethods = {
          * @typedef {defaultDefaults & Object<string , *>} defaults
          */
         /**
+         * @typedef {import("./schema").paginationProps} paginationProps
+         */
+        /**
          * @typedef {object} contextMethods
          * @property {import('../src/restSchema/contextMethods/cast')} cast
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
@@ -623,6 +652,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
          * @property {import('../src/restSchema/contextMethods/getPage')} getPage
+         * @property {import('../src/restSchema/contextMethods/getPaginationData')} getPaginationData
          * @property {import('../src/restSchema/contextMethods/getRelations')} getRelations
          * @property {import('../src/restSchema/contextMethods/getResource')} getResource
          * @property {import('../src/restSchema/contextMethods/getResourceResponse')} getResourceResponse
@@ -689,6 +719,7 @@ export type contextMethods = {
          * @property {boolean} [isRelation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
+         * @property {paginationProps} [pagination]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -760,5 +791,6 @@ export type contextProps = {
     isRelation?: boolean;
     parent?: context;
     dirtyInputs?: object;
+    pagination?: paginationProps;
 };
 export type context = contextProps & contextMethods;

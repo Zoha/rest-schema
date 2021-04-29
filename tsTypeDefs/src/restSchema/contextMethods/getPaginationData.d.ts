@@ -1,11 +1,4 @@
-declare function _exports({ defaultLimit, maxLimit, minLimit, limitKey, inputs, pagination }?: {
-    defaultLimit?: number;
-    maxLimit?: number;
-    minLimit?: number;
-    limitKey?: string;
-    inputs?: object;
-    pagination?: paginationProps;
-}): Promise<number>;
+declare function _exports({ pagination, setResource, force }?: object): Promise<object>;
 export = _exports;
 export type resource = import("../../../typeDefs/context").resource;
 export type context = import("../../../typeDefs/context").context;

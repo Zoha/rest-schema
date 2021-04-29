@@ -6,4 +6,6 @@ export declare const filters: {};
 export declare const middleware: {};
 export declare const routeKeys: string[];
 export declare const hooks: {};
+export declare const saveNullInputsInDatabase: boolean;
+export declare const returnNullValuesInResponse: boolean;
 export { fields, routes, pagination, wrappers };

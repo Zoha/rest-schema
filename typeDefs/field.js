@@ -186,7 +186,7 @@ const {
  * @property {objectForNumber | number | fieldPropHandler} [maxLength]
  * @property {objectForNumber | number | fieldPropHandler} [betweenLength]
  * @property {RegExp | objectForNumberRegExp | fieldPropHandler} [match]
- * @property {Array<string> | objectForStringArray | fieldPropHandler} [enum]
+ * @property {Array<string> | objectForStringArray | fieldPropHandler | Object.<string , string>} [enum]
  * @property {objectForString | string | fieldPropHandler} [existsIn]
  *
  * @callback fieldsFunction
