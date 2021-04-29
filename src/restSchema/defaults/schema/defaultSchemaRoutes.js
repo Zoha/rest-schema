@@ -2,7 +2,7 @@ const getRelationPath = require("../../helpers/getRelationPaths")
 const relationTypes = require("../../enums/relationTypes")
 const manualInvolveMiddlewareList = require("../../helpers/manualInvolveMiddlewareList")
 const injectContext = require("../../middleware/registerMiddlewareList")
-const { ValidationError } = require("../../errors")
+const { ValidationError, RestSchemaError } = require("../../errors")
 const URL = require("url")
 
 /** @type {Object<string , import("../../../../typeDefs/route").route>} */
@@ -158,6 +158,12 @@ module.exports = {
     method: "get",
     path: "/:id/*",
     handler: async (context, req, res, next) => {
+      context.relationDepth = context.relationDepth || 1
+      if (context.relationDepth > context.schema.maximumRelationDepth) {
+        const error = new RestSchemaError(context.getMessages().maximumRelationDepth)
+        error.status = 400
+        throw error
+      }
       // get relations object in format {schemaBuilder , type , fieldName}
       const relations = await context.getRelations()
 
@@ -230,6 +236,7 @@ module.exports = {
       relationContext.isRelation = true
       relationContext.parent = context
       relationContext.res = context.res
+      relationContext.relationDepth = context.relationDepth + 1
       const relationPathIdRegexResult = /\/[^/]+\/([^/]+)/.exec(relationPath.path)
       let url = relationPath.path
       if (relation.type == relationTypes.collection && relationRoute.name == "relation") {

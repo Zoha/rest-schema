@@ -25,6 +25,10 @@ const {
  */
 
 /**
+ * @typedef {import("mongoose").model} model
+ */
+
+/**
  * @callback handlerCallback
  * @param {context} ctx
  * @return {*}
@@ -64,8 +68,7 @@ const {
  * @typedef {handlerCallbackWithValue | objectForHandlerCallbackWithValue} fieldPropHandlerWithValue
  *
  *
- *
- *
+ * @typedef {import("../src/restSchema/schemaBuilder")} schemaBuilder
  *
  *
  * @typedef objectForBoolean
@@ -78,6 +81,7 @@ const {
  * @property {boolean} [validate]
  * @property {boolean} [count]
  *
+ *
  * @typedef objectForNumber
  * @type {object}
  * @property {number} [create]
@@ -87,6 +91,26 @@ const {
  * @property {number} [single]
  * @property {number} [validate]
  * @property {number} [count]
+ *
+ * @typedef objectForExistsIn
+ * @type {object}
+ * @property {string | model | schemaBuilder } [create]
+ * @property {string | model | schemaBuilder } [update]
+ * @property {string | model | schemaBuilder } [delete]
+ * @property {string | model | schemaBuilder } [index]
+ * @property {string | model | schemaBuilder } [single]
+ * @property {string | model | schemaBuilder } [validate]
+ * @property {string | model | schemaBuilder } [count]
+ *
+ * @typedef objectForNumberOrDate
+ * @type {object}
+ * @property {number | Date} [create]
+ * @property {number | Date} [update]
+ * @property {number | Date} [delete]
+ * @property {number | Date} [index]
+ * @property {number | Date} [single]
+ * @property {number | Date} [validate]
+ * @property {number | Date} [count]
  *
  * @typedef objectForString
  * @type {object}
@@ -107,6 +131,16 @@ const {
  * @property {number[]} [single]
  * @property {number[]} [validate]
  * @property {number[]} [count]
+ *
+ * @typedef objectForNumberOrDateArray
+ * @type {object}
+ * @property {number[] | Date[]} [create]
+ * @property {number[] | Date[]} [update]
+ * @property {number[] | Date[]} [delete]
+ * @property {number[] | Date[]} [index]
+ * @property {number[] | Date[]} [single]
+ * @property {number[] | Date[]} [validate]
+ * @property {number[] | Date[]} [count]
  *
  * @typedef objectForStringArray
  * @type {object}
@@ -140,6 +174,7 @@ const {
  * @param {context} [relationCtx]
  * @param {relation} [relation]
  * @returns {object}
+ *
  */
 
 /**
@@ -179,15 +214,16 @@ const {
  * @property {fieldPropHandlerWithValue} [validate]
  * @property {objectForBoolean | boolean | fieldPropHandler} [unique]
  * @property {objectForBoolean | boolean | fieldPropHandler} [required]
- * @property {Array<number> | objectForNumberArray | fieldPropHandler} [between]
- * @property {objectForNumber | number | fieldPropHandler} [min]
- * @property {objectForNumber | number | fieldPropHandler} [max]
+ * @property {Array<number> | Array<Date> | objectForNumberOrDateArray | fieldPropHandler} [between]
+ * @property {objectForNumberOrDate | number | Date | fieldPropHandler} [min]
+ * @property {objectForNumberOrDate | number | Date | fieldPropHandler} [max]
  * @property {objectForNumber | number | fieldPropHandler} [minLength]
  * @property {objectForNumber | number | fieldPropHandler} [maxLength]
  * @property {objectForNumber | number | fieldPropHandler} [betweenLength]
  * @property {RegExp | objectForNumberRegExp | fieldPropHandler} [match]
  * @property {Array<string> | objectForStringArray | fieldPropHandler | Object.<string , string>} [enum]
- * @property {objectForString | string | fieldPropHandler} [existsIn]
+ * @property {objectForExistsIn | string | model | schemaBuilder | fieldPropHandler} [existsIn]
+ * @property {(objectForBoolean | boolean | fieldPropHandler)} [uniqueItems]
  *
  * @callback fieldsFunction
  * @param {context} context

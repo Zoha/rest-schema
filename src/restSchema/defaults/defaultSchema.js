@@ -13,5 +13,6 @@ module.exports = {
   routeKeys: ["_id"],
   hooks: {},
   saveNullInputsInDatabase: true,
-  returnNullValuesInResponse: false
+  returnNullValuesInResponse: false,
+  maximumRelationDepth: 4
 }

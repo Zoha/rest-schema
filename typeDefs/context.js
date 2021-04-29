@@ -103,6 +103,7 @@
  * @property {resource} [deletedResource]
  * @property {resource} [deletedResource]
  * @property {Array.<resource>} [collection]
+ * @property {number} [relationDepth]
  * @property {request & Object.<string , any>} [req]
  * @property {response & Object.<string , any>} [res]
  * @property {function} [next]

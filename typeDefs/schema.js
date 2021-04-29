@@ -166,6 +166,7 @@
  * @property {string} [name]
  * @property {boolean} [saveNullInputsInDatabase]
  * @property {boolean} [returnNullValuesInResponse]
+ * @property {number} [maximumRelationDepth]
  *
  */
 

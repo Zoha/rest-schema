@@ -1,4 +1,5 @@
 const cast = require("../helpers/cast")
+const scapeStringRegexp = require("../helpers/escapeStringRegexp")
 
 module.exports = {
   // basic info of route
@@ -77,10 +78,10 @@ module.exports = {
       return { $ne: null }
     },
     $regex: v => {
-      return { $regex: new RegExp(v) }
+      return { $regex: new RegExp(scapeStringRegexp(v)) }
     },
     $regexi: v => {
-      return { $regex: new RegExp(v, "i") }
+      return { $regex: new RegExp(scapeStringRegexp(v), "i") }
     }
   }
 }

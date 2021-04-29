@@ -3,6 +3,7 @@ const isArray = require("../helpers/isArray")
 const isFunction = require("../helpers/isFunction")
 const validationHandlers = require("../validators")
 const { RestSchemaError } = require("../errors")
+const mongoose = require("mongoose")
 
 const getErrorMessage = (type, key, value, args, messages) => {
   let message = messages.validations[type]
@@ -59,7 +60,12 @@ const check = async ({
   // if is function call the function to determine
   // that should be checked or not
   if (isFunction(validationArgs) && !callbackValidators.includes(validator)) {
-    shouldBeChecked = await validationArgs(value, context, key)
+    if (
+      !(validationArgs.prototype instanceof mongoose.Model) &&
+      !(validationArgs instanceof require("../schemaBuilder").SchemaBuilder)
+    ) {
+      shouldBeChecked = await validationArgs(value, context, key)
+    }
   }
   if (!shouldBeChecked) {
     return true

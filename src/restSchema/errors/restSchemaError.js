@@ -1,4 +1,8 @@
 class RestSchemaError extends Error {
+  constructor(...args) {
+    super(...args)
+    this.status = 500
+  }
   /**
    *
    * @param {import("../../../typeDefs/context").context} context
@@ -6,7 +10,7 @@ class RestSchemaError extends Error {
    * @param {import("../../../typeDefs/context").response} res
    */
   handler(context, req, res) {
-    return res.status(500).json({
+    return res.status(this.status).json({
       message: this.message
     })
   }

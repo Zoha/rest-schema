@@ -84,7 +84,8 @@ const defaultField = {
   betweenLength: undefined,
   match: undefined,
   enum: undefined,
-  existsIn: undefined
+  existsIn: undefined,
+  uniqueItems: false
 }
 
 module.exports = defaultField

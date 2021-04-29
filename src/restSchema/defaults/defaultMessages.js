@@ -20,5 +20,6 @@ module.exports = {
   resourceNotFound: "resource not found",
   validationPassed: "validation passed, request is valid",
   inactiveRouteMessage: "route is inactive",
-  listOfErrors: "list of errors"
+  listOfErrors: "list of errors",
+  maximumRelationDepth: "maximum relation depth executed"
 }

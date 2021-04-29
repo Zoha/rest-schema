@@ -649,7 +649,7 @@ describe("validateInput method", () => {
     expect(error).to.be.equal(null)
   })
 
-  it("uniqueInArray validate", async () => {
+  it("uniqueItems validate", async () => {
     let error
 
     let field = {
@@ -986,5 +986,79 @@ describe("validateInput method", () => {
       error = e
     }
     expect(error).to.be.equal(null)
+  })
+
+  it("existsIn validate for mongoose model", async () => {
+    // create model 2 schema builder
+    const schema2 = schemaMaker(
+      model,
+      {
+        prop1: String
+      },
+      { name: model.collection.collectionName, routeKeys: ["prop1"] }
+    )
+
+    const value = "test"
+
+    // try and check validate for existsIn validate
+    let error = null
+    try {
+      await validateInput.call(context, {
+        value,
+        field: {
+          type: String,
+          existsIn: model
+        }
+      })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("this field does not exists")
+
+    await model.create({
+      prop1: "something not create"
+    })
+
+    // try and check validate for existsIn validate
+    error = null
+    try {
+      await validateInput.call(context, {
+        value,
+        field: {
+          type: String,
+          existsIn: model
+        }
+      })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals("this field does not exists")
+
+    // check again
+    await model.create({
+      prop1: "test"
+    })
+    error = null
+    try {
+      await validateInput.call(context, {
+        value,
+        field: {
+          type: String,
+          existsIn: model
+        }
+      })
+    } catch (e) {
+      error = e
+    }
+
+    if (error !== null) {
+      throw new Error("expect error to be null")
+    }
   })
 })

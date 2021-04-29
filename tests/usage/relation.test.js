@@ -370,4 +370,29 @@ describe("relation routes", () => {
         expect(response[1]._id).to.be.equal(permission3._id.toString())
       })
   })
+
+  it("single to single relation fails with maximum relation depth execution", async () => {
+    const profile = await ProfileModel.create({
+      field: "something"
+    })
+    const user = await UserModel.create({
+      profile: profile._id
+    })
+
+    await request(app)
+      .get(`/users/${user._id}/profile/user/profile/user`)
+      .expect("Content-Type", /json/)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response._id).to.be.equals(user._id.toString())
+        expect(response)
+          .to.haveOwnProperty("profile")
+          .that.equals(profile._id.toString())
+      })
+
+    await request(app)
+      .get(`/users/${user._id}/profile/user/profile/user/profile`)
+      .expect("Content-Type", /json/)
+      .expect(400)
+  })
 })
