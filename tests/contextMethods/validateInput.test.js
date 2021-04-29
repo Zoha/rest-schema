@@ -5,6 +5,7 @@ const cloneDeep = require("clone-deep")
 const schemaMaker = require("../../src/restSchema/schema")
 const createContext = require("../../src/restSchema/createContext")
 const { defaultSchema } = require("../../src/restSchema/defaults")
+const moment = require("moment")
 
 const context = createContext({ ...defaultSchema, model }, defaultSchema.routes.create)
 
@@ -878,6 +879,106 @@ describe("validateInput method", () => {
       .that.equals("field1 is invalid")
 
     value = "valid2"
+    error = null
+    try {
+      await validateInput.call(context, { value, field })
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.equal(null)
+  })
+
+  it("min validate on date", async () => {
+    let error
+
+    const field = {
+      min: new Date(moment().subtract(1, "seconds"))
+    }
+    let value = new Date(moment().subtract(5, "seconds"))
+
+    try {
+      await validateInput.call(context, { value, field, key: "field1" })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals(`field1 should be more than ${field.min.toLocaleString()}`)
+
+    value = new Date(moment().add(2, "seconds"))
+    error = null
+    try {
+      await validateInput.call(context, { value, field })
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.equal(null)
+  })
+
+  it("max validate on date", async () => {
+    let error
+
+    const field = {
+      max: new Date(moment().add(1, "seconds"))
+    }
+    let value = new Date(moment().add(5, "seconds"))
+
+    try {
+      await validateInput.call(context, { value, field, key: "field1" })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals(`field1 should be less than ${field.max.toLocaleString()}`)
+
+    value = new Date(moment().subtract(2, "seconds"))
+    error = null
+    try {
+      await validateInput.call(context, { value, field })
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.equal(null)
+  })
+
+  it("between validate on date", async () => {
+    let error
+
+    const field = {
+      between: [new Date(moment().subtract(1, "second")), new Date(moment().add(1, "hour"))]
+    }
+    let value = new Date(moment().subtract(5, "seconds"))
+
+    try {
+      await validateInput.call(context, { value, field, key: "field1" })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals(
+        `field1 value should be between ${field.between[0].toLocaleString()} and ${field.between[1].toLocaleString()}`
+      )
+
+    value = new Date(moment().add(2, "hours"))
+    error = null
+    try {
+      await validateInput.call(context, { value, field, key: "field1" })
+    } catch (e) {
+      error = e
+    }
+
+    expect(error)
+      .to.haveOwnProperty("message")
+      .that.equals(
+        `field1 value should be between ${field.between[0].toLocaleString()} and ${field.between[1].toLocaleString()}`
+      )
+
+    value = new Date(moment().add(20, "minutes"))
     error = null
     try {
       await validateInput.call(context, { value, field })

@@ -16,7 +16,7 @@ module.exports = {
     requiredUpdate: "{key} is required",
     existsIn: "this {key} does not exists"
   },
-  idParamNotFound: ":id param does not exists in request",
+  idParamNotFound: "primary key param does not exists in request",
   resourceNotFound: "resource not found",
   validationPassed: "validation passed, request is valid",
   inactiveRouteMessage: "route is inactive",

@@ -15,6 +15,11 @@ module.exports = (value, of, field, context, checkString = false) => {
       return false
     }
   }
+
+  if (of instanceof Date) {
+    return value <= of
+  }
+
   if (typeof val === "string" || isArray(val)) {
     if (val.length > parseFloat(of)) {
       return false

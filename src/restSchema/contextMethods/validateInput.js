@@ -10,10 +10,13 @@ const getErrorMessage = (type, key, value, args, messages) => {
   message = message.replace(new RegExp("\\{value\\}", "g"), value)
   if (isArray(args)) {
     Object.keys(args).forEach(argIndex => {
-      message = message.replace(new RegExp(`\\{args\\[${argIndex}\\]\\}`, "g"), args[argIndex])
+      const argItem =
+        args[argIndex] instanceof Date ? args[argIndex].toLocaleString() : args[argIndex]
+      message = message.replace(new RegExp(`\\{args\\[${argIndex}\\]\\}`, "g"), argItem)
     })
   } else {
-    message = message.replace(new RegExp("\\{args\\}", "g"), args)
+    const argString = args instanceof Date ? args.toLocaleString() : args
+    message = message.replace(new RegExp("\\{args\\}", "g"), argString)
   }
 
   return message
