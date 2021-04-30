@@ -1,11 +1,7 @@
 const { expect } = require("chai")
 const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute")
-const getNestedField = require("../../src/restSchema/contextMethods/getNestedField")
 const getFilters = require("../../src/restSchema/contextMethods/getFilters")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
-const cast = require("../../src/restSchema/helpers/cast")
-const getCustomFilters = require("../../src/restSchema/contextMethods/getCustomFilters")
-const getRoutes = require("../../src/restSchema/contextMethods/getRoutes")
 const createContext = require("../../src/restSchema/createContext")
 
 const context = {
@@ -16,17 +12,13 @@ const context = {
     }
   ),
   inputs: {},
-  getRoutes,
-  getCustomFilters,
   schema: {
     routes: [],
     filters: {},
     pagination: {
       defaultFilters: {}
     }
-  },
-  getNestedField,
-  cast
+  }
 }
 
 describe("getFilters method", () => {

@@ -3,6 +3,7 @@ const isObject = require("../helpers/isObject")
 const isArray = require("../helpers/isArray")
 const cast = require("../helpers/cast")
 const isFunction = require("../helpers/isFunction")
+const escapeStringRegexp = require("../helpers/escapeStringRegexp")
 
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource
@@ -72,7 +73,8 @@ module.exports = async function({
     // starts with an operator
     let hasOperator
     Object.keys(operators).every(operator => {
-      if (!hasOperator && value.startsWith(operator)) {
+      const includingOperatorRegexp = new RegExp(`[,|]+${escapeStringRegexp(operator)}`)
+      if (!hasOperator && (value.startsWith(operator) || includingOperatorRegexp.test(value))) {
         hasOperator = true
         return false
       }
@@ -86,7 +88,7 @@ module.exports = async function({
     if (hasOperator) {
       const regex = new RegExp(
         `(${Object.keys(operators)
-          .map(i => i.replace(":", "").replace("$", "\\$"))
+          .map(i => escapeStringRegexp(i.replace(":", "")))
           .join("|")})`,
         "g"
       )
