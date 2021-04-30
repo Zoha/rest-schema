@@ -3,10 +3,23 @@ const registerMiddlewareList = require("./middleware/registerMiddlewareList")
 const beforeHook = require("./middleware/beforeHook")
 const afterMiddlewareHook = require("./middleware/afterMiddlewareHook")
 
+/**
+ *
+ * @param {*} router
+ * @param {import("../../typeDefs/route").route} routeObject
+ * @param {import("../../typeDefs/schema").schema} schema
+ */
 module.exports = (router, routeObject, schema) => {
   // register middleware
   // some of middleware are with condition
   // and will be injected if route need them
+
+  // merge settings of route and schema
+  schema.saveNullInputsInDatabase =
+    routeObject.saveNullInputsInDatabase || schema.saveNullInputsInDatabase
+  schema.returnNullValuesInResponse =
+    routeObject.returnNullValuesInResponse || schema.returnNullValuesInResponse
+  schema.errorOnInvalidLimit = routeObject.errorOnInvalidLimit || schema.errorOnInvalidLimit
 
   // inject context to request
   const middlewareList = [injectContext(schema, routeObject), beforeHook]
@@ -27,7 +40,11 @@ module.exports = (router, routeObject, schema) => {
         const response = result || context.response
         if (response != null) {
           // apply wrapper
-          const wrapperResponse = context.schema.wrappers.response(response, req, res, next)
+          const responseWrapper =
+            routeObject.wrappers && typeof routeObject.wrappers.response === "function"
+              ? routeObject.wrappers.response
+              : context.schema.wrappers.response
+          const wrapperResponse = await responseWrapper(response, req, res, next)
 
           if (res.headersSent) {
             await context.hook("after")
@@ -49,7 +66,11 @@ module.exports = (router, routeObject, schema) => {
     } catch (err) {
       if (!res.headersSent) {
         // apply error response
-        const wrapperResponse = context.schema.wrappers.error(err, context, req, res, next)
+        const errorWrapper =
+          routeObject.wrappers && typeof routeObject.wrappers.error === "function"
+            ? routeObject.wrappers.error
+            : context.schema.wrappers.error
+        const wrapperResponse = await errorWrapper(err, context, req, res, next)
 
         if (res.headersSent) {
           await context.hook("error")

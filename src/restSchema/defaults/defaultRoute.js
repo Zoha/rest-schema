@@ -10,8 +10,15 @@ module.exports = {
   selectable: true,
   filterable: true,
 
-  // middleware
   middleware: [],
+  routeKeys: null,
+  filters: {},
+  hooks: {},
+  wrappers: null,
+  pagination: {},
+  saveNullInputsInDatabase: null,
+  returnNullValuesInResponse: null,
+  errorOnInvalidLimit: null,
 
   // meta that contains key props for this route
   meta: {

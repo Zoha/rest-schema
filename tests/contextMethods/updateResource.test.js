@@ -146,4 +146,42 @@ describe("updateResource method", function() {
     expect(dbResource.prop1).to.be.equal(null)
     expect(dbResource).to.not.haveOwnProperty("prop2")
   })
+
+  it("will not update resource with null values if its option was false", async () => {
+    const resource = await model.create({
+      prop1: "test"
+    })
+    const defaultContext = await createContext(
+      {
+        ...schema,
+        saveNullInputsInDatabase: false
+      },
+      defaultRoute
+    )
+    const context = {
+      ...defaultContext,
+      req: {
+        params: { id: "test" }
+      },
+      resource,
+      getRouteKeys: () => ["prop1", "_id"],
+      fields: {
+        prop1: {
+          ...defaultField
+        }
+      },
+      inputs: {
+        prop1: null
+      }
+    }
+    await updateResource.call(context)
+
+    expect(context).to.haveOwnProperty("updatedResource")
+    expect(context).to.haveOwnProperty("resource")
+
+    const dbResources = await model.find()
+    expect(dbResources).to.have.lengthOf(1)
+    const dbResource = dbResources[0].toObject()
+    expect(dbResource.prop1).to.be.equal("test")
+  })
 })

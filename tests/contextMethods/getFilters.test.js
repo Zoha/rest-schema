@@ -27,6 +27,22 @@ describe("getFilters method", () => {
     expect(result).to.be.an("object")
   })
 
+  it("will get filters from route", async () => {
+    const result = await getFilters.call({
+      ...context,
+      routeObject: {
+        ...context.routeObject,
+        filters: {
+          something: false
+        }
+      }
+    })
+    expect(result).to.be.an("object")
+    expect(result)
+      .to.haveOwnProperty("something")
+      .that.equals(false)
+  })
+
   it("will get filters with single filter", async () => {
     const result = await getFilters.call({
       ...context,

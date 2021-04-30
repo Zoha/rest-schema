@@ -1,15 +1,9 @@
 const { expect } = require("chai")
-const getCreateInputs = require("../../src/restSchema/contextMethods/getCreateInputs")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
-const cast = require("../../src/restSchema/helpers/cast")
-const getCreateFields = require("../../src/restSchema/contextMethods/getCreateFields")
-const getInputsFromFields = require("../../src/restSchema/contextMethods/getInputsFromFields")
 const createResource = require("../../src/restSchema/contextMethods/createResource")
 const model = require("../../src/testHelpers/model")
-const hook = require("../../src/restSchema/contextMethods/hook")
-const getFields = require("../../src/restSchema/contextMethods/getFields")
-const defaults = require("../../src/restSchema/defaults")
-const getInputs = require("../../src/restSchema/contextMethods/getInputs")
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
+const createContext = require("../../src/restSchema/createContext")
 
 const schema = {
   model,
@@ -27,17 +21,7 @@ describe("createResource method", function() {
   })
   it("will create resource normally", async () => {
     const context = {
-      getInputs,
-      schema,
-      model,
-      cast,
-      hook,
-      getInputsFromFields,
-      getCreateFields,
-      getCreateInputs,
-      createResource,
-      getFields,
-      defaults,
+      ...createContext(schema, defaultRoute),
       fields: {
         prop1: {
           ...defaultField
@@ -59,17 +43,7 @@ describe("createResource method", function() {
 
   it("will not change context if set resource passed as false", async () => {
     const context = {
-      getInputs,
-      schema,
-      model,
-      cast,
-      hook,
-      getInputsFromFields,
-      getCreateFields,
-      getCreateInputs,
-      createResource,
-      getFields,
-      defaults,
+      ...createContext(schema, defaultRoute),
       fields: {
         prop1: {
           ...defaultField
@@ -86,17 +60,7 @@ describe("createResource method", function() {
 
   it("will not change context if set createdResource passed as false", async () => {
     const context = {
-      getInputs,
-      schema,
-      model,
-      cast,
-      hook,
-      getInputsFromFields,
-      getCreateFields,
-      getCreateInputs,
-      createResource,
-      getFields,
-      defaults,
+      ...createContext(schema, defaultRoute),
       fields: {
         prop1: {
           ...defaultField

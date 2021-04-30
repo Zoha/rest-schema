@@ -1,11 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-const { expect } = require("chai")
 const express = require("express")
 const request = require("supertest")
 const bodyParser = require("body-parser")
 const model = require("../../src/testHelpers/model")
 const expressErrorHandler = require("../../src/testHelpers/expressErrorHandler")
-const { Mixed } = require("../../src/restSchema/types")
 const { schema: createSchema } = require("../../src/restSchema/index")
 
 const app = express()

@@ -15,7 +15,7 @@
  * @param {context} context
  * @returns {object}
  *
- * @typedef {object|filtersCallback} {filters}
+ * @typedef {Object.<string , *>|filtersCallback} filters
  *
  *
  *

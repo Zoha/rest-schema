@@ -34,6 +34,29 @@ const getPluginHooksFor = (context, hook) => {
   return hooks
 }
 
+const callHooksOn = async (target, context, hook) => {
+  const { route } = context
+
+  if (!target) {
+    return
+  }
+
+  // global hooks
+  if (target[hook] && typeof target[hook] === "function") {
+    await target[hook](context)
+  }
+
+  // global object hooks
+  if (target.global && target.global[hook] && typeof target.global[hook] === "function") {
+    await target.global[hook](context)
+  }
+
+  // route hooks
+  if (target[route] && target[route][hook] && typeof target[route][hook] === "function") {
+    await target[route][hook](context)
+  }
+}
+
 /**
  * @this context
  * @param {string} hook
@@ -42,7 +65,7 @@ const getPluginHooksFor = (context, hook) => {
 module.exports = async function(hook) {
   const context = this
   const { schema } = context
-  const { route } = context
+  const { routeObject } = context
 
   // plugin hooks as array
   const pluginHooks = getPluginHooksFor(context, hook)
@@ -52,30 +75,6 @@ module.exports = async function(hook) {
     }
   }
 
-  if (!schema.hooks) {
-    return
-  }
-
-  // global hooks
-  if (schema.hooks[hook] && typeof schema.hooks[hook] === "function") {
-    await schema.hooks[hook](context)
-  }
-
-  // global object hooks
-  if (
-    schema.hooks.global &&
-    schema.hooks.global[hook] &&
-    typeof schema.hooks.global[hook] === "function"
-  ) {
-    await schema.hooks.global[hook](context)
-  }
-
-  // route hooks
-  if (
-    schema.hooks[route] &&
-    schema.hooks[route][hook] &&
-    typeof schema.hooks[route][hook] === "function"
-  ) {
-    await schema.hooks[route][hook](context)
-  }
+  await callHooksOn(schema.hooks, context, hook)
+  await callHooksOn(routeObject.hooks, context, hook)
 }

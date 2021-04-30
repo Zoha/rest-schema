@@ -2,11 +2,16 @@ const { expect } = require("chai")
 const model = require("../../src/testHelpers/model")
 const getCollection = require("../../src/restSchema/contextMethods/getCollection")
 const hook = require("../../src/restSchema/contextMethods/hook")
+const createContext = require("../../src/restSchema/createContext")
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
 
 const context = {
-  schema: {
-    hooks: {}
-  },
+  ...createContext(
+    {
+      hooks: {}
+    },
+    defaultRoute
+  ),
   model,
   hook,
   route: "default",

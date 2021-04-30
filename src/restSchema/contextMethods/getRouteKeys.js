@@ -2,6 +2,7 @@
  * @typedef {import("../../../typeDefs/context").resource} resource
  */
 
+const isArray = require("../helpers/isArray")
 const setOnContext = require("../helpers/setOnContext")
 
 /**
@@ -19,13 +20,22 @@ const setOnContext = require("../helpers/setOnContext")
 
 module.exports = function() {
   const context = this
+  const route = context.routeObject
   // get array of route keys
   // if route key was a string
   // will return it as an array
-  const schemaRouteKeys = context.schema.routeKeys
+  let schemaRouteKeys = context.schema.routeKeys
   if (typeof schemaRouteKeys === "string") {
-    return [schemaRouteKeys]
+    schemaRouteKeys = [schemaRouteKeys]
   }
-  setOnContext(context, "routeKeys", schemaRouteKeys)
+  let routeSpecificRouteKeys = []
+  if (route.routeKeys) {
+    if (typeof route.routeKeys === "string") {
+      routeSpecificRouteKeys = [schemaRouteKeys]
+    } else if (isArray(route.routeKeys)) {
+      routeSpecificRouteKeys = route.routeKeys
+    }
+  }
+  setOnContext(context, "routeKeys", [...schemaRouteKeys, ...routeSpecificRouteKeys])
   return schemaRouteKeys
 }

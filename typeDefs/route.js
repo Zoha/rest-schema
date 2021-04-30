@@ -44,9 +44,19 @@
  *
  * @typedef {import('express').RequestHandler} requestHandler
  *
+ * @typedef
+ *
  * @typedef {object } routeProps
  * @property {(routeHandlerCallback|Promise<routeHandlerCallback>)} handler
  * @property {requestHandler[] | requestHandler} [middleware]
+ * @property {import('./schema').route} [routeKeys]
+ * @property {import("./schema").filters} filters
+ * @property {import("./schema").hooks} [hooks]
+ * @property {import("./schema").wrappers} [wrappers]
+ * @property {import("./schema").pagination} [pagination]
+ * @property {boolean} [saveNullInputsInDatabase]
+ * @property {boolean} [returnNullValuesInResponse]
+ * @property {number} [errorOnInvalidLimit]
  * @property {('create' | 'update' |'delete' | 'index' |'single' | 'validate' |'count' | string)} [name]
  * @property {('get' | 'post' | 'delete' | 'put' | 'patch' | string)} [method]
  * @property {string} [path]

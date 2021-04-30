@@ -71,4 +71,37 @@ describe("getPaginationData method", () => {
       .that.haveOwnProperty("something")
       .that.equals(true)
   })
+
+  it("will be merged with route pagination", async () => {
+    const result = await getPaginationData.call({
+      ...context,
+      routeObject: {
+        pagination: {
+          defaultFilters() {
+            return {
+              somethingElse: false
+            }
+          }
+        }
+      },
+      schema: {
+        routes: [],
+        filters: {},
+        pagination: () => ({
+          defaultFilters: () => ({
+            something: true
+          })
+        })
+      }
+    })
+    expect(result)
+      .to.be.an("object")
+      .that.haveOwnProperty("defaultFilters")
+      .that.haveOwnProperty("something")
+      .that.equals(true)
+    expect(result)
+      .that.haveOwnProperty("defaultFilters")
+      .that.haveOwnProperty("somethingElse")
+      .that.equals(false)
+  })
 })
