@@ -6,6 +6,7 @@ const RestSchemaObjectId = function(val) {
   if (val) {
     return ObjectId(val)
   }
+  return ObjectId()
 }
 RestSchemaObjectId.isValid = ObjectId.isValid
 RestSchemaObjectId.createFromHexString = ObjectId.createFromHexString

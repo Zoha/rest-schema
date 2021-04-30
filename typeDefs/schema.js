@@ -167,6 +167,7 @@
  * @property {boolean} [saveNullInputsInDatabase]
  * @property {boolean} [returnNullValuesInResponse]
  * @property {number} [maximumRelationDepth]
+ * @property {boolean} [errorOnInvalidLimit]
  *
  */
 

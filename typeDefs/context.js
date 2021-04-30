@@ -65,6 +65,7 @@
  * @property {import('../src/restSchema/contextMethods/hook')} hook
  * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
  * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
+ * @property {import('../src/restSchema/contextMethods/setMeta')} setMeta
  * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
  * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
  * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
@@ -120,6 +121,7 @@
  * @property {context} [parent]
  * @property {object} [dirtyInputs]
  * @property {paginationProps} [pagination]
+ * @property {object} [dynamicFilters]
  *
  *
  * @typedef {contextProps & contextMethods} context

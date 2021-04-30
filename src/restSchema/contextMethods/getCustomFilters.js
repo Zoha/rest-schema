@@ -17,13 +17,18 @@ const cast = require("../helpers/cast")
  * @this context
  * @param {object} [args]
  * @param {object} [args.filters]
- * @param {string} [args.route]
- * @param {routes} [args.routes]
  * @param {object} [args.relationFilters]
+ * @param {object} [args.dynamicFilters]
  * @returns {Promise.<object>}
  */
-module.exports = async function({ filters = null, relationFilters = null } = {}) {
+module.exports = async function({
+  filters = null,
+  relationFilters = null,
+  dynamicFilters = null
+} = {}) {
   const context = this
+  dynamicFilters =
+    context.cast(dynamicFilters).to(Object) || context.cast(context.dynamicFilters).to(Object) || {}
   filters = filters || context.schema.filters
   relationFilters = cast(relationFilters).to(Object) || context.relationFilters
 
@@ -32,5 +37,5 @@ module.exports = async function({ filters = null, relationFilters = null } = {})
     return await filters(context)
   }
 
-  return { ...filters, ...relationFilters }
+  return { ...dynamicFilters, ...filters, ...relationFilters }
 }

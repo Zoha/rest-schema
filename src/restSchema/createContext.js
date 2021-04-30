@@ -36,6 +36,7 @@ const methods = {
   hook: require("./contextMethods/hook"),
   sanitizeInput: require("./contextMethods/sanitizeInput"),
   sanitizeInputs: require("./contextMethods/sanitizeInputs"),
+  setMeta: require("./contextMethods/setMeta"),
   setPaginationHeaders: require("./contextMethods/setPaginationHeaders"),
   updateResource: require("./contextMethods/updateResource"),
   validateInput: require("./contextMethods/validateInput"),

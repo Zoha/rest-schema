@@ -1,3 +1,4 @@
+const ValidationError = require("../errors/validationError")
 const cast = require("../helpers/cast")
 
 /**
@@ -53,7 +54,20 @@ module.exports = async function({
   if (inputs[limitKey]) {
     initialLimit = Number(inputs[limitKey])
     if (initialLimit > maxLimit || initialLimit < minLimit) {
-      initialLimit = defaultLimit
+      if (context.schema.errorOnInvalidLimit) {
+        const errorMessages = context.getMessages()
+        throw new ValidationError(
+          errorMessages.validations.between
+            .replace(new RegExp("\\{key\\}", "g"), limitKey)
+            .replace(new RegExp(`\\{args\\[${0}\\]\\}`, "g"), minLimit)
+            .replace(new RegExp(`\\{args\\[${1}\\]\\}`, "g"), maxLimit)
+        )
+      }
+      if (initialLimit > maxLimit) {
+        initialLimit = maxLimit
+      } else {
+        initialLimit = minLimit
+      }
     }
     if (Number.isNaN(initialLimit)) {
       initialLimit = 10

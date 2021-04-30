@@ -14,5 +14,6 @@ module.exports = {
   hooks: {},
   saveNullInputsInDatabase: true,
   returnNullValuesInResponse: false,
-  maximumRelationDepth: 4
+  maximumRelationDepth: 4,
+  errorOnInvalidLimit: true
 }
