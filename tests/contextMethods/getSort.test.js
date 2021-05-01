@@ -68,4 +68,109 @@ describe("getSort method", () => {
       .to.be.an("object")
       .that.not.haveOwnProperty("prop3")
   })
+
+  it("return correct sorts with object", async () => {
+    let sort = await getSort.call({ ...context, inputs: { sort: { prop1: -1 } } })
+    expect(sort)
+      .to.be.an("object")
+      .that.haveOwnProperty("prop1")
+      .that.equals(-1)
+    sort = await getSort.call({ ...context, inputs: { sort: { prop1: 1 } } })
+    expect(sort)
+      .to.be.an("object")
+      .that.haveOwnProperty("prop1")
+      .that.equals(1)
+
+    sort = await getSort.call({ ...context, inputs: { sort: { prop2: 1 } } })
+    expect(sort)
+      .to.be.an("object")
+      .that.not.haveOwnProperty("prop2")
+    sort = await getSort.call({ ...context, inputs: { sort: { prop3: 1 } } })
+    expect(sort)
+      .to.be.an("object")
+      .that.not.haveOwnProperty("prop3")
+  })
+
+  it("return correct sorts with function sortable", async () => {
+    let sort = await getSort.call({
+      ...context,
+      schema: {
+        ...context.schema,
+        fields: {
+          prop1: {
+            type: String,
+            sortable() {
+              return true
+            }
+          }
+        }
+      },
+      inputs: { sort: { prop1: -1 } }
+    })
+    expect(sort)
+      .to.be.an("object")
+      .that.haveOwnProperty("prop1")
+      .that.equals(-1)
+
+    sort = await getSort.call({
+      ...context,
+      schema: {
+        ...context.schema,
+        fields: {
+          prop1: {
+            type: String,
+            sortable() {
+              return false
+            }
+          }
+        }
+      },
+      inputs: { sort: { prop1: -1 } }
+    })
+    expect(sort)
+      .to.be.an("object")
+      .that.not.haveOwnProperty("prop1")
+
+    sort = await getSort.call({
+      ...context,
+      schema: {
+        ...context.schema,
+        fields: {
+          prop1: {
+            type: String,
+            sortable: {
+              create() {
+                return false
+              }
+            }
+          }
+        }
+      },
+      inputs: { sort: { prop1: -1 } }
+    })
+    expect(sort)
+      .to.be.an("object")
+      .that.not.haveOwnProperty("prop1")
+
+    sort = await getSort.call({
+      ...context,
+      schema: {
+        ...context.schema,
+        fields: {
+          prop1: {
+            type: String,
+            sortable: {
+              create() {
+                return true
+              }
+            }
+          }
+        }
+      },
+      inputs: { sort: { prop1: -1 } }
+    })
+    expect(sort)
+      .to.be.an("object")
+      .that.haveOwnProperty("prop1")
+  })
 })

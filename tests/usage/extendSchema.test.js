@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 const { expect } = require("chai")
 const { schema } = require("../../src/restSchema")
-const { routeKeys } = require("../../src/restSchema/defaults/defaultRoute")
 const model = require("../../src/testHelpers/model")
 const model2 = require("../../src/testHelpers/UserModel")
 

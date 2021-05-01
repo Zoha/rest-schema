@@ -35,9 +35,11 @@
  * @param {context} context
  * @returns {number}
  *
+ * @typedef {string|Object.<string,(-1|1)>} sort
+ *
  * @callback paginationSort
  * @param {context} context
- * @returns {string}
+ * @returns {sort}
  *
  * @callback paginationDefaultFilters
  * @param {context} context
@@ -53,7 +55,7 @@
  * @property {number} [limit]
  * @property {number} [minLimit]
  * @property {number} [maxLimit]
- * @property {string} [sort]
+ * @property {sort} [sort]
  * @property {filters} [defaultFilters]
  * @property {number} [skip]
  *

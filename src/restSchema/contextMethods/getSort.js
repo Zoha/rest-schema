@@ -1,4 +1,6 @@
 const cast = require("../helpers/cast")
+const isBoolean = require("../helpers/isBoolean")
+const isObject = require("../helpers/isObject")
 
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource
@@ -39,9 +41,16 @@ module.exports = async function({
   sortKey = cast(sortKey).to(String) || context.routeObject.meta.sort || "sort"
   let sort = cast(defaultSort).to(Object) || pagination.sort
   sortString = cast(sortString).to(String) || inputs[sortKey]
-  if (sortString && typeof sortString === "string") {
+  if ((sortString && typeof sortString === "string") || isObject(sortString)) {
     const sortsObject = {}
-    const requestedSorts = sortString.split(" ")
+    let requestedSorts = []
+    if (isObject(sortString)) {
+      Object.keys(sortString).forEach(key => {
+        requestedSorts.push(sortString[key] > 0 ? key : `-${key}`)
+      })
+    } else {
+      requestedSorts = sortString.split(" ")
+    }
 
     const formatRequestedSort = async requestedSort => {
       if (!requestedSort) {
@@ -57,6 +66,20 @@ module.exports = async function({
 
       if (typeof field.sortable === "function" && !(await field.sortable(context))) {
         return
+      }
+
+      if (
+        isObject(field.sortable) &&
+        (typeof field.sortable[context.route] === "function" ||
+          isBoolean(field.sortable[context.route]))
+      ) {
+        const sortable = field.sortable[context.route]
+        if (typeof sortable === "function" && !(await sortable(context))) {
+          return
+        }
+        if (!field.sortable[context.route]) {
+          return false
+        }
       }
 
       let orderOperator = 1
