@@ -12,6 +12,14 @@ declare class SchemaBuilder {
     createTempContext(): import("../../typeDefs/context").context;
     resource(): import("express-serve-static-core").Router;
     use(callback: any): any;
+    /**
+     * @typedef {import("./schemaBuilder")} schemaBuilder
+     * @param {import("../../typeDefs/schema").model} model
+     * @param {import("../../typeDefs/field").fields} fields
+     * @param {import("../../typeDefs/schema").schema} options
+     * @returns {schemaBuilder}
+     */
+    extend(model: import("../../typeDefs/schema").model, fields: import("../../typeDefs/field").fields, schema: any): SchemaBuilder;
     setDefaultField(...args: any[]): void;
     setDefaultMessages(...args: any[]): void;
     setDefaultValidationMessages(...args: any[]): void;

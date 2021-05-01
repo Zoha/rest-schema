@@ -5,6 +5,8 @@ const express = require("express")
 const registerRoute = require("./registerRoute")
 const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const createContext = require("./createContext")
+const deepmerge = require("deepmerge")
+const { default: isPlainObject } = require("is-plain-object")
 
 class SchemaBuilder {
   /**
@@ -26,9 +28,7 @@ class SchemaBuilder {
       // @ts-ignore // will be fixed with schema formatter
       this.schema.routes.filter(i => i.name == "single")
     )
-    // @ts-ignore
     context.req = {}
-    // @ts-ignore
     context.res = {}
     return context
   }
@@ -48,6 +48,22 @@ class SchemaBuilder {
 
   use(callback) {
     return callback(this)
+  }
+
+  /**
+   * @typedef {import("./schemaBuilder")} schemaBuilder
+   * @param {import("../../typeDefs/schema").model} model
+   * @param {import("../../typeDefs/field").fields} fields
+   * @param {import("../../typeDefs/schema").schema} options
+   * @returns {schemaBuilder}
+   */
+  extend(model, fields, schema) {
+    const clonedSchema = deepmerge(this.schema, schema, {
+      isMergeableObject: isPlainObject
+    })
+    clonedSchema.fields = deepmerge(this.schema.fields, fields)
+    clonedSchema.model = model || this.schema.model
+    return require("./schema")(clonedSchema.model, clonedSchema.fields, clonedSchema)
   }
 
   setDefaultField(...args) {

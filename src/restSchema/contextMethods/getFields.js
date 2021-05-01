@@ -165,7 +165,7 @@ const formatFields = async (argFields, context, prepend = "") => {
 
   // execute operations
   await Promise.all(operationOnEachFieldPromises)
-  return filter(formattedFields, i => i != null)
+  return filter(formattedFields, i => i != null && !!i.type)
 }
 
 /**
