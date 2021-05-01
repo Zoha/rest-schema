@@ -101,7 +101,7 @@ declare namespace methods {
     function getNestedField({ key, fields }: {
         key: string;
         fields?: import("../../typeDefs/field").fields;
-    }): Promise<import("../../typeDefs/field").field>;
+    }): Promise<any>;
     function getNestedInput({ key, inputs }: {
         key: string;
         inputs?: any;
@@ -179,7 +179,7 @@ declare namespace methods {
     function hook(hook: string): Promise<any>;
     function sanitizeInput({ value, field }: {
         value: any;
-        field: import("../../typeDefs/field").field;
+        field: any;
     }): Promise<any>;
     function sanitizeInputs({ setInputs, fields, inputs, setDirtyInputs }?: {
         setInputs?: boolean;
@@ -225,7 +225,7 @@ declare namespace methods {
     }): Promise<import("../../typeDefs/context").resource>;
     function validateInput({ value, field, key }: {
         value?: any;
-        field: import("../../typeDefs/field").field;
+        field: any;
         key?: string;
     }): Promise<any>;
     function validateInputs({ setValidationErrors, fields, inputs, checkRequired }?: {

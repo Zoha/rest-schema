@@ -434,7 +434,7 @@ export type contextMethods = {
     getNestedField: ({ key, fields }: {
         key: string;
         fields?: import("./field").fields;
-    }) => Promise<import("./field").field>;
+    }) => Promise<any>;
     getNestedInput: ({ key, inputs }: {
         key: string;
         inputs?: any;
@@ -512,7 +512,7 @@ export type contextMethods = {
     hook: (hook: string) => Promise<any>;
     sanitizeInput: ({ value, field }: {
         value: any;
-        field: import("./field").field;
+        field: any;
     }) => Promise<any>;
     sanitizeInputs: ({ setInputs, fields, inputs, setDirtyInputs }?: {
         setInputs?: boolean;
@@ -759,7 +759,7 @@ export type contextMethods = {
     }) => Promise<resource>;
     validateInput: ({ value, field, key }: {
         value?: any;
-        field: import("./field").field;
+        field: any;
         key?: string;
     }) => Promise<any>;
     validateInputs: ({ setValidationErrors, fields, inputs, checkRequired }?: {

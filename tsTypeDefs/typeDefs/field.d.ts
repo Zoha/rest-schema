@@ -211,7 +211,7 @@ export type fieldType = (ArrayConstructor | BooleanConstructor | StringConstruct
      * @param {context} context
      * @return {(fields|Promise.<fields>)}
      *
-     * @typedef {(fieldProps | Object.<string , *>)} field
+     * @typedef {(fieldProps | Object.<string , field> | Object.<string , *>)} field
      * @typedef {(fieldsFunction | Object.<string , field>)} fields
      */
     isValid: typeof import("bson").ObjectId.isValid;
@@ -336,7 +336,7 @@ export type objectForNumberRegExp = {
 export type relation = {
     schemaBuilder: import("../src/restSchema/schemaBuilder");
     type: ("collection" | "resource");
-    field: field;
+    field: any;
     fieldName: string;
 };
 export type findCallback = (resource?: resource, ctx?: context, relationCtx?: context, relation?: relation) => object;
@@ -390,6 +390,8 @@ export type fieldProps = {
 };
 export type fieldsFunction = (context: context) => (fields | Promise<fields>);
 export type field = (fieldProps | {
+    [x: string]: field;
+} | {
     [x: string]: any;
 });
 export type fields = (fieldsFunction | {

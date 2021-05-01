@@ -1,4 +1,4 @@
 declare function _exports(newField: any, { target }?: {
-    target?: import("../../../typeDefs/field").field;
+    target?: any;
 }): void;
 export = _exports;

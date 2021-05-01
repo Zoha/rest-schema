@@ -229,7 +229,7 @@ const {
  * @param {context} context
  * @return {(fields|Promise.<fields>)}
  *
- * @typedef {(fieldProps | Object.<string , *>)} field
+ * @typedef {(fieldProps | Object.<string , field> | Object.<string , *>)} field
  * @typedef {(fieldsFunction | Object.<string , field>)} fields
  */
 
