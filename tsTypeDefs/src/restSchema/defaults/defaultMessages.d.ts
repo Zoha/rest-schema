@@ -22,3 +22,4 @@ export const resourceNotFound: string;
 export const validationPassed: string;
 export const inactiveRouteMessage: string;
 export const listOfErrors: string;
+export const maximumRelationDepth: string;

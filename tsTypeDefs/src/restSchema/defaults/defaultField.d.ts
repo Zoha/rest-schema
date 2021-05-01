@@ -44,4 +44,5 @@ export declare const betweenLength: any;
 export declare const match: any;
 declare const _enum: any;
 export declare const existsIn: any;
+export declare const uniqueItems: boolean;
 export { Mixed as of, _default as default, _enum as enum };

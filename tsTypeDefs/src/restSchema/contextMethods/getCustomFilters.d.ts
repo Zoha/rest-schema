@@ -1,8 +1,8 @@
-declare function _exports({ filters, relationFilters }?: {
+declare function _exports({ filters, relationFilters, dynamicFilters, routeFilters }?: {
     filters?: object;
-    route?: string;
-    routes?: routes;
     relationFilters?: object;
+    dynamicFilters?: object;
+    routeFilters?: object;
 }): Promise<object>;
 export = _exports;
 export type resource = import("../../../typeDefs/context").resource;

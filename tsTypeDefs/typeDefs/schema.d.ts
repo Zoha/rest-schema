@@ -5,16 +5,15 @@ export type fields = import("./field").fields;
 export type routes = import("./route").routes;
 export type defaults = import("../src/restSchema/defaults").defaults;
 export type filtersCallback = (context: context) => object;
-/**
- * {filters}
- */
-export type exports = object | filtersCallback;
+export type filters = {
+    [x: string]: any;
+} | filtersCallback;
 export type paginationPage = (context: context) => number;
 export type paginationLimit = (context: context) => number;
 export type paginationMinLimit = (context: context) => number;
 export type paginationMaxLimit = (context: context) => number;
 export type paginationSort = (context: context) => string;
-export type paginationDefaultFilters = (context: context) => any;
+export type paginationDefaultFilters = (context: context) => filters;
 export type paginationSkip = (context: context) => number;
 export type paginationProps = {
     page?: number;
@@ -22,7 +21,7 @@ export type paginationProps = {
     minLimit?: number;
     maxLimit?: number;
     sort?: string;
-    defaultFilters?: any;
+    defaultFilters?: filters;
     skip?: number;
 };
 export type paginationInput = {
@@ -31,7 +30,7 @@ export type paginationInput = {
     minLimit?: number | paginationMinLimit;
     maxLimit?: number | paginationMaxLimit;
     sort?: string | paginationSort;
-    defaultFilters?: any | paginationDefaultFilters;
+    defaultFilters?: filters | paginationDefaultFilters;
     skip?: number | paginationSkip;
 };
 export type paginationCallback = (context: context) => paginationInput;
@@ -98,7 +97,7 @@ export type schema = {
     routes?: routes;
     pagination?: pagination;
     wrappers?: wrappers;
-    filters?: any;
+    filters?: filters;
     middleware?: middleware;
     routeKeys?: Array<string>;
     hooks?: hooks;
@@ -106,4 +105,6 @@ export type schema = {
     name?: string;
     saveNullInputsInDatabase?: boolean;
     returnNullValuesInResponse?: boolean;
+    maximumRelationDepth?: number;
+    errorOnInvalidLimit?: boolean;
 };

@@ -61,9 +61,18 @@ export type filteringOperators = (filteringOperatorsDefaults | {
     [x: string]: filteringOperatorCallback;
 });
 export type requestHandler = import('express').RequestHandler;
+export type exports = any;
 export type routeProps = {
     handler: (routeHandlerCallback | Promise<routeHandlerCallback>);
     middleware?: requestHandler[] | requestHandler;
+    routeKeys?: any;
+    filters: import("./schema").filters;
+    hooks?: import("./schema").hooks;
+    wrappers?: import("./schema").wrappers;
+    pagination?: import("./schema").pagination;
+    saveNullInputsInDatabase?: boolean;
+    returnNullValuesInResponse?: boolean;
+    errorOnInvalidLimit?: number;
     name?: ('create' | 'update' | 'delete' | 'index' | 'single' | 'validate' | 'count' | string);
     method?: ('get' | 'post' | 'delete' | 'put' | 'patch' | string);
     path?: string;

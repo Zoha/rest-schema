@@ -1,5 +1,7 @@
 export = RestSchemaError;
 declare class RestSchemaError extends Error {
+    constructor(...args: any[]);
+    status: number;
     /**
      *
      * @param {import("../../../typeDefs/context").context} context

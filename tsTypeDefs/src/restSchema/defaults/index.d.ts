@@ -57,6 +57,7 @@ type messages = {
     validationPassed: string;
     inactiveRouteMessage: string;
     listOfErrors: string;
+    maximumRelationDepth: string;
 };
 type route = import("../../../typeDefs/route").route;
 type schema = import("../../../typeDefs/schema").schema;

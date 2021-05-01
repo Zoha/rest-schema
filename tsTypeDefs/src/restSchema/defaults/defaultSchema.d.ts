@@ -8,4 +8,6 @@ export declare const routeKeys: string[];
 export declare const hooks: {};
 export declare const saveNullInputsInDatabase: boolean;
 export declare const returnNullValuesInResponse: boolean;
+export declare const maximumRelationDepth: number;
+export declare const errorOnInvalidLimit: boolean;
 export { fields, routes, pagination, wrappers };

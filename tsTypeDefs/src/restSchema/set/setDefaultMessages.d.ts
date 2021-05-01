@@ -22,6 +22,7 @@ declare function _exports(newMessages: any, { target }?: {
         validationPassed: string;
         inactiveRouteMessage: string;
         listOfErrors: string;
+        maximumRelationDepth: string;
     };
 }): void;
 declare namespace _exports {

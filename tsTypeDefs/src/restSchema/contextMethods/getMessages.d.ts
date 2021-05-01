@@ -25,5 +25,6 @@ export type messages = {
     validationPassed: string;
     inactiveRouteMessage: string;
     listOfErrors: string;
+    maximumRelationDepth: string;
 };
 export type fields = import("../../../typeDefs/field").fields;

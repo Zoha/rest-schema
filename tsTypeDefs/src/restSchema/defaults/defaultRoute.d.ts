@@ -5,6 +5,14 @@ export const inputsTarget: string[];
 export const selectable: boolean;
 export const filterable: boolean;
 export const middleware: any[];
+export const routeKeys: any;
+export const filters: {};
+export const hooks: {};
+export const wrappers: any;
+export const pagination: {};
+export const saveNullInputsInDatabase: any;
+export const returnNullValuesInResponse: any;
+export const errorOnInvalidLimit: any;
 export namespace meta {
     const select: string;
     const sort: string;

@@ -37,11 +37,11 @@ declare namespace methods {
         fields?: import("../../typeDefs/field").fields;
         inputs?: any;
     }): Promise<any>;
-    function getCustomFilters({ filters, relationFilters }?: {
+    function getCustomFilters({ filters, relationFilters, dynamicFilters, routeFilters }?: {
         filters?: any;
-        route?: string;
-        routes?: import("./contextMethods/getCustomFilters").routes;
         relationFilters?: any;
+        dynamicFilters?: any;
+        routeFilters?: any;
     }): Promise<any>;
     function getFields({ setFields, fields }?: {
         setFields?: boolean;
@@ -96,6 +96,7 @@ declare namespace methods {
         validationPassed: string;
         inactiveRouteMessage: string;
         listOfErrors: string;
+        maximumRelationDepth: string;
     };
     function getNestedField({ key, fields }: {
         key: string;
@@ -185,6 +186,18 @@ declare namespace methods {
         fields?: import("../../typeDefs/field").fields;
         inputs?: any;
         setDirtyInputs?: boolean;
+    }): Promise<any>;
+    function setMeta({ filters, sort, limit, select, page, skip, inputs, setInputs, force, route }?: {
+        filters?: any;
+        sort?: number;
+        limit?: number;
+        select?: string;
+        page?: number;
+        skip?: number;
+        inputs?: any;
+        setInputs?: boolean;
+        force?: boolean;
+        route?: any;
     }): Promise<any>;
     function setPaginationHeaders({ res, total, collection, count, skip, limit, page, start, end, range, hasPrevPage, hasNextPage, prevPage, nextPage, lastPage }?: {
         res?: import("express").Response<any, Record<string, any>>;

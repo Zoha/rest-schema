@@ -69,6 +69,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/hook')} hook
          * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
          * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
+         * @property {import('../src/restSchema/contextMethods/setMeta')} setMeta
          * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
          * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
          * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
@@ -104,6 +105,7 @@ export type contextMethods = {
          * @property {resource} [deletedResource]
          * @property {resource} [deletedResource]
          * @property {Array.<resource>} [collection]
+         * @property {number} [relationDepth]
          * @property {request & Object.<string , any>} [req]
          * @property {response & Object.<string , any>} [res]
          * @property {function} [next]
@@ -120,6 +122,7 @@ export type contextMethods = {
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
+         * @property {object} [dynamicFilters]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -186,6 +189,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/hook')} hook
          * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
          * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
+         * @property {import('../src/restSchema/contextMethods/setMeta')} setMeta
          * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
          * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
          * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
@@ -221,6 +225,7 @@ export type contextMethods = {
          * @property {resource} [deletedResource]
          * @property {resource} [deletedResource]
          * @property {Array.<resource>} [collection]
+         * @property {number} [relationDepth]
          * @property {request & Object.<string , any>} [req]
          * @property {response & Object.<string , any>} [res]
          * @property {function} [next]
@@ -237,6 +242,7 @@ export type contextMethods = {
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
+         * @property {object} [dynamicFilters]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -252,11 +258,11 @@ export type contextMethods = {
         fields?: import("./field").fields;
         inputs?: any;
     }) => Promise<any>;
-    getCustomFilters: ({ filters, relationFilters }?: {
+    getCustomFilters: ({ filters, relationFilters, dynamicFilters, routeFilters }?: {
         filters?: any;
-        route?: string;
-        routes?: import("../src/restSchema/contextMethods/getCustomFilters").routes;
         relationFilters?: any;
+        dynamicFilters?: any;
+        routeFilters?: any;
     }) => Promise<any>;
     getFields: ({ setFields, fields }?: {
         setFields?: boolean;
@@ -346,6 +352,7 @@ export type contextMethods = {
              * @property {import('../src/restSchema/contextMethods/hook')} hook
              * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
              * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
+             * @property {import('../src/restSchema/contextMethods/setMeta')} setMeta
              * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
              * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
              * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
@@ -381,6 +388,7 @@ export type contextMethods = {
              * @property {resource} [deletedResource]
              * @property {resource} [deletedResource]
              * @property {Array.<resource>} [collection]
+             * @property {number} [relationDepth]
              * @property {request & Object.<string , any>} [req]
              * @property {response & Object.<string , any>} [res]
              * @property {function} [next]
@@ -397,6 +405,7 @@ export type contextMethods = {
              * @property {context} [parent]
              * @property {object} [dirtyInputs]
              * @property {paginationProps} [pagination]
+             * @property {object} [dynamicFilters]
              *
              *
              * @typedef {contextProps & contextMethods} context
@@ -420,6 +429,7 @@ export type contextMethods = {
         validationPassed: string;
         inactiveRouteMessage: string;
         listOfErrors: string;
+        maximumRelationDepth: string;
     };
     getNestedField: ({ key, fields }: {
         key: string;
@@ -510,6 +520,18 @@ export type contextMethods = {
         inputs?: any;
         setDirtyInputs?: boolean;
     }) => Promise<any>;
+    setMeta: ({ filters, sort, limit, select, page, skip, inputs, setInputs, force, route }?: {
+        filters?: any;
+        sort?: number;
+        limit?: number;
+        select?: string;
+        page?: number;
+        skip?: number;
+        inputs?: any;
+        setInputs?: boolean;
+        force?: boolean;
+        route?: any;
+    }) => Promise<any>;
     setPaginationHeaders: ({ res, total, collection, count, skip, limit, page, start, end, range, hasPrevPage, hasNextPage, prevPage, nextPage, lastPage }?: {
         res?: import("express").Response<any, Record<string, any>>;
         total?: number;
@@ -556,6 +578,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/hook')} hook
          * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
          * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
+         * @property {import('../src/restSchema/contextMethods/setMeta')} setMeta
          * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
          * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
          * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
@@ -591,6 +614,7 @@ export type contextMethods = {
          * @property {resource} [deletedResource]
          * @property {resource} [deletedResource]
          * @property {Array.<resource>} [collection]
+         * @property {number} [relationDepth]
          * @property {request & Object.<string , any>} [req]
          * @property {response & Object.<string , any>} [res]
          * @property {function} [next]
@@ -607,6 +631,7 @@ export type contextMethods = {
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
+         * @property {object} [dynamicFilters]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -669,6 +694,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/hook')} hook
          * @property {import('../src/restSchema/contextMethods/sanitizeInput')} sanitizeInput
          * @property {import('../src/restSchema/contextMethods/sanitizeInputs')} sanitizeInputs
+         * @property {import('../src/restSchema/contextMethods/setMeta')} setMeta
          * @property {import('../src/restSchema/contextMethods/setPaginationHeaders')} setPaginationHeaders
          * @property {import('../src/restSchema/contextMethods/updateResource')} updateResource
          * @property {import('../src/restSchema/contextMethods/validateInput')} validateInput
@@ -704,6 +730,7 @@ export type contextMethods = {
          * @property {resource} [deletedResource]
          * @property {resource} [deletedResource]
          * @property {Array.<resource>} [collection]
+         * @property {number} [relationDepth]
          * @property {request & Object.<string , any>} [req]
          * @property {response & Object.<string , any>} [res]
          * @property {function} [next]
@@ -720,6 +747,7 @@ export type contextMethods = {
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
+         * @property {object} [dynamicFilters]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -772,6 +800,7 @@ export type contextProps = {
     createdResource?: resource;
     deletedResource?: resource;
     collection?: Array<resource>;
+    relationDepth?: number;
     req?: request & {
         [x: string]: any;
     };
@@ -792,5 +821,6 @@ export type contextProps = {
     parent?: context;
     dirtyInputs?: object;
     pagination?: paginationProps;
+    dynamicFilters?: object;
 };
 export type context = contextProps & contextMethods;
