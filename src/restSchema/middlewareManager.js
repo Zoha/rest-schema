@@ -5,8 +5,11 @@ const defaultSchemaRoutes = require("./defaults/schema/defaultSchemaRoutes")
  */
 
 class MiddlewareManager {
-  constructor() {
-    this.defaultRoutes = Object.keys(defaultSchemaRoutes)
+  constructor(extraRoutes = []) {
+    this.defaultRoutes = [
+      ...Object.keys(defaultSchemaRoutes),
+      ...extraRoutes.map(i => (i && i.name ? i.name : i))
+    ]
     this.middlewareList = {}
     this.setDefaultMiddlewareList()
   }
