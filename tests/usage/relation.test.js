@@ -213,6 +213,15 @@ describe("relation routes", () => {
       })
 
     await request(app)
+      .get(`/roles/${role._id}/users?select=_id&_id=${user1._id}`)
+      .expect(200)
+      .expect(res => {
+        const response = JSON.parse(res.text)
+        expect(response).to.have.lengthOf(1)
+        expect(response[0]._id).to.be.equal(user1._id.toString())
+      })
+
+    await request(app)
       .get(`/roles/${role._id}/users/${user2._id}`)
       .expect(200)
       .expect(res => {
