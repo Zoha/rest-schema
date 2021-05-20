@@ -1,7 +1,7 @@
-declare function _exports({ setTotal, filters, force }?: {
-    setTotal?: boolean;
-    filters?: object;
-    force?: boolean;
+declare function _exports({ setSearch, inputs, searchKey }?: {
+    setSearch?: boolean;
+    inputs?: object;
+    searchKey?: string;
 }): Promise<number>;
 export = _exports;
 export type resource = import("../../../typeDefs/context").resource;

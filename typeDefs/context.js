@@ -35,6 +35,8 @@
  * @property {import('../src/restSchema/contextMethods/createResource')} createResource
  * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
  * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
+ * @property {import('../src/restSchema/contextMethods/getAggregateCollection')} getAggregateCollection
+ * @property {import('../src/restSchema/contextMethods/getAggregateResource')} getAggregateResource
  * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
  * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
  * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
@@ -44,6 +46,7 @@
  * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
  * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
  * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
+ * @property {import('../src/restSchema/contextMethods/getLoadRelations')} getLoadRelations
  * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
  * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
  * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
@@ -56,6 +59,7 @@
  * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
  * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
  * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
+ * @property {import('../src/restSchema/contextMethods/getSearch')} getSearch
  * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
  * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
  * @property {import('../src/restSchema/contextMethods/getSort')} getSort
@@ -91,6 +95,10 @@
  */
 
 /**
+ * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+ */
+
+/**
  * @typedef {object} contextProps
  * @property {schema} schema
  * @property {model} model
@@ -118,10 +126,13 @@
  * @property {number} [total]
  * @property {validationErrors} [validationErrors]
  * @property {boolean} [isRelation]
+ * @property {relationObj} [relation]
  * @property {context} [parent]
  * @property {object} [dirtyInputs]
  * @property {paginationProps} [pagination]
  * @property {object} [dynamicFilters]
+ * @property {Array.<relationObj>} [loadRelations]
+ * @property {string} [search]
  *
  *
  * @typedef {contextProps & contextMethods} context

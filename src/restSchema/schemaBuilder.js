@@ -7,6 +7,13 @@ const schemaFormatter = require("./schemaFormatters/schemaFormatter")
 const createContext = require("./createContext")
 const deepmerge = require("deepmerge")
 const { default: isPlainObject } = require("is-plain-object")
+const relationTypes = require("./enums/relationTypes")
+
+/**
+ * @typedef {import("express").Request} request
+ * @typedef {import("express").Response} response
+ * @typedef {import("../../typeDefs/context").context} context
+ */
 
 class SchemaBuilder {
   /**
@@ -18,21 +25,9 @@ class SchemaBuilder {
     this.schema = schema
     this.schema.defaults = this.defaults
     this.name = schema.name
+    this.collectionName = schema.name
     this.tempContext = this.createTempContext()
   }
-
-  createTempContext() {
-    // create base context
-    const context = createContext(
-      this.schema,
-      // @ts-ignore // will be fixed with schema formatter
-      this.schema.routes.filter(i => i.name == "single")
-    )
-    context.req = {}
-    context.res = {}
-    return context
-  }
-
   resource() {
     // format schema and merge it with default
     const schema = schemaFormatter(this.schema)
@@ -44,6 +39,82 @@ class SchemaBuilder {
     })
 
     return router
+  }
+
+  /**
+   *
+   * @param {request & Object.<string , any>} [req]
+   * @param {request & Object.<string , any>} [res]
+   * @param {Partial<import("../../typeDefs/context").context>} [otherProps]
+   * @param {import("../../typeDefs/route").route} [route]
+   * @returns
+   */
+  createTempContext(req = {}, res = {}, otherProps = {}, route = null) {
+    // create base context
+    const fakeContext = createContext(
+      this.schema,
+      route || this.schema.routes.sort((a, b) => (b.name == "single" ? -1 : 0))[0]
+    )
+    const finalTempContext = {
+      ...fakeContext,
+      req,
+      res,
+      ...otherProps
+    }
+
+    req.rest = finalTempContext
+    return finalTempContext
+  }
+
+  /**
+   *
+   * @param {context} parentContext
+   * @param {import("./contextMethods/getRelations").relationObj} relation
+   * @param {request & Object.<string , any>} [req]
+   * @param {request & Object.<string , any>} [res]
+   * @param {import("../../typeDefs/route").route} [relationRoute]
+   * @param {number} [relationDepth = 1]
+   * @param {Partial<import("../../typeDefs/context").context>} otherProps
+   * @returns {context}
+   */
+  createRelationContext(
+    parentContext,
+    relation,
+    req = {},
+    res = {},
+    relationRoute = null,
+    relationDepth = 1,
+    otherProps = {}
+  ) {
+    if (!relationRoute) {
+      // determine relation route
+      // if relation is resource then try single relation route or if does not exist try single route
+      // if relation is collection then try single indexRelation route or if does not exist try index
+      if (relation.type === relationTypes.resource) {
+        relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "singleRelation")
+        if (!relationRoute) {
+          relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "single")
+        }
+      } else if (relation.type === relationTypes.collection) {
+        relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "indexRelation")
+        if (!relationRoute) {
+          relationRoute = relation.schemaBuilder.schema.routes.find(i => i.name === "index")
+        }
+      }
+    }
+
+    return this.createTempContext(
+      req,
+      res,
+      {
+        relation,
+        parent: parentContext,
+        isRelation: true,
+        relationDepth,
+        ...otherProps
+      },
+      relationRoute
+    )
   }
 
   use(callback) {

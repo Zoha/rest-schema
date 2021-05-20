@@ -24,15 +24,30 @@ const createMapFieldsFromInput = require("../helpers/createMapFieldsFromInput")
  */
 
 /**
+ * @typedef {import("./getRelations").relationObj} relationObj
+ */
+
+/**
  *
  * @param {fields} argFields
  * @param {object|array} values
  * @param {context} context
  * @param {selectFieldBase} selectFields
  * @param {resource} originalResource
+ * @param {relationObj[]} [loadRelations]
+ * @param {field} [parent]
+ * @param {Object.<string, fields>} [relationsFields]
  * @returns
  */
-const getFields = async (argFields, values, context, selectFields, originalResource) => {
+const getFields = async (
+  argFields,
+  values,
+  context,
+  selectFields,
+  originalResource,
+  loadRelations,
+  parent = null
+) => {
   if (!argFields) {
     return isArray(values) ? [] : {}
   }
@@ -50,9 +65,26 @@ const getFields = async (argFields, values, context, selectFields, originalResou
 
   const executeLoopOperation = async fieldKey => {
     // define field and value
-    const field = fields[fieldKey]
+    let field = fields[fieldKey]
     let value = context.cast(values[fieldKey]).to(field.type || String)
     let include = selectFields.showChildrenByDefault
+
+    const fieldInRelations = loadRelations.find(r => r.field.uniqueKey === field.uniqueKey)
+    let isRelation = false
+    if (fieldInRelations) {
+      field = cloneDeep(fieldInRelations.field)
+      isRelation = true
+      field.isNested = true
+      field.isObjectNested = true
+      field.type = Object
+      field.default = () => ({})
+      field.children = await fieldInRelations.schemaBuilder.tempContext.getFields()
+      value = context.cast(values[fieldKey]).to(field.type || String)
+    }
+
+    if (field == null) {
+      return
+    }
 
     // if fields should be hided
     // so this fields should not be selected
@@ -97,7 +129,34 @@ const getFields = async (argFields, values, context, selectFields, originalResou
 
     // check that exists in selected
     // if yes so check that selected should be hide or not
-    const thisFieldInSelectFields = selectFields.children.find(i => i.key === field.nestedKey)
+    let targetNestedKey = field.nestedKey
+    if (parent) {
+      targetNestedKey = parent.nestedKey + "." + field.nestedKey
+    }
+    let targetNestedKeyWithoutArrayIndexes = targetNestedKey.replace(/\.\d+(\.|$)/g, "$1")
+    let thisFieldInSelectFields = selectFields.children.find(i => {
+      return (
+        i.key === targetNestedKey ||
+        (targetNestedKey !== targetNestedKeyWithoutArrayIndexes &&
+          !/\.\d+$/.test(i.key) &&
+          i.key.startsWith(targetNestedKeyWithoutArrayIndexes))
+      )
+    })
+
+    if (
+      thisFieldInSelectFields &&
+      targetNestedKey !== targetNestedKeyWithoutArrayIndexes &&
+      thisFieldInSelectFields.key.length > targetNestedKeyWithoutArrayIndexes.length &&
+      !/\.\d+$/.test(thisFieldInSelectFields.key) &&
+      thisFieldInSelectFields.key.startsWith(targetNestedKeyWithoutArrayIndexes)
+    ) {
+      thisFieldInSelectFields = {
+        key: targetNestedKey,
+        children: [thisFieldInSelectFields],
+        show: true,
+        showChildrenByDefault: thisFieldInSelectFields.showChildrenByDefault
+      }
+    }
 
     if (thisFieldInSelectFields) {
       if (!thisFieldInSelectFields.show) {
@@ -167,7 +226,9 @@ const getFields = async (argFields, values, context, selectFields, originalResou
         value,
         context,
         thisFieldInSelectFields,
-        originalResource
+        originalResource,
+        loadRelations,
+        isRelation ? field : null
       )
 
       if (Object.values(field.children).length) {
@@ -229,9 +290,7 @@ const packInputs = (
       key
     }
   } else if (!key || keys.filter(i => i.includes(key)).length) {
-    const childrenKeys = key
-      ? keys.filter(i => i.replace(/^[-+]/, "").startsWith(base.key ? `${base.key}.${key}` : key))
-      : keys
+    const childrenKeys = key ? keys.filter(i => i.replace(/^[-+]/, "").startsWith(key + ".")) : keys
 
     const final = {
       showChildrenByDefault: true,
@@ -291,6 +350,7 @@ const getSelectPacks = ({ inputs, selectInputKey }) => {
  * @param {object} [args.inputs]
  * @param {import("../../../typeDefs/route").route} [args.routeObject]
  * @param {boolean} [args.selectable]
+ * @param {relationObj[]} [args.loadRelations]
  * @returns {Promise.<fields>}
  */
 module.exports = async function({
@@ -299,7 +359,8 @@ module.exports = async function({
   selectInputKey = null,
   inputs = null,
   routeObject = null,
-  selectable = null
+  selectable = null,
+  loadRelations = null
 } = {}) {
   const context = this
   fields =
@@ -312,6 +373,7 @@ module.exports = async function({
   resource = cast(resource).to(Object) || context.resource || (await context.getResource())
   routeObject = cast(routeObject).to(Object) || context.routeObject
   selectable = cast(selectable).to(Boolean) || routeObject.selectable
+  loadRelations = cast(loadRelations).to(Array) || (await context.getRelations())
 
   // get fields that are specified in select input
   // this values can be for hiding the field
@@ -331,5 +393,5 @@ module.exports = async function({
   // if selectable fields has any item without -
   // so hide by default should be true
 
-  return getFields(fields, resource, context, selectFields, resource)
+  return getFields(fields, resource, context, selectFields, resource, loadRelations, null)
 }

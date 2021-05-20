@@ -4,10 +4,12 @@ const getCollection = require("../../src/restSchema/contextMethods/getCollection
 const hook = require("../../src/restSchema/contextMethods/hook")
 const createContext = require("../../src/restSchema/createContext")
 const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
+const defaultSchema = require("../../src/restSchema/defaults/defaultSchema")
 
 const context = {
   ...createContext(
     {
+      ...defaultSchema,
       hooks: {}
     },
     defaultRoute
@@ -15,10 +17,10 @@ const context = {
   model,
   hook,
   route: "default",
-  getFilters: async () => ({}),
-  getLimit: async () => 5,
-  getSkip: async () => 0,
-  getSort: async () => {}
+  req: {
+    query: {},
+    body: {}
+  }
 }
 
 describe("getCollection method", async () => {
@@ -43,7 +45,7 @@ describe("getCollection method", async () => {
       {
         ...context,
         getFilters: async () => ({
-          prop1: "something1"
+          filters: { prop1: "something1" }
         })
       },
       { force: true }
@@ -81,4 +83,9 @@ describe("getCollection method", async () => {
       .to.be.an("array")
       .that.have.lengthOf(1)
   })
+
+  // TODO check that will use aggregate if there is aggregate filtering
+  // TODO check that will use aggregate if there is aggregate sorting
+  // TODO check that will use aggregate if there is random sort
+  // TODO check that will use aggregate if there is random loads
 })

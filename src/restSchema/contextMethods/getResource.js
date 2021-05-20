@@ -27,6 +27,7 @@ const { NotFoundError } = require("../errors")
  * @param {*} [args.resourceId]
  * @param {model} [args.model]
  * @param {object} [args.filters]
+ * @param {boolean} [args.canUseAggregate]
  * @returns {Promise.<resource>}
  */
 module.exports = async function({
@@ -35,13 +36,10 @@ module.exports = async function({
   force = false,
   resourceId = null,
   model = null,
-  filters = null
+  filters = null,
+  canUseAggregate = true
 } = {}) {
   const context = this
-
-  const validationMessages = (await context.getMessages()).validations
-  model = model || context.model
-  filters = cast(filters).to(Object) || {}
 
   await context.hook("beforeGetResource")
 
@@ -49,31 +47,47 @@ module.exports = async function({
     return context.resource
   }
 
-  // find the resource by route keys
+  // check if there is load request use aggregate instead
   let resource
-  if (resourceId != null) {
-    resource = await model.findOne({
-      _id: resourceId
+  const loadRelations = await context.getLoadRelations()
+  if (loadRelations.length && canUseAggregate) {
+    resource = await context.getAggregateResource({
+      setResource: false,
+      errorOnNotFound,
+      force,
+      filters,
+      resourceId
     })
   } else {
-    let getRouteKeysFilters = {}
-    getRouteKeysFilters = {
-      $or: await context.getRouteKeysFilters()
-    }
-    if (!getRouteKeysFilters.$or.length) {
-      getRouteKeysFilters = {}
-    }
-    let finalFilters = deepMergeFilters([
-      getRouteKeysFilters,
-      await context.getCustomFilters(),
-      filters
-    ])
-    if (Object.keys(finalFilters).length) {
-      resource = await model.findOne(finalFilters)
+    model = model || context.model
+    filters = cast(filters).to(Object) || {}
+
+    // find the resource by route keys
+    if (resourceId != null) {
+      resource = await model.findOne({
+        _id: resourceId
+      })
+    } else {
+      let getRouteKeysFilters = {}
+      getRouteKeysFilters = {
+        $or: await context.getRouteKeysFilters()
+      }
+      if (!getRouteKeysFilters.$or.length) {
+        getRouteKeysFilters = {}
+      }
+      let finalFilters = deepMergeFilters([
+        getRouteKeysFilters,
+        await context.getCustomFilters(),
+        filters
+      ])
+      if (Object.keys(finalFilters).length) {
+        resource = await model.findOne(finalFilters)
+      }
     }
   }
 
   if (errorOnNotFound && !resource) {
+    const validationMessages = (await context.getMessages()).validations
     throw new NotFoundError(validationMessages.resourceNotFound)
   }
 

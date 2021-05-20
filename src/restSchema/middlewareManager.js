@@ -1,15 +1,28 @@
 const defaultSchemaRoutes = require("./defaults/schema/defaultSchemaRoutes")
+const RouteManager = require("./routeManager")
 
 /**
  * @typedef {import("../../typeDefs/schema").middleware} middleware
  */
 
+/**
+ * @typedef {import("../../typeDefs/route").routes} routes
+ * @typedef {import("../../typeDefs/route").route} route
+ */
+
 class MiddlewareManager {
+  /**
+   *
+   * @param {routes | RouteManager} extraRoutes
+   */
   constructor(extraRoutes = []) {
+    if (extraRoutes instanceof RouteManager) {
+      extraRoutes = RouteManager.get().map(i => (i && i.name ? i.name : i))
+    }
     this.defaultRoutes = [
       ...Object.keys(defaultSchemaRoutes),
       ...extraRoutes.map(i => (i && i.name ? i.name : i))
-    ]
+    ].filter(i => typeof i === "string")
     this.middlewareList = {}
     this.setDefaultMiddlewareList()
   }

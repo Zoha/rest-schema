@@ -13,9 +13,19 @@
  * @property {string} [limit]
  * @property {string} [skip]
  * @property {string} [page]
+ * @property {string} [search]
+ * @property {string} [randomSort]
+ * @property {string} [load]
+ *
+ * @typedef {import("express").Request} request
+ * @typedef {import("express").Response} response
+ *
  *
  * @callback routeHandlerCallback
- * @param {context} ctx
+ * @param {context} [ctx]
+ * @param {request & Object.<string , any>} [req]
+ * @param {response & Object.<string , any>} [res]
+ * @param {function).next} res
  * @returns {*}
  *
  * @callback filteringOperatorCallback

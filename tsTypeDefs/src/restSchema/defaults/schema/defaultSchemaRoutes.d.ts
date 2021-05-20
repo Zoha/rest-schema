@@ -1,4 +1,12 @@
-declare const _exports: {
-    [x: string]: import("../../../../typeDefs/route").route;
+export = defaultSchemaRoutes;
+/**
+ * @typedef {import("../../../../typeDefs/route").route} route
+ */
+/** @type {Object<string , route>} */
+declare const defaultSchemaRoutes: {
+    [x: string]: route;
 };
-export = _exports;
+declare namespace defaultSchemaRoutes {
+    export { route };
+}
+type route = import("../../../../typeDefs/route").route;

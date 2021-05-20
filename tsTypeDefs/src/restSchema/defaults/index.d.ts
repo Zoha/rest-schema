@@ -64,7 +64,7 @@ type schema = import("../../../typeDefs/schema").schema;
 type hooks = import("../../../typeDefs/schema").hooks;
 type middleware = import("../../../typeDefs/schema").middleware;
 type defaults = {
-    defaultField: any;
+    defaultField: field;
     defaultMessages: messages;
     defaultRoute: route;
     defaultSchema: schema;

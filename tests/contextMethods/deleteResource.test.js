@@ -4,6 +4,7 @@ const deleteResource = require("../../src/restSchema/contextMethods/deleteResour
 const model = require("../../src/testHelpers/model")
 const createContext = require("../../src/restSchema/createContext")
 const schemaFormatter = require("../../src/restSchema/schemaFormatters/schemaFormatter")
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
 
 const schema = schemaFormatter({
   model
@@ -15,7 +16,7 @@ describe("deleteResource method", function() {
   })
   it("will delete resource normally", async () => {
     const resource = await model.create({ prop1: "something" })
-    const context = await createContext(schema, { name: "delete" })
+    const context = await createContext(schema, { ...defaultRoute, name: "delete" })
     context.req = {
       params: {
         id: resource._id.toString()

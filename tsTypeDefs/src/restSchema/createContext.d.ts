@@ -20,7 +20,25 @@ declare namespace methods {
         req?: string;
         inputsTargets?: string;
     }): Promise<import("../../typeDefs/context").resource>;
-    function getCollection({ setCollection, force, filters, skip, limit, sort, filtersMeta }?: {
+    function getAggregateCollection({ setCollection, force, filters, skip, limit, sort, search, sortRelations, filterRelations }?: {
+        setCollection?: boolean;
+        force?: boolean;
+        filters?: any;
+        skip?: number;
+        limit?: number;
+        sort?: any;
+        search?: string;
+        sortRelations?: import("./contextMethods/getRelations").relationObj[];
+        filterRelations?: import("./contextMethods/getRelations").relationObj[];
+    }): Promise<import("../../typeDefs/context").resource[]>;
+    function getAggregateResource({ errorOnNotFound, setResource, force, filters, resourceId }?: {
+        errorOnNotFound?: boolean;
+        setResource?: boolean;
+        force?: boolean;
+        filters?: any;
+        resourceId?: any;
+    }): Promise<import("../../typeDefs/context").resource[]>;
+    function getCollection({ setCollection, force, filters, skip, limit, sort, filtersMeta, canUseAggregate, search }?: {
         setCollection?: boolean;
         force?: boolean;
         filters?: any;
@@ -28,6 +46,8 @@ declare namespace methods {
         limit?: number;
         sort?: any;
         filtersMeta?: any;
+        canUseAggregate?: boolean;
+        search?: string;
     }): Promise<import("../../typeDefs/context").resource[]>;
     function getCreateFields({ fields }?: {
         fields?: import("../../typeDefs/field").fields;
@@ -47,13 +67,15 @@ declare namespace methods {
         setFields?: boolean;
         fields?: import("../../typeDefs/field").fields;
     }): Promise<import("../../typeDefs/field").fields>;
-    function getFilters({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta, pagination }?: {
+    function getFilters({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta, pagination, includeRelationFilters, includeRelationsInResult }?: {
         inputs?: any;
         operators?: import("../../typeDefs/route").filteringOperators;
         defaultRouteFilters?: any;
         customFilters?: any;
         filteringMeta?: any;
         pagination?: import("../../typeDefs/schema").paginationProps;
+        includeRelationFilters?: false;
+        includeRelationsInResult?: boolean;
     }): Promise<any>;
     function getInputs({ setInputs, req, inputsTarget, force }?: {
         setInputs?: boolean;
@@ -73,6 +95,14 @@ declare namespace methods {
         inputs?: any;
         pagination?: import("../../typeDefs/schema").paginationProps;
     }): Promise<number>;
+    function getLoadRelations({ setLoadRelations, inputs, loadKey, force, relations, loads }?: {
+        setLoadRelations?: boolean;
+        inputs?: any;
+        loadKey?: string;
+        force?: boolean;
+        relations?: import("./contextMethods/getRelations").relationObj[];
+        loads?: string | string[];
+    }): Promise<import("./contextMethods/getRelations").relationObj[]>;
     function getMessages(): {
         validations: {
             required: string;
@@ -101,7 +131,7 @@ declare namespace methods {
     function getNestedField({ key, fields }: {
         key: string;
         fields?: import("../../typeDefs/field").fields;
-    }): Promise<any>;
+    }): Promise<import("../../typeDefs/field").field>;
     function getNestedInput({ key, inputs }: {
         key: string;
         inputs?: any;
@@ -111,16 +141,19 @@ declare namespace methods {
         limit?: number;
     }): Promise<number>;
     function getPaginationData({ pagination, setResource, force }?: any): Promise<any>;
-    function getRelations({ fields }?: {
+    function getRelations({ fields, setRelations, force }?: {
         fields?: import("../../typeDefs/field").fields;
-    }): Promise<any>;
-    function getResource({ errorOnNotFound, setResource, force, resourceId, model, filters }?: {
+        setRelations?: boolean;
+        force?: boolean;
+    }): Promise<import("./contextMethods/getRelations").relationObj[]>;
+    function getResource({ errorOnNotFound, setResource, force, resourceId, model, filters, canUseAggregate }?: {
         errorOnNotFound?: boolean;
         setResource?: boolean;
         force?: boolean;
         resourceId?: any;
         model?: import("../../typeDefs/context").model;
         filters?: any;
+        canUseAggregate?: boolean;
     }): Promise<import("../../typeDefs/context").resource>;
     function getResourceResponse({ resource }?: {
         resource?: import("../../typeDefs/context").resource;
@@ -140,13 +173,19 @@ declare namespace methods {
         fallbackFilters?: any;
     }): Promise<any[]>;
     function getRoutes(): import("../../typeDefs/route").routes;
-    function getSelectFields({ resource, fields, selectInputKey, inputs, routeObject, selectable }?: {
+    function getSearch({ setSearch, inputs, searchKey }?: {
+        setSearch?: boolean;
+        inputs?: any;
+        searchKey?: string;
+    }): Promise<number>;
+    function getSelectFields({ resource, fields, selectInputKey, inputs, routeObject, selectable, loadRelations }?: {
         resource?: import("../../typeDefs/context").resource;
         fields?: import("../../typeDefs/field").fields;
         selectInputKey?: string;
         inputs?: any;
         routeObject?: import("../../typeDefs/route").route;
         selectable?: boolean;
+        loadRelations?: import("./contextMethods/getRelations").relationObj[];
     }): Promise<import("../../typeDefs/field").fields>;
     function getSkip({ skip, inputs, skipInputKey, page, pageInputKey, defaultPage, limit, pagination }?: {
         skip?: number;
@@ -158,16 +197,19 @@ declare namespace methods {
         limit?: number;
         pagination?: import("../../typeDefs/schema").paginationProps;
     }): Promise<number>;
-    function getSort({ inputs, sortKey, defaultSort, sortString, pagination }?: {
+    function getSort({ inputs, sortKey, defaultSort, sortString, pagination, includeRelationSorts, includeRelationsInResult }?: {
         sortKey?: string;
         inputs?: any;
         defaultSort?: any;
         sortString?: string;
         pagination?: import("../../typeDefs/schema").paginationProps;
+        includeRelationSorts?: boolean;
+        includeRelationsInResult?: boolean;
     }): Promise<any>;
-    function getTotal({ setTotal, filters }?: {
+    function getTotal({ setTotal, filters, force }?: {
         setTotal?: boolean;
         filters?: any;
+        force?: boolean;
     }): Promise<number>;
     function getUpdateFields({ fields }?: {
         fields?: import("../../typeDefs/field").fields;
@@ -179,7 +221,7 @@ declare namespace methods {
     function hook(hook: string): Promise<any>;
     function sanitizeInput({ value, field }: {
         value: any;
-        field: any;
+        field: import("../../typeDefs/field").field;
     }): Promise<any>;
     function sanitizeInputs({ setInputs, fields, inputs, setDirtyInputs }?: {
         setInputs?: boolean;
@@ -225,7 +267,7 @@ declare namespace methods {
     }): Promise<import("../../typeDefs/context").resource>;
     function validateInput({ value, field, key }: {
         value?: any;
-        field: any;
+        field: import("../../typeDefs/field").field;
         key?: string;
     }): Promise<any>;
     function validateInputs({ setValidationErrors, fields, inputs, checkRequired }?: {

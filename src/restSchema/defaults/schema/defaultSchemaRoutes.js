@@ -4,9 +4,15 @@ const manualInvolveMiddlewareList = require("../../helpers/manualInvolveMiddlewa
 const injectContext = require("../../middleware/registerMiddlewareList")
 const { ValidationError, RestSchemaError } = require("../../errors")
 const URL = require("url")
+const filter = require("../../helpers/filter")
 
-/** @type {Object<string , import("../../../../typeDefs/route").route>} */
-module.exports = {
+/**
+ * @typedef {import("../../../../typeDefs/route").route} route
+ */
+
+/** @type {Object<string , route>} */
+
+const defaultSchemaRoutes = {
   index: {
     name: "index",
     handler: async context => {
@@ -165,18 +171,19 @@ module.exports = {
         throw error
       }
       // get relations object in format {schemaBuilder , type , fieldName}
-      const relations = await context.getRelations()
+      const allRelations = (await context.getRelations()) || []
+      const relations = allRelations.filter(i => !i.isNested)
 
       // get relation path details {path , fieldName}
       const requestUrl = new URL.URL(context.req.url, "https://example.com").pathname
       const relationPath = getRelationPath(requestUrl)
       // if relation map is invalid or field name not exists in relations
-      if (!relationPath || !Object.keys(relations).includes(relationPath.fieldName)) {
+      if (!relationPath || !relations.find(i => i.fieldName === relationPath.fieldName)) {
         return next()
       }
 
       // get relation in list of all relations
-      const relation = relations[relationPath.fieldName]
+      const relation = relations.find(r => r.fieldName === relationPath.fieldName)
       // determine route related to relation type
       let relationRoute
 
@@ -231,33 +238,30 @@ module.exports = {
       }
 
       // switch res schema in request and create context
-      const createContext = require("../../createContext")
-      const relationContext = createContext(relation.schemaBuilder.schema, relationRoute)
-      relationContext.isRelation = true
-      relationContext.parent = context
-      relationContext.res = context.res
-      relationContext.relationDepth = context.relationDepth + 1
       const relationPathIdRegexResult = /\/[^/]+\/([^/]+)/.exec(relationPath.path)
       let url = relationPath.path
       if (relation.type == relationTypes.collection && relationRoute.name == "relation") {
         url = relationPath.path.replace(/\/[^/]+/, "")
       }
-      relationContext.req = {
+      const relationContextReq = {
         ...context.req,
-        rest: relationContext,
         url,
         params: {
           id: relationPathIdRegexResult ? relationPathIdRegexResult[1] : ""
         }
       }
 
-      // get query from find method
-      const relationFilters = await relation.field.find(
-        resource,
+      const relationContext = await relation.schemaBuilder.createRelationContext(
         context,
-        relationContext,
-        relation
+        relation,
+        relationContextReq,
+        context.res,
+        relationRoute,
+        context.relationDepth + 1
       )
+
+      // get query from find method
+      const relationFilters = relation.field.find(resource, context, relationContext, relation)
       relationContext.relationFilters = relationFilters
       // call relation schema middleware list manually
       if (!relation.field.withoutMiddleware) {
@@ -270,3 +274,5 @@ module.exports = {
     }
   }
 }
+
+module.exports = defaultSchemaRoutes

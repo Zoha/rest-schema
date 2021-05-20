@@ -24,6 +24,7 @@ declare const _default: any;
 export declare const pickUniqueItems: boolean;
 export declare const ref: any;
 export declare const refPath: any;
+export declare const loadable: boolean;
 export declare function find(resource: any, ctx: any, relationCtx: any, relation: any): {
     $or: ({
         [x: number]: any;

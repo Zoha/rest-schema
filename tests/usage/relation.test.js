@@ -404,4 +404,8 @@ describe("relation routes", () => {
       .expect("Content-Type", /json/)
       .expect(400)
   })
+
+  // TODO check with relation filtering
+  // TODO check with relation sorting
+  // TODO check with load
 })

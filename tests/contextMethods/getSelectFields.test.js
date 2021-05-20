@@ -2,6 +2,9 @@ const { expect } = require("chai")
 const createContext = require("../../src/restSchema/createContext")
 const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
 const defaultSchema = require("../../src/restSchema/defaults/defaultSchema")
+const schemaModelBuilder = require("../../src/restSchema/schema")
+const model = require("../../src/testHelpers/model")
+const { ObjectId } = require("../../src/restSchema/types")
 
 const route = defaultRoute
 const schema = {
@@ -183,4 +186,107 @@ describe("getSelectFields method", () => {
     expect(result.prop1.children.nested1).to.be.an("object")
     expect(result.prop1.children.nested2).to.be.an("object")
   })
+
+  it("select fields with relation", async () => {
+    const schema1 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema2 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema3 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema4 = schemaModelBuilder(
+      model,
+      {
+        normalProp: {
+          type: String
+        },
+        notSelectable: {
+          type: ObjectId,
+          ref: schema1,
+          hide: true
+        },
+        relation: {
+          type: ObjectId,
+          ref: schema1
+        },
+        relationNested: {
+          type: {
+            nested: {
+              type: ObjectId,
+              ref: schema2
+            }
+          }
+        },
+        relationArrayNested: {
+          type: [
+            {
+              nested: {
+                type: ObjectId,
+                ref: schema3
+              }
+            }
+          ]
+        }
+      },
+      {}
+    )
+
+    const selectFields = await schema4.tempContext.getSelectFields({
+      inputs: {
+        select:
+          "notExists normalProp relation.prop1 relationNested.nested  relationArrayNested.nested.prop1"
+      },
+      resource: {
+        notExists: "something",
+        normalProp: 123,
+        relation: {
+          prop1: "something"
+        },
+        relationNested: {
+          nested: {
+            prop1: "something"
+          }
+        },
+        relationArrayNested: [
+          {
+            nested: {
+              prop1: "something"
+            }
+          },
+          {
+            nested: {
+              prop1: "something-else"
+            }
+          }
+        ]
+      }
+    })
+
+    expect(Object.keys(selectFields)).to.have.lengthOf(4)
+    expect(Object.keys(selectFields.relation.children)).to.have.lengthOf(1)
+    expect(selectFields.relation.children.prop1.nestedKey).to.be.equal("prop1")
+    expect(Object.keys(selectFields.relationNested.children.nested.children)).to.have.lengthOf(4)
+    expect(selectFields.relationNested.children.nested.children.prop1.nestedKey).to.be.equal(
+      "prop1"
+    )
+
+    expect(
+      Object.keys(selectFields.relationArrayNested.children[0].children.nested.children)
+    ).to.have.lengthOf(1)
+    expect(
+      selectFields.relationArrayNested.children[0].children.nested.children.prop1.nestedKey
+    ).to.be.equal("prop1")
+  })
+
+  // TODO check that will work with relations
+  // TODO check that will ignore relations if is hide
 })

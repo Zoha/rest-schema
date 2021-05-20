@@ -209,6 +209,7 @@ const {
  *
  * @property {string} [ref]
  * @property {string | fieldPropHandler} [refPath]
+ * @property {boolean | fieldPropHandler} [loadable]
  * @property {findCallback} [find]
  *
  * @property {fieldPropHandlerWithValue} [validate]
@@ -229,7 +230,7 @@ const {
  * @param {context} context
  * @return {(fields|Promise.<fields>)}
  *
- * @typedef {(fieldProps | Object.<string , field> | Object.<string , *>)} field
+ * @typedef {(fieldProps | Object.<string , fieldProps> | Object.<string , *>)} field
  * @typedef {(fieldsFunction | Object.<string , field>)} fields
  */
 

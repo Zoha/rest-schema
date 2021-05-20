@@ -85,6 +85,16 @@ const formatFields = async (argFields, context, prepend = "") => {
       .toString(36)
       .substring(7)
 
+    // set default values
+    if (field.filterable === undefined && field.ref) {
+      field.filterable = false
+    }
+
+    // set default values
+    if (field.sortable === undefined && field.ref) {
+      field.sortable = false
+    }
+
     // deep merge field values with default field values
     // @ts-ignore
     field = deepmerge(defaultField, field, { isMergeableObject: isPlainObject })

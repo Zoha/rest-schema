@@ -40,6 +40,7 @@ const defaultField = {
   // relation
   ref: undefined,
   refPath: undefined,
+  loadable: false,
   find: (resource, ctx, relationCtx, relation) => {
     const { fieldName, type } = relation
     if (type === relationTypes.resource) {

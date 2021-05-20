@@ -26,9 +26,10 @@ const cloneDeep = require("clone-deep")
  * @param {object} args
  * @param {string} args.key
  * @param {fields} [args.fields]
+ * @param {boolean} [args.ignoreArrayIndexes]
  * @returns {Promise.<field>}
  */
-module.exports = async function({ key, fields = null }) {
+module.exports = async function({ key, fields = null, ignoreArrayIndexes = false }) {
   const context = this
   const targetParts = key.split(".")
   fields =
@@ -61,8 +62,15 @@ module.exports = async function({ key, fields = null }) {
     } else if (isArray(operateFields)) {
       if (!operateFields.length || Number.isNaN(Number(target))) {
         foundedField = undefined
-        return false
+        if (ignoreArrayIndexes && operateFields.length) {
+          operateFields = operateFields[0]
+          operateFields.children.nestedKey = path.replace(/\.$/, "")
+          return true
+        } else {
+          return false
+        }
       }
+
       if (operateFields.length < Number(target)) {
         foundedField = cloneDeep(operateFields[(Number(target) % operateFields.length) - 1])
         operateFields = foundedField

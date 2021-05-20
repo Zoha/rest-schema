@@ -4,6 +4,7 @@ const isArray = require("../helpers/isArray")
 const cast = require("../helpers/cast")
 const isFunction = require("../helpers/isFunction")
 const escapeStringRegexp = require("../helpers/escapeStringRegexp")
+const unique = require("../helpers/unique")
 
 /**
  * @typedef {import("../../../typeDefs/context").resource} resource
@@ -30,6 +31,8 @@ const escapeStringRegexp = require("../helpers/escapeStringRegexp")
  * @param {object} [args.customFilters]
  * @param {object} [args.filteringMeta]
  * @param {paginationProps} [args.pagination]
+ * @param {false} [args.includeRelationFilters]
+ * @param {boolean} [args.includeRelationsInResult]
  * @returns {Promise.<object>}
  */
 module.exports = async function({
@@ -38,7 +41,9 @@ module.exports = async function({
   defaultRouteFilters = null,
   customFilters = null,
   filteringMeta = null,
-  pagination = null
+  pagination = null,
+  includeRelationFilters = false,
+  includeRelationsInResult = false
 } = {}) {
   const context = this
   const allInputs = inputs || context.inputs || (await context.getInputs())
@@ -51,14 +56,66 @@ module.exports = async function({
   customFilters = customFilters || (await context.getCustomFilters())
   filteringMeta = filteringMeta || context.routeObject.meta
 
-  const formatFilters = async (key, argValue) => {
+  const filterRelations = []
+  const relationsFields = {}
+  /** @type {import("./getRelations").relationObj[]} */
+  let relations = []
+  let relationsLoaded = false
+  const getRelations = async () => {
+    relations = await context.getRelations()
+    relationsLoaded = true
+  }
+
+  const formatFilters = async (/** @type {string} */ key, argValue) => {
     let logic
     let filterValue
 
     // if type of field not found return undefined
-    const field = await context.getNestedField({ key })
+    let field = await context.getNestedField({ key, ignoreArrayIndexes: true })
+
+    // field does not exists in context check that maybe field is relation field
+    if (includeRelationFilters && field == null) {
+      if (!relations.length && !relationsLoaded) {
+        await getRelations()
+      }
+      const relatedRelation = relations.find(
+        r =>
+          r.field.filterable &&
+          (key.startsWith(r.field.nestedKey + ".") ||
+            key.startsWith(r.nestedKeyWithoutArrayIndex + "."))
+      )
+      let relatedRelationFields
+      if (relatedRelation) {
+        if (relationsFields[relatedRelation.field.nestedKey]) {
+          relatedRelationFields = relationsFields[relatedRelation.field.nestedKey]
+        } else {
+          relatedRelationFields = await relatedRelation.schemaBuilder.tempContext.getFields()
+          relationsFields[relatedRelation.field.nestedKey] = relatedRelationFields
+        }
+      }
+      if (relatedRelationFields) {
+        field = await context.getNestedField({
+          key: key.substr(relatedRelation.nestedKey.length + 1),
+          ignoreArrayIndexes: true,
+          fields: relatedRelationFields
+        })
+        if (!field && relatedRelation.nestedKeyWithoutArrayIndex !== relatedRelation.nestedKey) {
+          field = await context.getNestedField({
+            key: key.substr(relatedRelation.nestedKeyWithoutArrayIndex.length + 1),
+            ignoreArrayIndexes: true,
+            fields: relatedRelationFields
+          })
+        }
+      }
+
+      if (field != null) {
+        filterRelations.push(relatedRelation)
+        key = "__" + key
+      }
+    }
+
     if (field == null || !field.filterable || field.type == null) {
-      return undefined
+      return {}
     }
     const { type } = field
 
@@ -66,7 +123,7 @@ module.exports = async function({
     const value = decodeURIComponent(cast(argValue).to(String))
 
     if (value == null) {
-      return undefined
+      return {}
     }
 
     // change hasOperator if string
@@ -126,7 +183,10 @@ module.exports = async function({
       filterValue = cast(value).to(type)
     }
 
-    return logic ? { [logic]: filterValue.map(i => ({ [key]: i })) } : filterValue
+    return {
+      filterValue: logic ? { [logic]: filterValue.map(i => ({ [key]: i })) } : filterValue,
+      filterKey: key
+    }
   }
 
   // separate inputs that are not meta
@@ -161,10 +221,14 @@ module.exports = async function({
           // defined like {prop : value}
           const keys = Object.keys(notMetaInputs[inputKey][index])
           for (let keyIndex = 0; keyIndex < keys.length; keyIndex += 1) {
-            const key = keys[keyIndex]
+            let key = keys[keyIndex]
             const logicItemFilters = {}
             // eslint-disable-next-line no-await-in-loop
-            const filterValue = await formatFilters(key, notMetaInputs[inputKey][index][key])
+            const { filterValue, filterKey } = await formatFilters(
+              key,
+              notMetaInputs[inputKey][index][key]
+            )
+            key = filterKey
             if (filterValue !== undefined) {
               // check that filter value contains logic or not
               if (filterValue != null && filterValue.$or) {
@@ -193,7 +257,7 @@ module.exports = async function({
       // push the logic in global logic
       // other wise push it to direct filters
       // eslint-disable-next-line no-await-in-loop
-      const filterValue = await formatFilters(inputKey, notMetaInputs[inputKey])
+      const { filterKey, filterValue } = await formatFilters(inputKey, notMetaInputs[inputKey])
       if (filterValue !== undefined) {
         if (filterValue != null && filterValue.$or) {
           requestFilters.$or = requestFilters.$or || []
@@ -202,7 +266,7 @@ module.exports = async function({
           requestFilters.$and = requestFilters.$and || []
           requestFilters.$and = [...requestFilters.$and, ...filterValue.$and]
         } else {
-          requestFilters[inputKey] = filterValue
+          requestFilters[filterKey] = filterValue
         }
       }
     }
@@ -210,9 +274,32 @@ module.exports = async function({
 
   // return final result
   // merge them with custom filters
-  return {
-    ...(isObject(defaultFilters) ? defaultFilters : {}),
-    ...requestFilters,
-    ...(isObject(customFilters) ? customFilters : {})
+  let finalResult
+  customFilters = isObject(customFilters) ? customFilters : {}
+  if (customFilters.$and || customFilters.$or) {
+    finalResult = {
+      $and: [
+        {
+          ...(isObject(defaultFilters) ? defaultFilters : {}),
+          ...requestFilters
+        },
+        isObject(customFilters) ? customFilters : {}
+      ]
+    }
+  } else {
+    finalResult = {
+      ...(isObject(defaultFilters) ? defaultFilters : {}),
+      ...requestFilters,
+      ...(isObject(customFilters) ? customFilters : {})
+    }
+  }
+
+  if (includeRelationFilters && includeRelationsInResult) {
+    return {
+      relations: await unique(filterRelations, i => i.field.nestedKey, context),
+      filters: finalResult
+    }
+  } else {
+    return finalResult
   }
 }

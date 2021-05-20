@@ -12,7 +12,10 @@ export type paginationPage = (context: context) => number;
 export type paginationLimit = (context: context) => number;
 export type paginationMinLimit = (context: context) => number;
 export type paginationMaxLimit = (context: context) => number;
-export type paginationSort = (context: context) => string;
+export type sort = string | {
+    [x: string]: (-1 | 1);
+};
+export type paginationSort = (context: context) => sort;
 export type paginationDefaultFilters = (context: context) => filters;
 export type paginationSkip = (context: context) => number;
 export type paginationProps = {
@@ -20,7 +23,7 @@ export type paginationProps = {
     limit?: number;
     minLimit?: number;
     maxLimit?: number;
-    sort?: string;
+    sort?: sort;
     defaultFilters?: filters;
     skip?: number;
 };
@@ -68,7 +71,9 @@ export type hooksList = {
     afterCreateResource?: (hookHandler | Promise<hookHandler>);
     afterDeleteResource?: (hookHandler | Promise<hookHandler>);
     beforeGetCollection?: (hookHandler | Promise<hookHandler>);
+    beforeGetAggregateCollection?: (hookHandler | Promise<hookHandler>);
     afterGetCollection?: (hookHandler | Promise<hookHandler>);
+    afterGetAggregateCollection?: (hookHandler | Promise<hookHandler>);
     beforeGetCollectionResponse?: (hookHandler | Promise<hookHandler>);
     afterGetCollectionResponse?: (hookHandler | Promise<hookHandler>);
     beforeGetResource?: (hookHandler | Promise<hookHandler>);
@@ -90,9 +95,9 @@ export type hooksListWithRoute = {
     validate?: hooksList;
 };
 export type hooks = (hooksList & hooksListWithRoute);
-export type model = import("mongoose").Model<any, any>;
+export type model = import("mongoose").Model<any, any, any>;
 export type schema = {
-    model?: import("mongoose").Model<any, any>;
+    model?: import("mongoose").Model<any, any, any>;
     fields?: fields;
     routes?: routes;
     pagination?: pagination;

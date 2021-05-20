@@ -6,8 +6,17 @@ export type routeMeta = {
     limit?: string;
     skip?: string;
     page?: string;
+    search?: string;
+    randomSort?: string;
+    load?: string;
 };
-export type routeHandlerCallback = (ctx: context) => any;
+export type request = import("express").Request;
+export type response = import("express").Response;
+export type routeHandlerCallback = (ctx?: context, req?: request & {
+    [x: string]: any;
+}, res?: response & {
+    [x: string]: any;
+}, : Function) => any;
 export type filteringOperatorCallback = (value: string, key: string, type: fieldType) => {
     [x: string]: any;
 };

@@ -5,8 +5,8 @@ export type resourceDocument = import("mongoose").Document;
 export type resource = resourceDocument & {
     [x: string]: any;
 };
-export type modelDocument = import("mongoose").Model<any, any>;
-export type model = import("mongoose").Model<any, any> & {
+export type modelDocument = import("mongoose").Model<any, any, any>;
+export type model = import("mongoose").Model<any, any, any> & {
     [x: string]: any;
 };
 export type route = import("./route").route;
@@ -39,6 +39,8 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
          * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
          * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
+         * @property {import('../src/restSchema/contextMethods/getAggregateCollection')} getAggregateCollection
+         * @property {import('../src/restSchema/contextMethods/getAggregateResource')} getAggregateResource
          * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
          * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
          * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
@@ -48,6 +50,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
          * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
          * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
+         * @property {import('../src/restSchema/contextMethods/getLoadRelations')} getLoadRelations
          * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
@@ -60,6 +63,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
          * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
          * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
+         * @property {import('../src/restSchema/contextMethods/getSearch')} getSearch
          * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
          * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
          * @property {import('../src/restSchema/contextMethods/getSort')} getSort
@@ -92,6 +96,9 @@ export type contextMethods = {
          * @typedef {import("express").Response} response
          */
         /**
+         * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+         */
+        /**
          * @typedef {object} contextProps
          * @property {schema} schema
          * @property {model} model
@@ -119,10 +126,13 @@ export type contextMethods = {
          * @property {number} [total]
          * @property {validationErrors} [validationErrors]
          * @property {boolean} [isRelation]
+         * @property {relationObj} [relation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
          * @property {object} [dynamicFilters]
+         * @property {Array.<relationObj>} [loadRelations]
+         * @property {string} [search]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -140,7 +150,106 @@ export type contextMethods = {
         req?: string;
         inputsTargets?: string;
     }) => Promise<resource>;
-    getCollection: ({ setCollection, force, filters, skip, limit, sort, filtersMeta }?: {
+    getAggregateCollection: ({ setCollection, force, filters, skip, limit, sort, search, sortRelations, filterRelations }?: {
+        setCollection?: boolean;
+        force?: boolean;
+        filters?: any;
+        skip?: number;
+        limit?: number;
+        /**
+         * @typedef {object} contextProps
+         * @property {schema} schema
+         * @property {model} model
+         * @property {('index' | 'single' | 'get' | 'update' | 'validate' | 'count' | 'delete' | string)} route
+         * @property {route} routeObject
+         * @property {defaults} defaults
+         * @property {object} relationFilters
+         * @property {resource} [resource]
+         * @property {resource} [updatedResource]
+         * @property {resource} [createdResource]
+         * @property {resource} [deletedResource]
+         * @property {resource} [deletedResource]
+         * @property {Array.<resource>} [collection]
+         * @property {number} [relationDepth]
+         * @property {request & Object.<string , any>} [req]
+         * @property {response & Object.<string , any>} [res]
+         * @property {function} [next]
+         * @property {fields} [fields]
+         * @property {object} [response]
+         * @property {object} [collectionResponse]
+         * @property {object} [inputs]
+         * @property {object} [createInputs]
+         * @property {object} [updateInputs]
+         * @property {string[]} [routeKeys]
+         * @property {number} [total]
+         * @property {validationErrors} [validationErrors]
+         * @property {boolean} [isRelation]
+         * @property {relationObj} [relation]
+         * @property {context} [parent]
+         * @property {object} [dirtyInputs]
+         * @property {paginationProps} [pagination]
+         * @property {object} [dynamicFilters]
+         * @property {Array.<relationObj>} [loadRelations]
+         * @property {string} [search]
+         *
+         *
+         * @typedef {contextProps & contextMethods} context
+         */
+        sort?: any;
+        search?: string;
+        sortRelations?: import("../src/restSchema/contextMethods/getRelations").relationObj[];
+        filterRelations?: import("../src/restSchema/contextMethods/getRelations").relationObj[];
+    }) => Promise<resource[]>;
+    getAggregateResource: ({ errorOnNotFound, setResource, force, filters, resourceId }?: {
+        /**
+         * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+         */
+        /**
+         * @typedef {object} contextProps
+         * @property {schema} schema
+         * @property {model} model
+         * @property {('index' | 'single' | 'get' | 'update' | 'validate' | 'count' | 'delete' | string)} route
+         * @property {route} routeObject
+         * @property {defaults} defaults
+         * @property {object} relationFilters
+         * @property {resource} [resource]
+         * @property {resource} [updatedResource]
+         * @property {resource} [createdResource]
+         * @property {resource} [deletedResource]
+         * @property {resource} [deletedResource]
+         * @property {Array.<resource>} [collection]
+         * @property {number} [relationDepth]
+         * @property {request & Object.<string , any>} [req]
+         * @property {response & Object.<string , any>} [res]
+         * @property {function} [next]
+         * @property {fields} [fields]
+         * @property {object} [response]
+         * @property {object} [collectionResponse]
+         * @property {object} [inputs]
+         * @property {object} [createInputs]
+         * @property {object} [updateInputs]
+         * @property {string[]} [routeKeys]
+         * @property {number} [total]
+         * @property {validationErrors} [validationErrors]
+         * @property {boolean} [isRelation]
+         * @property {relationObj} [relation]
+         * @property {context} [parent]
+         * @property {object} [dirtyInputs]
+         * @property {paginationProps} [pagination]
+         * @property {object} [dynamicFilters]
+         * @property {Array.<relationObj>} [loadRelations]
+         * @property {string} [search]
+         *
+         *
+         * @typedef {contextProps & contextMethods} context
+         */
+        errorOnNotFound?: boolean;
+        setResource?: boolean;
+        force?: boolean;
+        filters?: any;
+        resourceId?: any;
+    }) => Promise<resource[]>;
+    getCollection: ({ setCollection, force, filters, skip, limit, sort, filtersMeta, canUseAggregate, search }?: {
         setCollection?: boolean;
         force?: boolean;
         filters?: any;
@@ -159,6 +268,8 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
          * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
          * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
+         * @property {import('../src/restSchema/contextMethods/getAggregateCollection')} getAggregateCollection
+         * @property {import('../src/restSchema/contextMethods/getAggregateResource')} getAggregateResource
          * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
          * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
          * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
@@ -168,6 +279,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
          * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
          * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
+         * @property {import('../src/restSchema/contextMethods/getLoadRelations')} getLoadRelations
          * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
@@ -180,6 +292,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
          * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
          * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
+         * @property {import('../src/restSchema/contextMethods/getSearch')} getSearch
          * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
          * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
          * @property {import('../src/restSchema/contextMethods/getSort')} getSort
@@ -212,6 +325,9 @@ export type contextMethods = {
          * @typedef {import("express").Response} response
          */
         /**
+         * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+         */
+        /**
          * @typedef {object} contextProps
          * @property {schema} schema
          * @property {model} model
@@ -239,16 +355,21 @@ export type contextMethods = {
          * @property {number} [total]
          * @property {validationErrors} [validationErrors]
          * @property {boolean} [isRelation]
+         * @property {relationObj} [relation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
          * @property {object} [dynamicFilters]
+         * @property {Array.<relationObj>} [loadRelations]
+         * @property {string} [search]
          *
          *
          * @typedef {contextProps & contextMethods} context
          */
         sort?: any;
         filtersMeta?: any;
+        canUseAggregate?: boolean;
+        search?: string;
     }) => Promise<resource[]>;
     getCreateFields: ({ fields }?: {
         fields?: import("./field").fields;
@@ -268,13 +389,15 @@ export type contextMethods = {
         setFields?: boolean;
         fields?: import("./field").fields;
     }) => Promise<import("./field").fields>;
-    getFilters: ({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta, pagination }?: {
+    getFilters: ({ inputs, operators, defaultRouteFilters, customFilters, filteringMeta, pagination, includeRelationFilters, includeRelationsInResult }?: {
         inputs?: any;
         operators?: import("./route").filteringOperators;
         defaultRouteFilters?: any;
         customFilters?: any;
         filteringMeta?: any;
         pagination?: import("./schema").paginationProps;
+        includeRelationFilters?: false;
+        includeRelationsInResult?: boolean;
     }) => Promise<any>;
     getInputs: ({ setInputs, req, inputsTarget, force }?: {
         setInputs?: boolean;
@@ -294,6 +417,14 @@ export type contextMethods = {
         inputs?: any;
         pagination?: import("./schema").paginationProps;
     }) => Promise<number>;
+    getLoadRelations: ({ setLoadRelations, inputs, loadKey, force, relations, loads }?: {
+        setLoadRelations?: boolean;
+        inputs?: any;
+        loadKey?: string;
+        force?: boolean;
+        relations?: import("../src/restSchema/contextMethods/getRelations").relationObj[];
+        loads?: string | string[];
+    }) => Promise<import("../src/restSchema/contextMethods/getRelations").relationObj[]>;
     getMessages: () => {
         validations: {
             required: string;
@@ -322,6 +453,8 @@ export type contextMethods = {
              * @property {import('../src/restSchema/contextMethods/createResource')} createResource
              * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
              * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
+             * @property {import('../src/restSchema/contextMethods/getAggregateCollection')} getAggregateCollection
+             * @property {import('../src/restSchema/contextMethods/getAggregateResource')} getAggregateResource
              * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
              * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
              * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
@@ -331,6 +464,7 @@ export type contextMethods = {
              * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
              * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
              * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
+             * @property {import('../src/restSchema/contextMethods/getLoadRelations')} getLoadRelations
              * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
              * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
              * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
@@ -343,6 +477,7 @@ export type contextMethods = {
              * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
              * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
              * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
+             * @property {import('../src/restSchema/contextMethods/getSearch')} getSearch
              * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
              * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
              * @property {import('../src/restSchema/contextMethods/getSort')} getSort
@@ -375,6 +510,9 @@ export type contextMethods = {
              * @typedef {import("express").Response} response
              */
             /**
+             * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+             */
+            /**
              * @typedef {object} contextProps
              * @property {schema} schema
              * @property {model} model
@@ -402,10 +540,13 @@ export type contextMethods = {
              * @property {number} [total]
              * @property {validationErrors} [validationErrors]
              * @property {boolean} [isRelation]
+             * @property {relationObj} [relation]
              * @property {context} [parent]
              * @property {object} [dirtyInputs]
              * @property {paginationProps} [pagination]
              * @property {object} [dynamicFilters]
+             * @property {Array.<relationObj>} [loadRelations]
+             * @property {string} [search]
              *
              *
              * @typedef {contextProps & contextMethods} context
@@ -434,7 +575,7 @@ export type contextMethods = {
     getNestedField: ({ key, fields }: {
         key: string;
         fields?: import("./field").fields;
-    }) => Promise<any>;
+    }) => Promise<import("./field").field>;
     getNestedInput: ({ key, inputs }: {
         key: string;
         inputs?: any;
@@ -444,16 +585,19 @@ export type contextMethods = {
         limit?: number;
     }) => Promise<number>;
     getPaginationData: ({ pagination, setResource, force }?: any) => Promise<any>;
-    getRelations: ({ fields }?: {
+    getRelations: ({ fields, setRelations, force }?: {
         fields?: import("./field").fields;
-    }) => Promise<any>;
-    getResource: ({ errorOnNotFound, setResource, force, resourceId, model, filters }?: {
+        setRelations?: boolean;
+        force?: boolean;
+    }) => Promise<import("../src/restSchema/contextMethods/getRelations").relationObj[]>;
+    getResource: ({ errorOnNotFound, setResource, force, resourceId, model, filters, canUseAggregate }?: {
         errorOnNotFound?: boolean;
         setResource?: boolean;
         force?: boolean;
         resourceId?: any;
         model?: model;
         filters?: any;
+        canUseAggregate?: boolean;
     }) => Promise<resource>;
     getResourceResponse: ({ resource }?: {
         resource?: resource;
@@ -473,13 +617,19 @@ export type contextMethods = {
         fallbackFilters?: any;
     }) => Promise<any[]>;
     getRoutes: () => import("./route").routes;
-    getSelectFields: ({ resource, fields, selectInputKey, inputs, routeObject, selectable }?: {
+    getSearch: ({ setSearch, inputs, searchKey }?: {
+        setSearch?: boolean;
+        inputs?: any;
+        searchKey?: string;
+    }) => Promise<number>;
+    getSelectFields: ({ resource, fields, selectInputKey, inputs, routeObject, selectable, loadRelations }?: {
         resource?: resource;
         fields?: import("./field").fields;
         selectInputKey?: string;
         inputs?: any;
         routeObject?: import("./route").route;
         selectable?: boolean;
+        loadRelations?: import("../src/restSchema/contextMethods/getRelations").relationObj[];
     }) => Promise<import("./field").fields>;
     getSkip: ({ skip, inputs, skipInputKey, page, pageInputKey, defaultPage, limit, pagination }?: {
         skip?: number;
@@ -491,16 +641,19 @@ export type contextMethods = {
         limit?: number;
         pagination?: import("./schema").paginationProps;
     }) => Promise<number>;
-    getSort: ({ inputs, sortKey, defaultSort, sortString, pagination }?: {
+    getSort: ({ inputs, sortKey, defaultSort, sortString, pagination, includeRelationSorts, includeRelationsInResult }?: {
         sortKey?: string;
         inputs?: any;
         defaultSort?: any;
         sortString?: string;
         pagination?: import("./schema").paginationProps;
+        includeRelationSorts?: boolean;
+        includeRelationsInResult?: boolean;
     }) => Promise<any>;
-    getTotal: ({ setTotal, filters }?: {
+    getTotal: ({ setTotal, filters, force }?: {
         setTotal?: boolean;
         filters?: any;
+        force?: boolean;
     }) => Promise<number>;
     getUpdateFields: ({ fields }?: {
         fields?: import("./field").fields;
@@ -512,7 +665,7 @@ export type contextMethods = {
     hook: (hook: string) => Promise<any>;
     sanitizeInput: ({ value, field }: {
         value: any;
-        field: any;
+        field: import("./field").field;
     }) => Promise<any>;
     sanitizeInputs: ({ setInputs, fields, inputs, setDirtyInputs }?: {
         setInputs?: boolean;
@@ -548,6 +701,8 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
          * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
          * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
+         * @property {import('../src/restSchema/contextMethods/getAggregateCollection')} getAggregateCollection
+         * @property {import('../src/restSchema/contextMethods/getAggregateResource')} getAggregateResource
          * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
          * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
          * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
@@ -557,6 +712,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
          * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
          * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
+         * @property {import('../src/restSchema/contextMethods/getLoadRelations')} getLoadRelations
          * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
@@ -569,6 +725,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
          * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
          * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
+         * @property {import('../src/restSchema/contextMethods/getSearch')} getSearch
          * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
          * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
          * @property {import('../src/restSchema/contextMethods/getSort')} getSort
@@ -601,6 +758,9 @@ export type contextMethods = {
          * @typedef {import("express").Response} response
          */
         /**
+         * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+         */
+        /**
          * @typedef {object} contextProps
          * @property {schema} schema
          * @property {model} model
@@ -628,10 +788,13 @@ export type contextMethods = {
          * @property {number} [total]
          * @property {validationErrors} [validationErrors]
          * @property {boolean} [isRelation]
+         * @property {relationObj} [relation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
          * @property {object} [dynamicFilters]
+         * @property {Array.<relationObj>} [loadRelations]
+         * @property {string} [search]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -664,6 +827,8 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/createResource')} createResource
          * @property {import('../src/restSchema/contextMethods/deleteResource')} deleteResource
          * @property {import('../src/restSchema/contextMethods/findLocationOfInput')} findLocationOfInput
+         * @property {import('../src/restSchema/contextMethods/getAggregateCollection')} getAggregateCollection
+         * @property {import('../src/restSchema/contextMethods/getAggregateResource')} getAggregateResource
          * @property {import('../src/restSchema/contextMethods/getCollection')} getCollection
          * @property {import('../src/restSchema/contextMethods/getCreateFields')} getCreateFields
          * @property {import('../src/restSchema/contextMethods/getCreateInputs')} getCreateInputs
@@ -673,6 +838,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getInputs')} getInputs
          * @property {import('../src/restSchema/contextMethods/getInputsFromFields')} getInputsFromFields
          * @property {import('../src/restSchema/contextMethods/getLimit')} getLimit
+         * @property {import('../src/restSchema/contextMethods/getLoadRelations')} getLoadRelations
          * @property {import('../src/restSchema/contextMethods/getMessages')} getMessages
          * @property {import('../src/restSchema/contextMethods/getNestedField')} getNestedField
          * @property {import('../src/restSchema/contextMethods/getNestedInput')} getNestedInput
@@ -685,6 +851,7 @@ export type contextMethods = {
          * @property {import('../src/restSchema/contextMethods/getRouteKeys')} getRouteKeys
          * @property {import('../src/restSchema/contextMethods/getRouteKeysFilters')} getRouteKeysFilters
          * @property {import('../src/restSchema/contextMethods/getRoutes')} getRoutes
+         * @property {import('../src/restSchema/contextMethods/getSearch')} getSearch
          * @property {import('../src/restSchema/contextMethods/getSelectFields')} getSelectFields
          * @property {import('../src/restSchema/contextMethods/getSkip')} getSkip
          * @property {import('../src/restSchema/contextMethods/getSort')} getSort
@@ -717,6 +884,9 @@ export type contextMethods = {
          * @typedef {import("express").Response} response
          */
         /**
+         * @typedef {import("../src/restSchema/contextMethods/getRelations").relationObj} relationObj
+         */
+        /**
          * @typedef {object} contextProps
          * @property {schema} schema
          * @property {model} model
@@ -744,10 +914,13 @@ export type contextMethods = {
          * @property {number} [total]
          * @property {validationErrors} [validationErrors]
          * @property {boolean} [isRelation]
+         * @property {relationObj} [relation]
          * @property {context} [parent]
          * @property {object} [dirtyInputs]
          * @property {paginationProps} [pagination]
          * @property {object} [dynamicFilters]
+         * @property {Array.<relationObj>} [loadRelations]
+         * @property {string} [search]
          *
          *
          * @typedef {contextProps & contextMethods} context
@@ -759,7 +932,7 @@ export type contextMethods = {
     }) => Promise<resource>;
     validateInput: ({ value, field, key }: {
         value?: any;
-        field: any;
+        field: import("./field").field;
         key?: string;
     }) => Promise<any>;
     validateInputs: ({ setValidationErrors, fields, inputs, checkRequired }?: {
@@ -788,6 +961,7 @@ export type validationError = {
 export type validationErrors = Array<validationError>;
 export type request = import("express").Request;
 export type response = import("express").Response;
+export type relationObj = import("../src/restSchema/contextMethods/getRelations").relationObj;
 export type contextProps = {
     schema: schema;
     model: model;
@@ -818,9 +992,12 @@ export type contextProps = {
     total?: number;
     validationErrors?: validationErrors;
     isRelation?: boolean;
+    relation?: relationObj;
     parent?: context;
     dirtyInputs?: object;
     pagination?: paginationProps;
     dynamicFilters?: object;
+    loadRelations?: Array<relationObj>;
+    search?: string;
 };
 export type context = contextProps & contextMethods;

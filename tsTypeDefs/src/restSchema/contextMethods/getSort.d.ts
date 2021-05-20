@@ -1,9 +1,11 @@
-declare function _exports({ inputs, sortKey, defaultSort, sortString, pagination }?: {
+declare function _exports({ inputs, sortKey, defaultSort, sortString, pagination, includeRelationSorts, includeRelationsInResult }?: {
     sortKey?: string;
     inputs?: object;
     defaultSort?: object;
     sortString?: string;
     pagination?: paginationProps;
+    includeRelationSorts?: boolean;
+    includeRelationsInResult?: boolean;
 }): Promise<object>;
 export = _exports;
 export type resource = import("../../../typeDefs/context").resource;

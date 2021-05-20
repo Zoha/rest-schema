@@ -3,6 +3,10 @@ const defaultRouteObject = require("../../src/restSchema/defaults/defaultRoute")
 const getFilters = require("../../src/restSchema/contextMethods/getFilters")
 const defaultField = require("../../src/restSchema/defaults/defaultField")
 const createContext = require("../../src/restSchema/createContext")
+const getSchemaModel = require("../../src/restSchema/getSchemaModel")
+const schemaModelBuilder = require("../../src/restSchema/schema")
+const model = require("../../src/testHelpers/model")
+const { ObjectId } = require("../../src/restSchema/types")
 
 const context = {
   ...createContext(
@@ -22,6 +26,13 @@ const context = {
 }
 
 describe("getFilters method", () => {
+  afterEach(() => {
+    getSchemaModel.definedSchemaList = {}
+  })
+  beforeEach(() => {
+    getSchemaModel.definedSchemaList = {}
+  })
+
   it("will get filters normally", async () => {
     const result = await getFilters.call(context)
     expect(result).to.be.an("object")
@@ -657,4 +668,94 @@ describe("getFilters method", () => {
       .that.haveOwnProperty("$lte")
       .that.includes("2018")
   })
+
+  it("will return relation filters", async () => {
+    const schema1 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema2 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema3 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema4 = schemaModelBuilder(
+      model,
+      {
+        normalProp: {
+          type: String
+        },
+        notFilterable: {
+          type: ObjectId,
+          ref: schema1
+        },
+        relation: {
+          type: ObjectId,
+          ref: schema1,
+          filterable: true
+        },
+        relationNested: {
+          type: {
+            nested: {
+              type: ObjectId,
+              ref: schema2,
+              filterable: true
+            }
+          }
+        },
+        relationArrayNested: {
+          type: [
+            {
+              nested: {
+                type: ObjectId,
+                ref: schema3,
+                filterable: true
+              }
+            }
+          ]
+        },
+        collectionRelation: {
+          type: [ObjectId],
+          ref: schema3,
+          filterable: true
+        }
+      },
+      {}
+    )
+
+    const { filters, relations } = await schema4.tempContext.getFilters({
+      inputs: {
+        notExists: "something",
+        normalProp: "something",
+        "notFilterable.prop1": "12",
+        "relation.prop1": "12",
+        "relationNested.nested.prop1": "$in:12,13",
+        "relationArrayNested.0.nested.prop1": "12",
+        "relationArrayNested.nested.prop1": "12"
+      },
+      includeRelationFilters: true,
+      includeRelationsInResult: true
+    })
+
+    expect(filters).to.not.haveOwnProperty("notExists")
+    expect(filters.normalProp).to.be.equal("something")
+    expect(filters).to.not.haveOwnProperty("notFilterable.prop1")
+    expect(filters["__relation.prop1"]).to.be.equal(12)
+    expect(filters["__relationNested.nested.prop1"]).to.be.an("object")
+    expect(filters["__relationNested.nested.prop1"].$in).to.have.lengthOf(2)
+    expect(filters["__relationNested.nested.prop1"].$in[0]).to.be.equal(12)
+    expect(filters["__relationArrayNested.0.nested.prop1"]).to.be.equal(12)
+    expect(filters["__relationArrayNested.nested.prop1"]).to.be.equal(12)
+    expect(Object.keys(filters)).to.have.lengthOf(5)
+    expect(relations).to.be.an("array")
+    expect(relations).to.have.lengthOf(3)
+  })
+
+  // TODO will filter with nested on array (not array item index) for filtering on arrays
 })

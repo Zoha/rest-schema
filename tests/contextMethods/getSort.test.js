@@ -6,6 +6,9 @@ const getNestedField = require("../../src/restSchema/contextMethods/getNestedFie
 const getFields = require("../../src/restSchema/contextMethods/getFields")
 const defaults = require("../../src/restSchema/defaults")
 const createContext = require("../../src/restSchema/createContext")
+const schemaModelBuilder = require("../../src/restSchema/schema")
+const model = require("../../src/testHelpers/model")
+const { ObjectId } = require("../../src/restSchema/types")
 
 const context = {
   ...createContext(
@@ -172,5 +175,86 @@ describe("getSort method", () => {
     expect(sort)
       .to.be.an("object")
       .that.haveOwnProperty("prop1")
+  })
+
+  it("will return relation sorts", async () => {
+    const schema1 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema2 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema3 = schemaModelBuilder(model, {
+      prop1: {
+        type: Number
+      }
+    })
+    const schema4 = schemaModelBuilder(
+      model,
+      {
+        normalProp: {
+          type: String
+        },
+        notFilterable: {
+          type: ObjectId,
+          ref: schema1
+        },
+        relation: {
+          type: ObjectId,
+          ref: schema1,
+          sortable: true
+        },
+        relationNested: {
+          type: {
+            nested: {
+              type: ObjectId,
+              ref: schema2,
+              sortable: true
+            }
+          }
+        },
+        relationArrayNested: {
+          type: [
+            {
+              nested: {
+                type: ObjectId,
+                ref: schema3,
+                sortable: true
+              }
+            }
+          ]
+        },
+        collectionRelation: {
+          type: [ObjectId],
+          ref: schema3,
+          sortable: true
+        }
+      },
+      {}
+    )
+
+    const { sort, relations } = await schema4.tempContext.getSort({
+      inputs: {
+        sort:
+          "notExists normalProp relation.prop1 -relationNested.nested.prop1 relationArrayNested.0.nested.prop1 relationArrayNested.nested.prop1"
+      },
+      includeRelationSorts: true,
+      includeRelationsInResult: true
+    })
+
+    expect(sort).to.not.haveOwnProperty("notExists")
+    expect(sort.normalProp).to.be.equal(1)
+    expect(sort).to.not.haveOwnProperty("notSortable.prop1")
+    expect(sort["__relation.prop1"]).to.be.equal(1)
+    expect(sort["__relationNested.nested.prop1"]).to.be.equal(-1)
+    expect(sort["__relationArrayNested.0.nested.prop1"]).to.be.equal(1)
+    expect(sort["__relationArrayNested.nested.prop1"]).to.be.equal(1)
+    expect(Object.keys(sort)).to.have.lengthOf(5)
+    expect(relations).to.be.an("array")
+    expect(relations).to.have.lengthOf(3)
   })
 })

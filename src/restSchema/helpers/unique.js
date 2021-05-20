@@ -3,6 +3,10 @@ const isFunction = require("../helpers/isFunction")
 module.exports = async (items, key, context) => {
   let collection
 
+  if (!items || !items.length) {
+    return items
+  }
+
   if (key === undefined) {
     collection = items.filter((element, index, self) => self.indexOf(element) === index)
   } else {

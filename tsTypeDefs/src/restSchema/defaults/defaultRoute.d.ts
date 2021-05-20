@@ -19,6 +19,9 @@ export namespace meta {
     const limit: string;
     const skip: string;
     const page: string;
+    const search: string;
+    const randomSort: string;
+    const load: string;
 }
 export function handler(context: any): Promise<{
     message: any;

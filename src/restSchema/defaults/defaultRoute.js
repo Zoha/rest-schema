@@ -26,7 +26,10 @@ module.exports = {
     sort: "sort",
     limit: "limit",
     skip: "skip",
-    page: "page"
+    page: "page",
+    search: "search",
+    randomSort: "random",
+    load: "load"
   },
 
   // default route handler

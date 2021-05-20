@@ -6,8 +6,12 @@ const schemaMaker = require("../../src/restSchema/schema")
 const createContext = require("../../src/restSchema/createContext")
 const { defaultSchema } = require("../../src/restSchema/defaults")
 const moment = require("moment")
+const defaultRoute = require("../../src/restSchema/defaults/defaultRoute")
 
-const context = createContext({ ...defaultSchema, model }, defaultSchema.routes.create)
+const context = createContext(
+  { ...defaultSchema, model },
+  { ...defaultRoute, ...defaultSchema.routes.create }
+)
 
 describe("validateInput method", () => {
   beforeEach(async () => {

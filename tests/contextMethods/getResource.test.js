@@ -124,4 +124,6 @@ describe("getResource method", () => {
       .to.be.an("object")
       .that.haveOwnProperty("_id")
   })
+
+  // TODO check that will use aggregate if there is loads
 })
